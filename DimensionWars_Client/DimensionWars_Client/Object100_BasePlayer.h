@@ -58,6 +58,7 @@ public:
 	void Move(ULONG nDirection, float fDistance, bool bVelocity = false);
 	void Move(const XMFLOAT3& xmf3Shift, bool bVelocity = false);
 	void Move(float fxOffset = 0.0f, float fyOffset = 0.0f, float fzOffset = 0.0f);
+	
 	void Rotate(float x, float y, float z);
 
 	void Update(float fTimeElapsed);

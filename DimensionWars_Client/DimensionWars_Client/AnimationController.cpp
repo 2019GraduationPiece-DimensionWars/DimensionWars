@@ -212,7 +212,8 @@ void LoadedModelInfo::PrepareSkinning()
 	m_ppSkinnedMeshes = new SkinnedMesh*[m_nSkinnedMeshes];
 	m_pModelRootObject->FindAndSetSkinnedMesh(m_ppSkinnedMeshes, &nSkinnedMesh);
 
-	for (int i = 0; i < m_nSkinnedMeshes; i++) m_ppSkinnedMeshes[i]->PrepareSkinning(m_pModelRootObject);
+	for (int i = 0; i < m_nSkinnedMeshes; i++) 
+		m_ppSkinnedMeshes[i]->PrepareSkinning(m_pModelRootObject);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -232,11 +233,10 @@ AnimationController::AnimationController(ID3D12Device * pd3dDevice, ID3D12Graphi
 	m_ppd3dcbSkinningBoneTransforms = new ID3D12Resource*[m_nSkinnedMeshes];
 	m_ppcbxmf4x4MappedSkinningBoneTransforms = new XMFLOAT4X4*[m_nSkinnedMeshes];
 
-	UINT ncbElementBytes = (((sizeof(XMFLOAT4X4) * SKINNED_ANIMATION_BONES) + 255) & ~255); //256의 배수
-	for (int i = 0; i < m_nSkinnedMeshes; i++)
-	{
-		m_ppd3dcbSkinningBoneTransforms[i] = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
-		m_ppd3dcbSkinningBoneTransforms[i]->Map(0, NULL, (void **)&m_ppcbxmf4x4MappedSkinningBoneTransforms[i]);
+	unsigned int ncbElementBytes = (((sizeof(XMFLOAT4X4) * SKINNED_ANIMATION_BONES) + 255) & ~255); //256의 배수
+	for (int i = 0; i < m_nSkinnedMeshes; i++) {
+		m_ppd3dcbSkinningBoneTransforms[i] = ::CreateBufferResource(pd3dDevice, pd3dCommandList, nullptr, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, nullptr);
+		m_ppd3dcbSkinningBoneTransforms[i]->Map(0, nullptr, (void **)&m_ppcbxmf4x4MappedSkinningBoneTransforms[i]);
 	}
 }
 
@@ -317,6 +317,6 @@ void AnimationController::AdvanceTime(float fElapsedTime, SkinnedFrameObject * p
 			}
 		}
 
-		pRootGameObject->UpdateTransform(NULL);
+		pRootGameObject->UpdateTransform(nullptr);
 	}
 }

@@ -167,15 +167,15 @@ public:
 	float 							m_fTime = 0.0f;
 
 	int 							m_nAnimationTracks = 0;
-	CAnimationTrack 				*m_pAnimationTracks = NULL;
+	CAnimationTrack 				*m_pAnimationTracks = nullptr;
 
-	AnimationSets					*m_pAnimationSets = NULL;
+	AnimationSets					*m_pAnimationSets = nullptr;
 
 	int 							m_nSkinnedMeshes = 0;
-	SkinnedMesh						**m_ppSkinnedMeshes = NULL; //[SkinnedMeshes], Skinned Mesh Cache
+	SkinnedMesh						**m_ppSkinnedMeshes = nullptr; //[SkinnedMeshes], Skinned Mesh Cache
 
-	ID3D12Resource					**m_ppd3dcbSkinningBoneTransforms = NULL; //[SkinnedMeshes]
-	XMFLOAT4X4						**m_ppcbxmf4x4MappedSkinningBoneTransforms = NULL;
+	ID3D12Resource					**m_ppd3dcbSkinningBoneTransforms = nullptr; //[SkinnedMeshes]
+	XMFLOAT4X4						**m_ppcbxmf4x4MappedSkinningBoneTransforms = nullptr;
 
 public:
 	void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);

@@ -243,11 +243,11 @@ void BaseScene::ReleaseShaderVariables()
 
 void BaseScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList)
 {
-	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
+	m_pGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
 	CreateCbvSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 45); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
 
-	Material::PrepareShaders(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+	Material::PrepareShaders(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
 
 	BuildLightsAndMaterials();
 
@@ -283,7 +283,7 @@ void BaseScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLis
 
 void BaseScene::ReleaseObjects()
 {
-	if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
+	if (m_pGraphicsRootSignature) m_pGraphicsRootSignature->Release();
 	if (m_pd3dCbvSrvDescriptorHeap) m_pd3dCbvSrvDescriptorHeap->Release();
 
 	/*if (m_ppShaders)
@@ -370,7 +370,7 @@ bool BaseScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM w
 	return false;
 }
 
-bool BaseScene::ProcessInput(UCHAR * pKeysBuffer)
+bool BaseScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 {
 	return false;
 }
@@ -392,7 +392,7 @@ void BaseScene::AnimateObjects(float fTimeElapsed)
 
 void BaseScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)
 {
-	if (m_pd3dGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
+	if (m_pGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pGraphicsRootSignature);
 	if (m_pd3dCbvSrvDescriptorHeap) pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
 
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);

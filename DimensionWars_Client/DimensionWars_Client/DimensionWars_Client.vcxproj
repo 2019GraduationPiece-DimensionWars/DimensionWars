@@ -172,12 +172,17 @@
     <ClInclude Include="RuntimeFrameWork.h" />
     <ClInclude Include="Scene000_BaseScene.h" />
     <ClInclude Include="Scene001_TitleScene.h" />
+    <ClInclude Include="Scene002_LobbyScene.h" />
+    <ClInclude Include="Scene003_RoomScene.h" />
+    <ClInclude Include="Scene004_BattleScene.h" />
     <ClInclude Include="Shader000_BaseShader.h" />
     <ClInclude Include="Shader001_SkyBoxShader.h" />
+    <ClInclude Include="Shader002_TextureVertexRectShader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="FrameTimer.h" />
+    <ClInclude Include="TextureVertexRect.h" />
     <ClInclude Include="WICTextureLoader12.h" />
   </ItemGroup>
   <ItemGroup>
@@ -204,8 +209,12 @@
     <ClCompile Include="RuntimeFrameWork.cpp" />
     <ClCompile Include="Scene000_BaseScene.cpp" />
     <ClCompile Include="Scene001_TitleScene.cpp" />
+    <ClCompile Include="Scene002_LobbyScene.cpp" />
+    <ClCompile Include="Scene003_RoomScene.cpp" />
+    <ClCompile Include="Scene004_BattleScene.cpp" />
     <ClCompile Include="Shader000_BaseShader.cpp" />
     <ClCompile Include="Shader001_SkyBoxShader.cpp" />
+    <ClCompile Include="Shader002_TextureVertexRectShader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -214,6 +223,7 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
+    <ClCompile Include="TextureVertexRect.cpp" />
     <ClCompile Include="WICTextureLoader12.cpp" />
   </ItemGroup>
   <ItemGroup>

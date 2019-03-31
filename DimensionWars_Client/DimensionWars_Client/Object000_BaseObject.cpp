@@ -138,6 +138,10 @@ void BaseObject::SetRootParameter(ID3D12GraphicsCommandList * pd3dCommandList)
 {
 }
 
+void BaseObject::OnPrepareRender()
+{
+}
+
 void BaseObject::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)
 {
 	/*
@@ -263,6 +267,12 @@ void BaseObject::Rotate(float fPitch, float fYaw, float fRoll)
 void BaseObject::Rotate(XMFLOAT3 * pxmf3Axis, float fAngle)
 {
 	XMMATRIX mtxRotate = XMMatrixRotationAxis(XMLoadFloat3(pxmf3Axis), XMConvertToRadians(fAngle));
+	m_xmf4x4World = Matrix4x4::Multiply(mtxRotate, m_xmf4x4World);
+}
+
+void BaseObject::Rotate(XMFLOAT4 * pxmf4Quaternion)
+{
+	XMMATRIX mtxRotate = XMMatrixRotationQuaternion(XMLoadFloat4(pxmf4Quaternion));
 	m_xmf4x4World = Matrix4x4::Multiply(mtxRotate, m_xmf4x4World);
 }
 

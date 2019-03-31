@@ -162,3 +162,73 @@ float4 PSSkyBox(VS_SKYBOX_CUBEMAP_OUTPUT input) : SV_TARGET
 
     return (cColor);
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+struct VS_TEXTUREVERTEX_INPUT
+{
+    float3 position : POSITION;
+    float2 size : SIZE;
+};
+
+struct VS_TEXTUREVERTEX_OUTPUT
+{
+    float3 center : POSITION;
+    float2 size : SIZE;
+};
+
+struct GS_TEXTUREVERTEX_OUTPUT
+{
+    float4 positionH : SV_POSITION;
+    float3 positionWorld : POSITION;
+    float3 normal : NORMAL;
+    float2 uv : TEXCOORD;
+    uint primID : SV_PrimitiveID;
+};
+
+VS_TEXTUREVERTEX_OUTPUT VSTextureVertex(VS_TEXTUREVERTEX_INPUT input)
+{
+    VS_TEXTUREVERTEX_OUTPUT output;
+
+    output.center = input.position;
+    output.size = input.size;
+
+    return (output);
+}
+
+Texture2DArray TextureArray: register(t4);
+SamplerState gSamplerState : register(s0);
+
+[maxvertexcount(4)]
+void GSTextureVertex(point VS_TEXTUREVERTEX_OUTPUT input[1], uint primID : SV_PrimitiveID,inout TriangleStream<GS_TEXTUREVERTEX_OUTPUT> outStream)
+{
+    float halfWidth = input[0].size.x * 0.5f;
+    float halfHeight = input[0].size.y * 0.5f;
+    float4 pVertice[4];
+    pVertice[0] = float4(input[0].center + halfWidth - halfHeight, 1.0f);
+    pVertice[1] = float4(input[0].center + halfWidth + halfHeight, 1.0f);
+    pVertice[2] = float4(input[0].center - halfWidth - halfHeight, 1.0f);
+    pVertice[3] = float4(input[0].center - halfWidth + halfHeight, 1.0f);
+
+    float2 pUVs[4] = { float2(0.0f, 1.0f), float2(0.0f, 0.0f), float2(1.0f, 1.0f), float2(1.0f, 0.0f) };
+
+    GS_TEXTUREVERTEX_OUTPUT gsOut;
+    for (int i = 0; i < 4; ++i)
+    {
+        gsOut.positionWorld = pVertice[i].xyz;
+        gsOut.positionH = mul(mul(pVertice[i], gmtxView), gmtxProjection);
+        gsOut.normal = float3(0.0f, 0.0f, -1.0f);
+        gsOut.uv = pUVs[i];
+        gsOut.primID = primID;
+        outStream.Append(gsOut);
+    }
+
+}
+
+float4 PSTextureVertex(GS_TEXTUREVERTEX_OUTPUT input) : SV_TARGET
+{
+    float3 uvw = float3(input.uv, (input.primID % 4));
+    float4 cTexture = TextureArray.Sample(gSamplerState, uvw);
+    float4 cColor = cTexture;
+    return (cColor);
+}

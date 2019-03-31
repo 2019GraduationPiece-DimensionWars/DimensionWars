@@ -27,13 +27,13 @@ SkinnedFrameObject::SkinnedFrameObject()
 {
 	m_xmf4x4ToParent = Matrix4x4::Identity();
 	m_xmf4x4World = Matrix4x4::Identity();
+	Rotate(-90.0f, 0.0f, 0.0f);
 }
 
 SkinnedFrameObject::SkinnedFrameObject(unsigned int nMaterials, unsigned int nMeshes) : SkinnedFrameObject()
 {
 	m_nMaterials = nMaterials;
-	if (m_nMaterials > 0)
-	{
+	if (m_nMaterials > 0) {
 		m_ppMaterials = new Material*[m_nMaterials];
 		for (int i = 0; i < m_nMaterials; i++) m_ppMaterials[i] = nullptr;
 	}
@@ -81,6 +81,20 @@ void SkinnedFrameObject::SetSkinnedAnimationWireFrameShader()
 	SetMaterial(0, pMaterial);
 }
 
+void SkinnedFrameObject::SetPosition(float x, float y, float z)
+{
+	m_xmf4x4ToParent._41 = x;
+	m_xmf4x4ToParent._42 = y;
+	m_xmf4x4ToParent._43 = z;
+	
+	UpdateTransform(nullptr);
+}
+
+void SkinnedFrameObject::SetPosition(XMFLOAT3 xmf3Position)
+{
+	SkinnedFrameObject::SetPosition(xmf3Position.x, xmf3Position.y, xmf3Position.z);
+}
+
 void SkinnedFrameObject::SetScale(XMFLOAT3 xmf3Scale)
 {
 	XMMATRIX mtxScale = XMMatrixScaling(xmf3Scale.x, xmf3Scale.y, xmf3Scale.z);
@@ -101,10 +115,12 @@ void SkinnedFrameObject::SetChild(SkinnedFrameObject * pChild, bool bReferenceUp
 {
 	if (pChild) {
 		pChild->m_pParent = this;
-		if (bReferenceUpdate) pChild->AddRef();
+		if (bReferenceUpdate)
+			pChild->AddRef();
 	}
 	if (m_pChild) {
-		if (pChild) pChild->m_pSibling = m_pChild->m_pSibling;
+		if (pChild) 
+			pChild->m_pSibling = m_pChild->m_pSibling;
 		m_pChild->m_pSibling = pChild;
 	}
 	else {
@@ -129,6 +145,30 @@ SkinnedFrameObject * SkinnedFrameObject::FindFrame(char * pstrFrameName)
 	if (m_pChild) if (pFrameObject = m_pChild->FindFrame(pstrFrameName)) return(pFrameObject);
 
 	return nullptr;
+}
+
+void SkinnedFrameObject::Rotate(float fPitch, float fYaw, float fRoll)
+{
+	XMMATRIX mtxRotate = XMMatrixRotationRollPitchYaw(XMConvertToRadians(fPitch), XMConvertToRadians(fYaw), XMConvertToRadians(fRoll));
+	m_xmf4x4ToParent = Matrix4x4::Multiply(mtxRotate, m_xmf4x4ToParent);
+
+	UpdateTransform(nullptr);
+}
+
+void SkinnedFrameObject::Rotate(XMFLOAT3 * pxmf3Axis, float fAngle)
+{
+	XMMATRIX mtxRotate = XMMatrixRotationAxis(XMLoadFloat3(pxmf3Axis), XMConvertToRadians(fAngle));
+	m_xmf4x4ToParent = Matrix4x4::Multiply(mtxRotate, m_xmf4x4ToParent);
+
+	UpdateTransform(nullptr);
+}
+
+void SkinnedFrameObject::Rotate(XMFLOAT4 * pxmf4Quaternion)
+{
+	XMMATRIX mtxRotate = XMMatrixRotationQuaternion(XMLoadFloat4(pxmf4Quaternion));
+	m_xmf4x4ToParent = Matrix4x4::Multiply(mtxRotate, m_xmf4x4ToParent);
+
+	UpdateTransform(nullptr);
 }
 
 SkinnedMesh * SkinnedFrameObject::FindSkinnedMesh(char * pstrSkinnedMeshName)
@@ -251,20 +291,20 @@ SkinnedFrameObject * SkinnedFrameObject::LoadFrameHierarchyFromFile(ID3D12Device
 
 	int nFrame = ::ReadIntegerFromFile(pInFile);
 
-	SkinnedFrameObject *pGameObject = new SkinnedFrameObject();
-	::ReadStringFromFile(pInFile, pGameObject->m_pstrFrameName);
+	SkinnedFrameObject *pFrameObject = new SkinnedFrameObject();
+	::ReadStringFromFile(pInFile, pFrameObject->m_pstrFrameName);
 
 	while (true) {
 		::ReadStringFromFile(pInFile, pstrToken);
 		if (!strcmp(pstrToken, "<Transform>:")) {
-			nReads = (UINT)::fread(&pGameObject->m_xmf4x4ToParent, sizeof(XMFLOAT4X4), 1, pInFile);
+			nReads = (UINT)::fread(&pFrameObject->m_xmf4x4ToParent, sizeof(XMFLOAT4X4), 1, pInFile);
 		}
 		else if (!strcmp(pstrToken, "<Mesh>:")) {
 			HierarchyMesh *pMesh = new HierarchyMesh(pd3dDevice, pd3dCommandList);
 			pMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
-			pGameObject->SetMesh(pMesh);
-
-			/**/pGameObject->SetWireFrameShader();
+			pFrameObject->SetMesh(pMesh);
+			
+			/**/pFrameObject->SetWireFrameShader();
 		}
 		else if (!strcmp(pstrToken, "<SkinDeformations>:")) {
 			if (pnSkinnedMeshes) (*pnSkinnedMeshes)++;
@@ -276,9 +316,9 @@ SkinnedFrameObject * SkinnedFrameObject::LoadFrameHierarchyFromFile(ID3D12Device
 			::ReadStringFromFile(pInFile, pstrToken); //<Mesh>:
 			if (!strcmp(pstrToken, "<Mesh>:")) pSkinnedMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
 
-			pGameObject->SetMesh(pSkinnedMesh);
+			pFrameObject->SetMesh(pSkinnedMesh);
 
-			/**/pGameObject->SetSkinnedAnimationWireFrameShader();
+			/**/pFrameObject->SetSkinnedAnimationWireFrameShader();
 		}
 		else if (!strcmp(pstrToken, "<Children>:")) {
 			int nChilds = ::ReadIntegerFromFile(pInFile);
@@ -286,8 +326,8 @@ SkinnedFrameObject * SkinnedFrameObject::LoadFrameHierarchyFromFile(ID3D12Device
 				for (int i = 0; i < nChilds; i++) {
 					::ReadStringFromFile(pInFile, pstrToken);
 					if (!strcmp(pstrToken, "<Frame>:")) {
-						SkinnedFrameObject *pChild = SkinnedFrameObject::LoadFrameHierarchyFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, pGameObject, pInFile, pShader, pnSkinnedMeshes);
-						if (pChild) pGameObject->SetChild(pChild);
+						SkinnedFrameObject *pChild = SkinnedFrameObject::LoadFrameHierarchyFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, pFrameObject, pInFile, pShader, pnSkinnedMeshes);
+						if (pChild) pFrameObject->SetChild(pChild);
 #ifdef _WITH_DEBUG_FRAME_HIERARCHY
 						TCHAR pstrDebug[256] = { 0 };
 						_stprintf_s(pstrDebug, 256, _T("(Frame: %p) (Parent: %p)\n"), pChild, pGameObject);
@@ -300,10 +340,10 @@ SkinnedFrameObject * SkinnedFrameObject::LoadFrameHierarchyFromFile(ID3D12Device
 		else if (!strcmp(pstrToken, "</Frame>"))
 			break;
 	}
-	return(pGameObject);
+	return(pFrameObject);
 }
 
-LoadedModelInfo * SkinnedFrameObject::LoadGeometryAndAnimationFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, ID3D12RootSignature * pd3dGraphicsRootSignature, char * pstrFileName, BaseShader * pShader)
+LoadedModelInfo * SkinnedFrameObject::LoadGeometryAndAnimationFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, ID3D12RootSignature * pd3dGraphicsRootSignature, char * pstrFileName, BaseShader * pShader, bool flag3DsMaxCoordinates)
 {
 	FILE *pInFile = NULL;
 	::fopen_s(&pInFile, pstrFileName, "rb");
@@ -349,7 +389,8 @@ LoadedModelInfo * SkinnedFrameObject::LoadGeometryAndAnimationFromFile(ID3D12Dev
 #endif
 
 	::fclose(pInFile);
-
+	if (flag3DsMaxCoordinates)
+		pLoadedModel->m_pModelRootObject->Rotate(90.0f, 0.0f, 0.0f);	// 3D Max의 좌표계를 강제로 변환하기 위한 회전
 	return(pLoadedModel);
 }
 
@@ -366,6 +407,8 @@ void SkinnedFrameObject::PrintFrameInfo(SkinnedFrameObject * pGameObject, Skinne
 
 void SkinnedFrameObject::Animate(float fTimeElapsed)
 {
+	OnPrepareRender();
+
 	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->AdvanceTime(fTimeElapsed, this);
 
 	if (m_pSibling) m_pSibling->Animate(fTimeElapsed);

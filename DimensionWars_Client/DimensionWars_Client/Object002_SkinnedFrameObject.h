@@ -38,6 +38,9 @@ public:
 	void SetWireFrameShader();
 	void SetSkinnedAnimationWireFrameShader();
 
+	virtual void SetPosition(float x, float y, float z);
+	virtual void SetPosition(XMFLOAT3 xmf3Position);
+
 	void SetScale(XMFLOAT3 xmf3Scale = { 1.0f, 1.0f, 1.0f });
 	void SetScale(float x, float y, float z);
 
@@ -46,7 +49,11 @@ public:
 	void UpdateTransform(XMFLOAT4X4 *pxmf4x4Parent = nullptr);
 	SkinnedFrameObject *FindFrame(char *pstrFrameName);
 
+	virtual void Rotate(float fPitch, float fYaw, float fRoll) override;
+	virtual void Rotate(XMFLOAT3 *pxmf3Axis, float fAngle) override final;
+	virtual void Rotate(XMFLOAT4 *pxmf4Quaternion) override final;
 
+	//
 
 	AnimationController 			*m_pSkinnedAnimationController = nullptr;
 
@@ -59,9 +66,11 @@ public:
 	static void LoadAnimationFromFile(FILE *pInFile, LoadedModelInfo *pLoadedModel);
 	static SkinnedFrameObject *LoadFrameHierarchyFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, SkinnedFrameObject *pParent, FILE *pInFile, BaseShader *pShader, int *pnSkinnedMeshes);
 
-	static LoadedModelInfo *LoadGeometryAndAnimationFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, char *pstrFileName, BaseShader *pShader);
+	static LoadedModelInfo *LoadGeometryAndAnimationFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, char *pstrFileName, BaseShader *pShader, bool flag3DsMaxCoordinates = true);
 
 	static void PrintFrameInfo(SkinnedFrameObject *pGameObject, SkinnedFrameObject *pParent);
+
+
 
 	virtual void Animate(float fTimeElapsed);
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera = nullptr);

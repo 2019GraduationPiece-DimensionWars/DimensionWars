@@ -65,8 +65,9 @@ public:
 	virtual void ReleaseUploadBuffers();
 
 	virtual void SetRootParameter(ID3D12GraphicsCommandList *pd3dCommandList);
+	virtual void OnPrepareRender();
 	virtual void OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera);
-	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera = NULL);
+	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera = nullptr);
 
 	virtual void Animate(float fTimeElapsed);
 
@@ -75,15 +76,16 @@ public:
 	XMFLOAT3 GetUp() const;
 	XMFLOAT3 GetRight() const;
 
-	void SetPosition(float x, float y, float z);
-	void SetPosition(XMFLOAT3 xmf3Position);
+	virtual void SetPosition(float x, float y, float z);
+	virtual void SetPosition(XMFLOAT3 xmf3Position);
 
 	void MoveStrafe(float fDistance = 1.0f);
 	void MoveUp(float fDistance = 1.0f);
 	void MoveForward(float fDistance = 1.0f);
 
-	void Rotate(float fPitch = 10.0f, float fYaw = 10.0f, float fRoll = 10.0f);
-	void Rotate(XMFLOAT3 *pxmf3Axis, float fAngle);
+	virtual void Rotate(float fPitch, float fYaw, float fRoll);
+	virtual void Rotate(XMFLOAT3 *pxmf3Axis, float fAngle);
+	virtual void Rotate(XMFLOAT4 *pxmf4Quaternion);
 
 	unsigned int GetMeshType(int nIndex = 0);
 };

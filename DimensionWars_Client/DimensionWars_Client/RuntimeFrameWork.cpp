@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "RuntimeFrameWork.h"
 #include "Scene001_TitleScene.h"
+#include "Scene002_LobbyScene.h"
+#include "Scene003_RoomScene.h"
+#include "Scene004_BattleScene.h"
 #include "Camera000_BaseCamera.h"
 #include "Object101_GrimReaperPlayer.h"
 
@@ -47,7 +50,6 @@ RuntimeFrameWork::RuntimeFrameWork()
 
 	_tcscpy_s(m_pszFrameRate, _T("Dimension Wars - 차원대전 - "));
 }
-
 
 RuntimeFrameWork::~RuntimeFrameWork()
 {
@@ -117,9 +119,6 @@ void RuntimeFrameWork::OnDestroy()
 	HRESULT hResult = pdxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
 	pdxgiDebug->Release();
 #endif
-
-	m_pCurrScene = nullptr;
-//	for (int i = 0; i < BaseScene::SceneTag::Count; ++i) delete arrScene[i];	// 예외발생
 }
 
 void RuntimeFrameWork::CreateDirect3DDevice()
@@ -380,6 +379,9 @@ void RuntimeFrameWork::BuildObjects()
 void RuntimeFrameWork::BuildAllScene()
 {
 	arrScene[BaseScene::SceneTag::Title] = new TitleScene(BaseScene::SceneTag::Title, this);
+	arrScene[BaseScene::SceneTag::Lobby] = new LobbyScene(BaseScene::SceneTag::Lobby, this);
+	arrScene[BaseScene::SceneTag::Room] = new RoomScene(BaseScene::SceneTag::Room, this);
+	arrScene[BaseScene::SceneTag::Game] = new BattleScene(BaseScene::SceneTag::Game, this);
 }
 
 void RuntimeFrameWork::BuildPlayer()
@@ -395,6 +397,7 @@ void RuntimeFrameWork::ReleaseObjects()
 		if (arrScene[i]) {
 			arrScene[i]->ReleaseObjects();
 			delete arrScene[i];
+			arrScene[i] = nullptr;
 		}
 }
 
@@ -402,8 +405,7 @@ void RuntimeFrameWork::ProcessInput()
 {
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
-	if (GetKeyboardState(pKeysBuffer) && m_pCurrScene) bProcessedByScene = m_pCurrScene->ProcessInput(pKeysBuffer);
-	if (m_pPlayer) m_pPlayer->Update(m_Timer.GetTimeElapsed());
+	if (GetKeyboardState(pKeysBuffer) && m_pCurrScene) bProcessedByScene = m_pCurrScene->ProcessInput(pKeysBuffer, m_Timer.GetTimeElapsed());
 }
 
 void RuntimeFrameWork::Update()
@@ -411,8 +413,6 @@ void RuntimeFrameWork::Update()
 	float fTimeElapsed = m_Timer.GetTimeElapsed();
 
 	if (m_pCurrScene) m_pCurrScene->AnimateObjects(fTimeElapsed);
-
-	m_pPlayer->Animate(fTimeElapsed);
 }
 
 void RuntimeFrameWork::FrameAdvance()
@@ -452,8 +452,6 @@ void RuntimeFrameWork::FrameAdvance()
 #ifdef _WITH_PLAYER_TOP
 	m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 #endif
-	if (m_pPlayer) m_pPlayer->Render(m_pCommandList, m_pCamera);
-	
 
 	resourceBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	resourceBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
@@ -598,7 +596,6 @@ LRESULT RuntimeFrameWork::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, 
 	return ::DefWindowProc(hWnd, nMessageID, wParam, lParam);
 }
 
-
 LRESULT RuntimeFrameWork::WndProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	RuntimeFrameWork* self = ::GetUserDataPtr<RuntimeFrameWork*>(hWnd);	// static 함수랑 연결하려고 선언한 포인터. 클래스를 정적함수에 등록하기 위한 꼼수
@@ -642,6 +639,8 @@ LRESULT RuntimeFrameWork::WndProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPA
 
 void RuntimeFrameWork::ChangeScene(BaseScene::SceneTag tag, bool bDestroy)
 {
-	if (BaseScene::SceneTag::Count > tag)
-		m_pCurrScene = arrScene[tag];
+	if (BaseScene::SceneTag::Count > tag) {
+		m_pPrevScene = m_pCurrScene;
+		m_pCurrScene = arrScene[m_CurrTag = tag];
+	}
 }

@@ -16,20 +16,20 @@ TitleScene::~TitleScene()
 
 void TitleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList)
 {
-	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
+	m_pGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
 	CreateCbvSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 45); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
 
-	Material::PrepareShaders(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+	Material::PrepareShaders(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
 
 	BuildLightsAndMaterials();
 
-	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
 }
 
 void TitleScene::ReleaseObjects()
 {
-	if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
+	if (m_pGraphicsRootSignature) m_pGraphicsRootSignature->Release();
 
 	if (m_pSkyBox) delete m_pSkyBox;
 
@@ -41,20 +41,17 @@ void TitleScene::ReleaseUploadBuffers()
 	if (m_pSkyBox) m_pSkyBox->ReleaseUploadBuffers();
 }
 
-void TitleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)
+bool TitleScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	SetGraphicsRootSignature(pd3dCommandList);
-	if (m_pd3dCbvSrvDescriptorHeap) pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
-
-	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
-	pCamera->UpdateShaderVariables(pd3dCommandList);
-
-	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
-
-	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
+	return false;
 }
 
-bool TitleScene::ProcessInput(UCHAR * pKeysBuffer)
+bool TitleScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
+{
+	return false;
+}
+
+bool TitleScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 {
 	DWORD dwDirection = 0;
 	if (pKeysBuffer[VK_UP] & 0xF0) dwDirection |= DIR_FORWARD;
@@ -79,5 +76,24 @@ bool TitleScene::ProcessInput(UCHAR * pKeysBuffer)
 		if (dwDirection) m_pPlayer->Move(dwDirection, 12.25f, true);
 	}
 
+	m_pPlayer->Update(fTimeElapsed);
 	return false;
+}
+
+void TitleScene::AnimateObjects(float fTimeElapsed)
+{
+	m_pPlayer->Animate(fTimeElapsed);
+}
+
+void TitleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)
+{
+	SetGraphicsRootSignature(pd3dCommandList);
+	if (m_pd3dCbvSrvDescriptorHeap) pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
+
+	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
+	pCamera->UpdateShaderVariables(pd3dCommandList);
+
+	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
+
+	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
 }

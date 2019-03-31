@@ -27,70 +27,58 @@ SkinnedMesh::~SkinnedMesh()
 void SkinnedMesh::PrepareSkinning(SkinnedFrameObject * pModelRootObject)
 {
 	m_ppSkinningBoneFrameCaches = new SkinnedFrameObject*[m_nSkinningBones];
-	for (int j = 0; j < m_nSkinningBones; j++)
+	for (int j = 0; j < m_nSkinningBones; j++) {
 		m_ppSkinningBoneFrameCaches[j] = pModelRootObject->FindFrame(m_ppstrSkinningBoneNames[j]);
+	}
 }
 
 void SkinnedMesh::LoadSkinDeformationsFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, FILE * pInFile)
 {
 	char pstrToken[64] = { '\0' };
 	BYTE nStrLength = 0;
-	UINT nReads = 0;
+	unsigned int nReads = 0;
 
-	for (; ; )
-	{
+	while (true) {
 		::ReadStringFromFile(pInFile, pstrToken);
 		if (!strcmp(pstrToken, "<BonesPerVertex>:"))
-		{
 			m_nBonesPerVertex = ::ReadIntegerFromFile(pInFile);
-		}
-		else if (!strcmp(pstrToken, "<Bounds>:"))
-		{
+		else if (!strcmp(pstrToken, "<Bounds>:")){
 			nReads = (UINT)::fread(&m_xmf3AABBCenter, sizeof(XMFLOAT3), 1, pInFile);
-			nReads = (UINT)::fread(&m_xmf3AABBExtents, sizeof(XMFLOAT3), 1, pInFile);
+			nReads = (unsigned int)::fread(&m_xmf3AABBExtents, sizeof(XMFLOAT3), 1, pInFile);
 		}
-		else if (!strcmp(pstrToken, "<BoneNames>:"))
-		{
+		else if (!strcmp(pstrToken, "<BoneNames>:")) {
 			m_nSkinningBones = ::ReadIntegerFromFile(pInFile);
-			if (m_nSkinningBones > 0)
-			{
+			if (m_nSkinningBones > 0) {
 				m_ppstrSkinningBoneNames = new char[m_nSkinningBones][64];
 				m_ppSkinningBoneFrameCaches = new SkinnedFrameObject*[m_nSkinningBones];
-				for (int i = 0; i < m_nSkinningBones; i++)
-				{
+				for (int i = 0; i < m_nSkinningBones; ++i) {
 					::ReadStringFromFile(pInFile, m_ppstrSkinningBoneNames[i]);
-					m_ppSkinningBoneFrameCaches[i] = NULL;
+					m_ppSkinningBoneFrameCaches[i] = nullptr;
 				}
 			}
 		}
-		else if (!strcmp(pstrToken, "<BoneOffsets>:"))
-		{
+		else if (!strcmp(pstrToken, "<BoneOffsets>:")) {
 			m_nSkinningBones = ::ReadIntegerFromFile(pInFile);
-			if (m_nSkinningBones > 0)
-			{
+			if (m_nSkinningBones > 0) {
 				m_pxmf4x4BindPoseBoneOffsets = new XMFLOAT4X4[m_nSkinningBones];
-				nReads = (UINT)::fread(m_pxmf4x4BindPoseBoneOffsets, sizeof(XMFLOAT4X4), m_nSkinningBones, pInFile);
+				nReads = (unsigned int)::fread(m_pxmf4x4BindPoseBoneOffsets, sizeof(XMFLOAT4X4), m_nSkinningBones, pInFile);
 
-				UINT ncbElementBytes = (((sizeof(XMFLOAT4X4) * SKINNED_ANIMATION_BONES) + 255) & ~255); //256의 배수
+				unsigned int ncbElementBytes = (((sizeof(XMFLOAT4X4) * SKINNED_ANIMATION_BONES) + 255) & ~255); //256의 배수
 				m_pd3dcbBindPoseBoneOffsets = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 				m_pd3dcbBindPoseBoneOffsets->Map(0, NULL, (void **)&m_pcbxmf4x4MappedBindPoseBoneOffsets);
 
-				for (int i = 0; i < m_nSkinningBones; i++)
-				{
+				for (int i = 0; i < m_nSkinningBones; ++i)
 					XMStoreFloat4x4(&m_pcbxmf4x4MappedBindPoseBoneOffsets[i], XMMatrixTranspose(XMLoadFloat4x4(&m_pxmf4x4BindPoseBoneOffsets[i])));
-				}
 			}
 		}
-		else if (!strcmp(pstrToken, "<BoneIndices>:"))
-		{
+		else if (!strcmp(pstrToken, "<BoneIndices>:")) {
 			m_nType |= VERTEXT_BONE_INDEX_WEIGHT;
 
 			m_nVertices = ::ReadIntegerFromFile(pInFile);
-			if (m_nVertices > 0)
-			{
+			if (m_nVertices > 0) {
 				m_pxmn4BoneIndices = new XMINT4[m_nVertices];
 
-				nReads = (UINT)::fread(m_pxmn4BoneIndices, sizeof(XMINT4), m_nVertices, pInFile);
+				nReads = (unsigned int)::fread(m_pxmn4BoneIndices, sizeof(XMINT4), m_nVertices, pInFile);
 				m_pd3dBoneIndexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pxmn4BoneIndices, sizeof(XMINT4) * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dBoneIndexUploadBuffer);
 
 				m_d3dBoneIndexBufferView.BufferLocation = m_pd3dBoneIndexBuffer->GetGPUVirtualAddress();
@@ -98,16 +86,14 @@ void SkinnedMesh::LoadSkinDeformationsFromFile(ID3D12Device * pd3dDevice, ID3D12
 				m_d3dBoneIndexBufferView.SizeInBytes = sizeof(XMINT4) * m_nVertices;
 			}
 		}
-		else if (!strcmp(pstrToken, "<BoneWeights>:"))
-		{
+		else if (!strcmp(pstrToken, "<BoneWeights>:")) {
 			m_nType |= VERTEXT_BONE_INDEX_WEIGHT;
 
 			m_nVertices = ::ReadIntegerFromFile(pInFile);
-			if (m_nVertices > 0)
-			{
+			if (m_nVertices > 0) {
 				m_pxmf4BoneWeights = new XMFLOAT4[m_nVertices];
 
-				nReads = (UINT)::fread(m_pxmf4BoneWeights, sizeof(XMFLOAT4), m_nVertices, pInFile);
+				nReads = (unsigned int)::fread(m_pxmf4BoneWeights, sizeof(XMFLOAT4), m_nVertices, pInFile);
 				m_pd3dBoneWeightBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pxmf4BoneWeights, sizeof(XMFLOAT4) * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dBoneWeightUploadBuffer);
 
 				m_d3dBoneWeightBufferView.BufferLocation = m_pd3dBoneWeightBuffer->GetGPUVirtualAddress();
@@ -116,9 +102,7 @@ void SkinnedMesh::LoadSkinDeformationsFromFile(ID3D12Device * pd3dDevice, ID3D12
 			}
 		}
 		else if (!strcmp(pstrToken, "</SkinDeformations>"))
-		{
 			break;
-		}
 	}
 }
 

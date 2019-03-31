@@ -23,6 +23,7 @@ public:
 
 	virtual D3D12_SHADER_BYTECODE CreateVertexShader();
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader();
+	virtual D3D12_SHADER_BYTECODE CreateGeometryShader();
 
 	D3D12_SHADER_BYTECODE CompileShaderFromFile(WCHAR *pszFileName, LPCSTR pszShaderName, LPCSTR pszShaderProfile, ID3DBlob **ppd3dShaderBlob);
 	D3D12_SHADER_BYTECODE ReadCompiledShaderFromFile(WCHAR *pszFileName, ID3DBlob **ppd3dShaderBlob = nullptr);
@@ -49,6 +50,7 @@ public:
 protected:
 	ID3DBlob							*m_pd3dVertexShaderBlob = nullptr;
 	ID3DBlob							*m_pd3dPixelShaderBlob = nullptr;
+	ID3DBlob							*m_pd3dGeometryShaderBlob = nullptr;
 
 	ID3D12PipelineState					*m_pd3dPipelineState = nullptr;
 

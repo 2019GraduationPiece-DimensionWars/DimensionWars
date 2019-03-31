@@ -94,11 +94,16 @@ public:
 
 	void ChangeScene(BaseScene::SceneTag tag, bool bDestroy = false);
 
+	BaseScene::SceneTag GetNowTag() const { return m_CurrTag; }
+
 private:
 	FrameTimer m_Timer;
 	BasePlayer * m_pPlayer = nullptr;
 	BaseCamera * m_pCamera = nullptr;
 	BaseScene * arrScene[BaseScene::SceneTag::Count];
-	BaseScene * m_pCurrScene;
+	BaseScene * m_pCurrScene = nullptr;
+	BaseScene * m_pPrevScene = nullptr;
+
+	BaseScene::SceneTag m_CurrTag = BaseScene::SceneTag::Title;
 };
 

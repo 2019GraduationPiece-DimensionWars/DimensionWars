@@ -8,13 +8,11 @@ ThirdPersonCamera::ThirdPersonCamera(BaseCamera *pCamera)
 	m_nMode = THIRD_PERSON_CAMERA;
 	if (pCamera)
 	{
-
-			m_xmf3Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
-			m_xmf3Right.y = 0.0f;
-			m_xmf3Look.y = 0.0f;
-			m_xmf3Right = Vector3::Normalize(m_xmf3Right);
-			m_xmf3Look = Vector3::Normalize(m_xmf3Look);
-
+		m_xmf3Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+		m_xmf3Right.y = 0.0f;
+		m_xmf3Look.y = 0.0f;
+		m_xmf3Right = Vector3::Normalize(m_xmf3Right);
+		m_xmf3Look = Vector3::Normalize(m_xmf3Look);
 	}
 }
 
@@ -25,8 +23,7 @@ ThirdPersonCamera::~ThirdPersonCamera()
 
 void ThirdPersonCamera::Update(XMFLOAT3 & xmf3LookAt, float fTimeElapsed)
 {
-	if (m_pPlayer)
-	{
+	if (m_pPlayer) {
 		XMFLOAT4X4 xmf4x4Rotate = Matrix4x4::Identity();
 		XMFLOAT3 xmf3Right = m_pPlayer->GetRightVector();
 		XMFLOAT3 xmf3Up = m_pPlayer->GetUpVector();
@@ -47,8 +44,7 @@ void ThirdPersonCamera::Update(XMFLOAT3 & xmf3LookAt, float fTimeElapsed)
 		float fDistance = fLength * fTimeLagScale;
 		if (fDistance > fLength) fDistance = fLength;
 		if (fLength < 0.01f) fDistance = fLength;
-		if (fDistance > 0)
-		{
+		if (fDistance > 0){
 			m_xmf3Position = Vector3::Add(m_xmf3Position, xmf3Direction, fDistance);
 			SetLookAt(xmf3LookAt);
 		}
@@ -59,8 +55,10 @@ void ThirdPersonCamera::Update(XMFLOAT3 & xmf3LookAt, float fTimeElapsed)
 void ThirdPersonCamera::SetLookAt(XMFLOAT3 & xmf3LookAt)
 {
 	XMFLOAT3 xmf3PlayerUp = m_pPlayer->GetUpVector();
+	
+	XMFLOAT3 Target = { xmf3LookAt.x, xmf3LookAt.y + 125, xmf3LookAt.z + 100};
 #ifdef _WITH_LEFT_HAND_COORDINATES
-	XMFLOAT4X4 mtxLookAt = Matrix4x4::LookAtLH(m_xmf3Position, xmf3LookAt, xmf3PlayerUp);
+	XMFLOAT4X4 mtxLookAt = Matrix4x4::LookAtLH(m_xmf3Position, Target, xmf3PlayerUp);
 #else
 	XMFLOAT4X4 mtxLookAt = Matrix4x4::LookAtRH(m_xmf3Position, xmf3LookAt, xmf3PlayerUp);
 #endif
