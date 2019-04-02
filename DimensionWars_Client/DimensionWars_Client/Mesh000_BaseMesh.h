@@ -24,10 +24,15 @@ protected:
 
 	D3D12_PRIMITIVE_TOPOLOGY		m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	unsigned int					m_nSlot = 0;
+	unsigned int					m_nStride = 0;
 	unsigned int					m_nVertices = 0;
 	unsigned int					m_nOffset = 0;
 
 	unsigned int					m_nType = 0;
+
+	ID3D12Resource					*m_pd3dPositionBuffer = nullptr;
+	ID3D12Resource					*m_pd3dPositionUploadBuffer = nullptr;
+	D3D12_VERTEX_BUFFER_VIEW		m_d3dPositionBufferView;
 
 public:
 	unsigned int GetType() const { return m_nType; }

@@ -1,9 +1,13 @@
 #pragma once
 #include "Scene000_BaseScene.h"
+class SkyBox;
 
 class BattleScene :
 	public BaseScene
 {
+private:
+	POINT m_ptOldCursorPos;
+	SkyBox * m_pSkyBox = nullptr;
 public:
 	BattleScene();
 	BattleScene(SceneTag tag, RuntimeFrameWork* pFramework)

@@ -94,8 +94,8 @@ public:
 
 	void ChangeScene(BaseScene::SceneTag tag, bool bDestroy = false);
 
-	BaseScene::SceneTag GetNowTag() const { return m_CurrTag; }
-
+	BaseScene::SceneTag GetNowTag() const { return m_CurrSceneTag; }
+	HWND GetHandle() const { return m_hWnd; }
 private:
 	FrameTimer m_Timer;
 	BasePlayer * m_pPlayer = nullptr;
@@ -104,6 +104,6 @@ private:
 	BaseScene * m_pCurrScene = nullptr;
 	BaseScene * m_pPrevScene = nullptr;
 
-	BaseScene::SceneTag m_CurrTag = BaseScene::SceneTag::Title;
+	BaseScene::SceneTag m_CurrSceneTag = BaseScene::SceneTag::Title;
 };
 

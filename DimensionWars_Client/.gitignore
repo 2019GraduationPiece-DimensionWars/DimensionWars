@@ -5,6 +5,8 @@
 /DimensionWars_Client/Debug
 /DimensionWars_Client/Release
 /DimensionWars_Client/x64
+/DimensionWars_Client/Model/Angrybot.bin
+/DimensionWars_Client/Model/AngrybotFull.bin
 *.exe
 *.ilk
 *.pdb

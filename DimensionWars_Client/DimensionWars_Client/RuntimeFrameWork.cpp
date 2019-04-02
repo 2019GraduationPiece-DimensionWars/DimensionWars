@@ -356,13 +356,12 @@ void RuntimeFrameWork::BuildObjects()
 
 	m_pCurrScene->BuildObjects(m_pDevice, m_pCommandList);	// 루트 시그니처 생성
 
+	arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
 
-	GrimReaperPlayer *pPlayer = new GrimReaperPlayer(m_pDevice, m_pCommandList, m_pCurrScene->GetGraphicsRootSignature(), nullptr);
 
-	arrScene[BaseScene::SceneTag::Title]->m_pPlayer = m_pPlayer = pPlayer;
+	m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
-		
 	m_pCommandList->Close();
 	ID3D12CommandList *ppd3dCommandLists[] = { m_pCommandList };
 	m_pCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
@@ -557,6 +556,11 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 			break;
 		case VK_F9:
 			ChangeSwapChainState();
+		case VK_SPACE:
+			if (m_CurrSceneTag == BaseScene::SceneTag::Title)
+				ChangeScene(BaseScene::SceneTag::Game);
+			else
+				ChangeScene(BaseScene::SceneTag::Title);
 			break;
 		default:
 			break;
@@ -641,6 +645,6 @@ void RuntimeFrameWork::ChangeScene(BaseScene::SceneTag tag, bool bDestroy)
 {
 	if (BaseScene::SceneTag::Count > tag) {
 		m_pPrevScene = m_pCurrScene;
-		m_pCurrScene = arrScene[m_CurrTag = tag];
+		m_pCurrScene = arrScene[m_CurrSceneTag = tag];
 	}
 }

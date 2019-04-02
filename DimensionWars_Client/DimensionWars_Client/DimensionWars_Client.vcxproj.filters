@@ -160,7 +160,22 @@
       <Filter>Shader</Filter>
     </ClInclude>
     <ClInclude Include="TextureVertexRect.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader003_StandardLightingShader.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader004_SkinnedAnimationShader.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Object006_TextureRectObject.h">
       <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh005_TextureRectangleMesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader005_TextureRectangleShader.h">
+      <Filter>Shader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -264,7 +279,22 @@
       <Filter>Shader</Filter>
     </ClCompile>
     <ClCompile Include="TextureVertexRect.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader003_StandardLightingShader.cpp">
+      <Filter>Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader004_SkinnedAnimationShader.cpp">
+      <Filter>Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Object006_TextureRectObject.cpp">
       <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh005_TextureRectangleMesh.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader005_TextureRectangleShader.cpp">
+      <Filter>Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

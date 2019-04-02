@@ -9,7 +9,7 @@ GrimReaperPlayer::GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	LoadedModelInfo *GrimReaperModel = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Gambler.bin", nullptr);
+	LoadedModelInfo *GrimReaperModel = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/GrimReaper.bin", nullptr);
 	SetChild(GrimReaperModel->m_pModelRootObject, true);
 
 	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, GrimReaperModel);

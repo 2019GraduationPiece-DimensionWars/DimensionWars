@@ -112,7 +112,6 @@ void BaseObject::ReleaseShaderVariables()
 
 void BaseObject::UpdateShaderVariables(ID3D12GraphicsCommandList * pd3dCommandList)
 {
-	
 }
 
 void BaseObject::UpdateShaderVariable(ID3D12GraphicsCommandList * pd3dCommandList, XMFLOAT4X4 * pxmf4x4World)

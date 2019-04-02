@@ -53,5 +53,5 @@ D3D12_SHADER_BYTECODE SkyBoxShader::CreateVertexShader()
 
 D3D12_SHADER_BYTECODE SkyBoxShader::CreatePixelShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "PSSkyBox", "ps_5_1", &m_pd3dVertexShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "PSSkyBox", "ps_5_1", &m_pd3dPixelShaderBlob));
 }

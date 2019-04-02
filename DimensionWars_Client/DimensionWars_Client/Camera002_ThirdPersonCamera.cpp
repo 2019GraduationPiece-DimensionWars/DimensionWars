@@ -56,7 +56,7 @@ void ThirdPersonCamera::SetLookAt(XMFLOAT3 & xmf3LookAt)
 {
 	XMFLOAT3 xmf3PlayerUp = m_pPlayer->GetUpVector();
 	
-	XMFLOAT3 Target = { xmf3LookAt.x, xmf3LookAt.y + 125, xmf3LookAt.z + 100};
+	XMFLOAT3 Target = { xmf3LookAt.x, xmf3LookAt.y , xmf3LookAt.z + 100};
 #ifdef _WITH_LEFT_HAND_COORDINATES
 	XMFLOAT4X4 mtxLookAt = Matrix4x4::LookAtLH(m_xmf3Position, Target, xmf3PlayerUp);
 #else

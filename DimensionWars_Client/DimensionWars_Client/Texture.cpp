@@ -76,6 +76,6 @@ void Texture::ReleaseUploadBuffers()
 			if (m_ppTextureUploadBuffers[i]) 
 				m_ppTextureUploadBuffers[i]->Release();
 		delete[] m_ppTextureUploadBuffers;
-		m_ppTextureUploadBuffers = NULL;
+		m_ppTextureUploadBuffers = nullptr;
 	}
 }

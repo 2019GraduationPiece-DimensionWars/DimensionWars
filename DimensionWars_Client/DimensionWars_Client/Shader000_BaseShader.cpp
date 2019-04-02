@@ -26,95 +26,95 @@ D3D12_INPUT_LAYOUT_DESC BaseShader::CreateInputLayout()
 
 D3D12_RASTERIZER_DESC BaseShader::CreateRasterizerState()
 {
-	D3D12_RASTERIZER_DESC d3dRasterizerDesc;
-	::ZeroMemory(&d3dRasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
+	D3D12_RASTERIZER_DESC rasterizerDesc;
+	::ZeroMemory(&rasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
 	//	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
-	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-	d3dRasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 #ifdef _WITH_LEFT_HAND_COORDINATES
-	d3dRasterizerDesc.FrontCounterClockwise = FALSE;
+	rasterizerDesc.FrontCounterClockwise = FALSE;
 #else
 	d3dRasterizerDesc.FrontCounterClockwise = TRUE;
 #endif
-	d3dRasterizerDesc.DepthBias = 0;
-	d3dRasterizerDesc.DepthBiasClamp = 0.0f;
-	d3dRasterizerDesc.SlopeScaledDepthBias = 0.0f;
-	d3dRasterizerDesc.DepthClipEnable = TRUE;
-	d3dRasterizerDesc.MultisampleEnable = FALSE;
-	d3dRasterizerDesc.AntialiasedLineEnable = FALSE;
-	d3dRasterizerDesc.ForcedSampleCount = 0;
-	d3dRasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+	rasterizerDesc.DepthBias = 0;
+	rasterizerDesc.DepthBiasClamp = 0.0f;
+	rasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	rasterizerDesc.DepthClipEnable = TRUE;
+	rasterizerDesc.MultisampleEnable = FALSE;
+	rasterizerDesc.AntialiasedLineEnable = FALSE;
+	rasterizerDesc.ForcedSampleCount = 0;
+	rasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 
-	return(d3dRasterizerDesc);
+	return(rasterizerDesc);
 }
 
 D3D12_BLEND_DESC BaseShader::CreateBlendState()
 {
-	D3D12_BLEND_DESC d3dBlendDesc;
-	::ZeroMemory(&d3dBlendDesc, sizeof(D3D12_BLEND_DESC));
-	d3dBlendDesc.AlphaToCoverageEnable = FALSE;
-	d3dBlendDesc.IndependentBlendEnable = FALSE;
-	d3dBlendDesc.RenderTarget[0].BlendEnable = FALSE;
-	d3dBlendDesc.RenderTarget[0].LogicOpEnable = FALSE;
-	d3dBlendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
-	d3dBlendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ZERO;
-	d3dBlendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	d3dBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	d3dBlendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-	d3dBlendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	d3dBlendDesc.RenderTarget[0].LogicOp = D3D12_LOGIC_OP_NOOP;
-	d3dBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	D3D12_BLEND_DESC blendDesc;
+	::ZeroMemory(&blendDesc, sizeof(D3D12_BLEND_DESC));
+	blendDesc.AlphaToCoverageEnable = FALSE;
+	blendDesc.IndependentBlendEnable = FALSE;
+	blendDesc.RenderTarget[0].BlendEnable = FALSE;
+	blendDesc.RenderTarget[0].LogicOpEnable = FALSE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].LogicOp = D3D12_LOGIC_OP_NOOP;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
-	return(d3dBlendDesc);
+	return(blendDesc);
 }
 
 D3D12_DEPTH_STENCIL_DESC BaseShader::CreateDepthStencilState()
 {
-	D3D12_DEPTH_STENCIL_DESC d3dDepthStencilDesc;
-	::ZeroMemory(&d3dDepthStencilDesc, sizeof(D3D12_DEPTH_STENCIL_DESC));
-	d3dDepthStencilDesc.DepthEnable = TRUE;
-	d3dDepthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	d3dDepthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-	d3dDepthStencilDesc.StencilEnable = FALSE;
-	d3dDepthStencilDesc.StencilReadMask = 0x00;
-	d3dDepthStencilDesc.StencilWriteMask = 0x00;
-	d3dDepthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-	d3dDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
-	d3dDepthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-	d3dDepthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
-	d3dDepthStencilDesc.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-	d3dDepthStencilDesc.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
-	d3dDepthStencilDesc.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-	d3dDepthStencilDesc.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc;
+	::ZeroMemory(&depthStencilDesc, sizeof(D3D12_DEPTH_STENCIL_DESC));
+	depthStencilDesc.DepthEnable = TRUE;
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	depthStencilDesc.StencilEnable = FALSE;
+	depthStencilDesc.StencilReadMask = 0x00;
+	depthStencilDesc.StencilWriteMask = 0x00;
+	depthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
+	depthStencilDesc.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
 
-	return(d3dDepthStencilDesc);
+	return(depthStencilDesc);
 }
 
 D3D12_SHADER_BYTECODE BaseShader::CreateVertexShader()
 {
-	D3D12_SHADER_BYTECODE d3dShaderByteCode;
-	d3dShaderByteCode.BytecodeLength = 0;
-	d3dShaderByteCode.pShaderBytecode = nullptr;
+	D3D12_SHADER_BYTECODE shaderByteCode;
+	shaderByteCode.BytecodeLength = 0;
+	shaderByteCode.pShaderBytecode = nullptr;
 
-	return(d3dShaderByteCode);
+	return(shaderByteCode);
 }
 
 D3D12_SHADER_BYTECODE BaseShader::CreatePixelShader()
 {
-	D3D12_SHADER_BYTECODE d3dShaderByteCode;
-	d3dShaderByteCode.BytecodeLength = 0;
-	d3dShaderByteCode.pShaderBytecode = nullptr;
+	D3D12_SHADER_BYTECODE shaderByteCode;
+	shaderByteCode.BytecodeLength = 0;
+	shaderByteCode.pShaderBytecode = nullptr;
 
-	return(d3dShaderByteCode);
+	return(shaderByteCode);
 }
 
 D3D12_SHADER_BYTECODE BaseShader::CreateGeometryShader()
 {
-	D3D12_SHADER_BYTECODE d3dShaderByteCode;
-	d3dShaderByteCode.BytecodeLength = 0;
-	d3dShaderByteCode.pShaderBytecode = nullptr;
+	D3D12_SHADER_BYTECODE shaderByteCode;
+	shaderByteCode.BytecodeLength = 0;
+	shaderByteCode.pShaderBytecode = nullptr;
 
-	return(d3dShaderByteCode);
+	return(shaderByteCode);
 }
 
 D3D12_SHADER_BYTECODE BaseShader::CompileShaderFromFile(WCHAR * pszFileName, LPCSTR pszShaderName, LPCSTR pszShaderProfile, ID3DBlob ** ppd3dShaderBlob)
@@ -238,25 +238,25 @@ CWireFrameShader::~CWireFrameShader()
 
 D3D12_RASTERIZER_DESC CWireFrameShader::CreateRasterizerState()
 {
-	D3D12_RASTERIZER_DESC d3dRasterizerDesc;
-	::ZeroMemory(&d3dRasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
-	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-	d3dRasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+	D3D12_RASTERIZER_DESC rasterizerDesc;
+	::ZeroMemory(&rasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
+	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;//D3D12_FILL_MODE_WIREFRAME;;
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 #ifdef _WITH_LEFT_HAND_COORDINATES
-	d3dRasterizerDesc.FrontCounterClockwise = FALSE;
+	rasterizerDesc.FrontCounterClockwise = FALSE;
 #else
 	d3dRasterizerDesc.FrontCounterClockwise = TRUE;
 #endif
-	d3dRasterizerDesc.DepthBias = 0;
-	d3dRasterizerDesc.DepthBiasClamp = 0.0f;
-	d3dRasterizerDesc.SlopeScaledDepthBias = 0.0f;
-	d3dRasterizerDesc.DepthClipEnable = TRUE;
-	d3dRasterizerDesc.MultisampleEnable = FALSE;
-	d3dRasterizerDesc.AntialiasedLineEnable = FALSE;
-	d3dRasterizerDesc.ForcedSampleCount = 0;
-	d3dRasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+	rasterizerDesc.DepthBias = 0;
+	rasterizerDesc.DepthBiasClamp = 0.0f;
+	rasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	rasterizerDesc.DepthClipEnable = TRUE;
+	rasterizerDesc.MultisampleEnable = FALSE;
+	rasterizerDesc.AntialiasedLineEnable = FALSE;
+	rasterizerDesc.ForcedSampleCount = 0;
+	rasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 
-	return(d3dRasterizerDesc);
+	return(rasterizerDesc);
 }
 
 D3D12_INPUT_LAYOUT_DESC CWireFrameShader::CreateInputLayout()
@@ -313,7 +313,7 @@ D3D12_RASTERIZER_DESC CSkinnedAnimationWireFrameShader::CreateRasterizerState()
 {
 	D3D12_RASTERIZER_DESC d3dRasterizerDesc;
 	::ZeroMemory(&d3dRasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
-	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;//D3D12_FILL_MODE_WIREFRAME;
 	d3dRasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 #ifdef _WITH_LEFT_HAND_COORDINATES
 	d3dRasterizerDesc.FrontCounterClockwise = FALSE;
@@ -355,8 +355,7 @@ CSkinnedAnimationObjectsWireFrameShader::~CSkinnedAnimationObjectsWireFrameShade
 
 void CSkinnedAnimationObjectsWireFrameShader::ReleaseObjects()
 {
-	if (m_ppObjects)
-	{
+	if (m_ppObjects) {
 		for (int j = 0; j < m_nObjects; j++) if (m_ppObjects[j]) m_ppObjects[j]->Release();
 		delete[] m_ppObjects;
 	}

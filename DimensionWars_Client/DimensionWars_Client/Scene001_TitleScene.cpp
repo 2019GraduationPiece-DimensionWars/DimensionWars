@@ -1,9 +1,14 @@
 #include "stdafx.h"
 #include "Scene001_TitleScene.h"
-#include "Object003_SkyBox.h"
 #include "Camera000_BaseCamera.h"
+#include "Mesh005_TextureRectangleMesh.h"
+#include "Object003_SkyBox.h"
+#include "Object006_TextureRectObject.h"
+#include "Shader005_TextureRectangleShader.h"
+#include "Shader002_TextureVertexRectShader.h"
 #include "Object101_GrimReaperPlayer.h"
 #include "Material.h"
+#include "Texture.h"
 
 
 TitleScene::TitleScene(SceneTag tag, RuntimeFrameWork * pFramework) : BaseScene(tag, pFramework)
@@ -18,13 +23,21 @@ void TitleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 {
 	m_pGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
-	CreateCbvSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 45); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
+	CreateCbvSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 45); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
 
 	Material::PrepareShaders(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
 
 	BuildLightsAndMaterials();
 
 	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
+
+	m_nObjects = 1;
+	m_ppObjects = new BaseObject*[m_nObjects];
+	
+	TextureRectObject *titleImageObject = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/TitleTest800x600.dds");
+	m_ppObjects[0] = titleImageObject;
+
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
 void TitleScene::ReleaseObjects()
@@ -39,6 +52,8 @@ void TitleScene::ReleaseObjects()
 void TitleScene::ReleaseUploadBuffers()
 {
 	if (m_pSkyBox) m_pSkyBox->ReleaseUploadBuffers();
+
+	if (m_ppObjects) if (m_ppObjects[0]) m_ppObjects[0]->ReleaseUploadBuffers();
 }
 
 bool TitleScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -53,36 +68,11 @@ bool TitleScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 
 bool TitleScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 {
-	DWORD dwDirection = 0;
-	if (pKeysBuffer[VK_UP] & 0xF0) dwDirection |= DIR_FORWARD;
-	if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
-	if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
-	if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
-	if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
-	if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
-
-	float cxDelta = 0.0f, cyDelta = 0.0f;
-	POINT ptCursorPos;
-
-	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
-	{
-		if (cxDelta || cyDelta)
-		{
-			if (pKeysBuffer[VK_RBUTTON] & 0xF0)
-				m_pPlayer->Rotate(cyDelta, 0.0f, -cxDelta);
-			else
-				m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
-		}
-		if (dwDirection) m_pPlayer->Move(dwDirection, 12.25f, true);
-	}
-
-	m_pPlayer->Update(fTimeElapsed);
 	return false;
 }
 
 void TitleScene::AnimateObjects(float fTimeElapsed)
 {
-	m_pPlayer->Animate(fTimeElapsed);
 }
 
 void TitleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)
@@ -95,5 +85,5 @@ void TitleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 
 	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
 
-	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
+	if (m_ppObjects) if (m_ppObjects[0]) m_ppObjects[0]->Render(pd3dCommandList, pCamera);
 }

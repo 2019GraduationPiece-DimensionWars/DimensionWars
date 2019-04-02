@@ -160,12 +160,14 @@
     <ClInclude Include="Mesh002_HierarchyMesh.h" />
     <ClInclude Include="Mesh003_SkinnedMesh.h" />
     <ClInclude Include="Mesh004_SkyBoxMesh.h" />
+    <ClInclude Include="Mesh005_TextureRectangleMesh.h" />
     <ClInclude Include="Object000_BaseObject.h" />
     <ClInclude Include="Object001_NoneSkinnedFrameObject.h" />
     <ClInclude Include="Object002_SkinnedFrameObject.h" />
     <ClInclude Include="Object003_SkyBox.h" />
     <ClInclude Include="Object004_DimensionCube.h" />
     <ClInclude Include="Object005_SkinModelObject.h" />
+    <ClInclude Include="Object006_TextureRectObject.h" />
     <ClInclude Include="Object100_BasePlayer.h" />
     <ClInclude Include="Object101_GrimReaperPlayer.h" />
     <ClInclude Include="resource.h" />
@@ -178,6 +180,9 @@
     <ClInclude Include="Shader000_BaseShader.h" />
     <ClInclude Include="Shader001_SkyBoxShader.h" />
     <ClInclude Include="Shader002_TextureVertexRectShader.h" />
+    <ClInclude Include="Shader003_StandardLightingShader.h" />
+    <ClInclude Include="Shader004_SkinnedAnimationShader.h" />
+    <ClInclude Include="Shader005_TextureRectangleShader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Texture.h" />
@@ -198,12 +203,14 @@
     <ClCompile Include="Mesh002_HierarchyMesh.cpp" />
     <ClCompile Include="Mesh003_SkinnedMesh.cpp" />
     <ClCompile Include="Mesh004_SkyBoxMesh.cpp" />
+    <ClCompile Include="Mesh005_TextureRectangleMesh.cpp" />
     <ClCompile Include="Object000_BaseObject.cpp" />
     <ClCompile Include="Object001_NoneSkinnedFrameObject.cpp" />
     <ClCompile Include="Object002_SkinnedFrameObject.cpp" />
     <ClCompile Include="Object003_SkyBox.cpp" />
     <ClCompile Include="Object004_DimensionCube.cpp" />
     <ClCompile Include="Object005_SkinModelObject.cpp" />
+    <ClCompile Include="Object006_TextureRectObject.cpp" />
     <ClCompile Include="Object100_BasePlayer.cpp" />
     <ClCompile Include="Object101_GrimReaperPlayer.cpp" />
     <ClCompile Include="RuntimeFrameWork.cpp" />
@@ -215,6 +222,9 @@
     <ClCompile Include="Shader000_BaseShader.cpp" />
     <ClCompile Include="Shader001_SkyBoxShader.cpp" />
     <ClCompile Include="Shader002_TextureVertexRectShader.cpp" />
+    <ClCompile Include="Shader003_StandardLightingShader.cpp" />
+    <ClCompile Include="Shader004_SkinnedAnimationShader.cpp" />
+    <ClCompile Include="Shader005_TextureRectangleShader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

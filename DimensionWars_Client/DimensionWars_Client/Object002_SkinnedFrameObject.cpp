@@ -65,7 +65,7 @@ void SkinnedFrameObject::SetWireFrameShader()
 {
 	m_nMaterials = 1;
 	m_ppMaterials = new Material*[m_nMaterials];
-	m_ppMaterials[0] = NULL;
+	m_ppMaterials[0] = nullptr;
 	Material *pMaterial = new Material(0);
 	pMaterial->SetWireFrameShader();
 	SetMaterial(0, pMaterial);
@@ -75,7 +75,7 @@ void SkinnedFrameObject::SetSkinnedAnimationWireFrameShader()
 {
 	m_nMaterials = 1;
 	m_ppMaterials = new Material*[m_nMaterials];
-	m_ppMaterials[0] = NULL;
+	m_ppMaterials[0] = nullptr;
 	Material *pMaterial = new Material(0);
 	pMaterial->SetSkinnedAnimationWireFrameShader();
 	SetMaterial(0, pMaterial);

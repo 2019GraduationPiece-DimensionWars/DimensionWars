@@ -29,9 +29,9 @@ BaseScene::~BaseScene()
 
 ID3D12RootSignature * BaseScene::CreateGraphicsRootSignature(ID3D12Device * pd3dDevice)
 {
-	ID3D12RootSignature *pd3dGraphicsRootSignature = NULL;
+	ID3D12RootSignature *pd3dGraphicsRootSignature = nullptr;
 	
-	D3D12_DESCRIPTOR_RANGE pd3dDescriptorRanges[10];
+	D3D12_DESCRIPTOR_RANGE pd3dDescriptorRanges[11];
 
 	pd3dDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dDescriptorRanges[0].NumDescriptors = 1;
@@ -93,6 +93,13 @@ ID3D12RootSignature * BaseScene::CreateGraphicsRootSignature(ID3D12Device * pd3d
 	pd3dDescriptorRanges[9].RegisterSpace = 0;
 	pd3dDescriptorRanges[9].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
+	pd3dDescriptorRanges[10].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dDescriptorRanges[10].NumDescriptors = 1;
+	pd3dDescriptorRanges[10].BaseShaderRegister = 0; //t0: gtxtTexture
+	pd3dDescriptorRanges[10].RegisterSpace = 0;
+	pd3dDescriptorRanges[10].OffsetInDescriptorsFromTableStart = 0;
+
+
 	D3D12_ROOT_PARAMETER pd3dRootParameters[15];
 
 	pd3dRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
@@ -101,7 +108,7 @@ ID3D12RootSignature * BaseScene::CreateGraphicsRootSignature(ID3D12Device * pd3d
 	pd3dRootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	pd3dRootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
-	pd3dRootParameters[1].Constants.Num32BitValues = 16;
+	pd3dRootParameters[1].Constants.Num32BitValues = 16;	// 33
 	pd3dRootParameters[1].Constants.ShaderRegister = 2; //GameObject
 	pd3dRootParameters[1].Constants.RegisterSpace = 0;
 	pd3dRootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
@@ -152,12 +159,12 @@ ID3D12RootSignature * BaseScene::CreateGraphicsRootSignature(ID3D12Device * pd3d
 	pd3dRootParameters[10].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	pd3dRootParameters[11].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	pd3dRootParameters[11].Descriptor.ShaderRegister = 7; //Skinned Bone Offsets
+	pd3dRootParameters[11].Descriptor.ShaderRegister = 7; //Skinned Bone Offsets (b7)
 	pd3dRootParameters[11].Descriptor.RegisterSpace = 0;
 	pd3dRootParameters[11].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 
 	pd3dRootParameters[12].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	pd3dRootParameters[12].Descriptor.ShaderRegister = 8; //Skinned Bone Transforms
+	pd3dRootParameters[12].Descriptor.ShaderRegister = 8; //Skinned Bone Transforms (b8)
 	pd3dRootParameters[12].Descriptor.RegisterSpace = 0;
 	pd3dRootParameters[12].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 
@@ -170,6 +177,12 @@ ID3D12RootSignature * BaseScene::CreateGraphicsRootSignature(ID3D12Device * pd3d
 	pd3dRootParameters[14].DescriptorTable.NumDescriptorRanges = 1;
 	pd3dRootParameters[14].DescriptorTable.pDescriptorRanges = &(pd3dDescriptorRanges[9]);
 	pd3dRootParameters[14].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	pd3dRootParameters[14].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // t0
+	pd3dRootParameters[14].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[14].DescriptorTable.pDescriptorRanges = &(pd3dDescriptorRanges[10]);
+	pd3dRootParameters[14].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
 
 	D3D12_STATIC_SAMPLER_DESC pd3dSamplerDescs[2];
 
@@ -313,7 +326,7 @@ void BaseScene::ReleaseObjects()
 
 void BaseScene::BuildLightsAndMaterials()
 {
-	m_nLights = 4;
+	m_nLights = 5;
 	m_pLights = new LIGHT[m_nLights];
 	::ZeroMemory(m_pLights, sizeof(LIGHT) * m_nLights);
 
@@ -358,6 +371,14 @@ void BaseScene::BuildLightsAndMaterials()
 	m_pLights[3].m_fFalloff = 8.0f;
 	m_pLights[3].m_fPhi = (float)cos(XMConvertToRadians(90.0f));
 	m_pLights[3].m_fTheta = (float)cos(XMConvertToRadians(30.0f));
+	m_pLights[4].m_bEnable = true;
+	m_pLights[4].m_nType = POINT_LIGHT;
+	m_pLights[4].m_fRange = 200.0f;
+	m_pLights[4].m_xmf4Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	m_pLights[4].m_xmf4Diffuse = XMFLOAT4(0.8f, 0.3f, 0.3f, 1.0f);
+	m_pLights[4].m_xmf4Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 0.0f);
+	m_pLights[4].m_xmf3Position = XMFLOAT3(600.0f, 250.0f, 700.0f);
+	m_pLights[4].m_xmf3Attenuation = XMFLOAT3(1.0f, 0.001f, 0.0001f);
 }
 
 bool BaseScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -377,17 +398,17 @@ bool BaseScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 void BaseScene::AnimateObjects(float fTimeElapsed)
 {
-	/*
+	
 	m_fElapsedTime = fTimeElapsed;
 
-	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->AnimateObjects(fTimeElapsed);
+	//for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->AnimateObjects(fTimeElapsed);
 	
-	if (m_pLights)
+	//if (m_pLights)
 	{
-		m_pLights[1].m_xmf3Position = m_pPlayer->GetPosition();
-		m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
+	//	m_pLights[1].m_xmf3Position = m_pPlayer->GetPosition();
+	//	m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
 	}
-	*/
+	
 }
 
 void BaseScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)

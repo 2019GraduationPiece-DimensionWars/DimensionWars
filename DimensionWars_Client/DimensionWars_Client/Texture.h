@@ -26,7 +26,7 @@ private:
 	D3D12_GPU_DESCRIPTOR_HANDLE		*m_pSamplerGpuDescriptorHandles = nullptr;
 
 public:
-	Texture(int nTextureResources = 1, UINT nResourceType = RESOURCE_TEXTURE2D, int nSamplers = 0);
+	Texture(int nTextureResources = 1, unsigned int nResourceType = RESOURCE_TEXTURE2D, int nSamplers = 0);
 	virtual ~Texture();
 
 	SRVROOTARGUMENTINFO				*m_pRootArgumentInfos = NULL;

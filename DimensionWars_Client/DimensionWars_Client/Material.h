@@ -30,7 +30,7 @@ public:
 	float							m_fGlossyReflection = 0.0f;
 
 	Material() = delete;
-	Material(unsigned int nTextures);
+	Material(unsigned int nTextures = 1);
 	virtual ~Material();
 	void AddRef() { ++m_nReferences; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
@@ -58,6 +58,10 @@ public:
 
 	static BaseShader					*m_pWireFrameShader;
 	static BaseShader					*m_pSkinnedAnimationWireFrameShader;
+
+	static BaseShader					*m_pStandardShader;
+	static BaseShader					*m_pSkinnedAnimationShader;
+
 
 	static void Material::PrepareShaders(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature);
 

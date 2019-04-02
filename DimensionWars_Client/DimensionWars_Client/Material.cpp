@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "Material.h"
 #include "Texture.h"
-#include "Shader000_BaseShader.h"
+
+#include "Shader004_SkinnedAnimationShader.h"
 #include "Object002_SkinnedFrameObject.h"
 
 Material::Material(unsigned int nTextures)
@@ -63,6 +64,8 @@ void Material::ReleaseUploadBuffers()
 
 BaseShader *Material::m_pWireFrameShader = nullptr;
 BaseShader *Material::m_pSkinnedAnimationWireFrameShader = nullptr;
+BaseShader *Material::m_pStandardShader = nullptr;
+BaseShader *Material::m_pSkinnedAnimationShader = nullptr;
 
 void Material::PrepareShaders(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, ID3D12RootSignature * pd3dGraphicsRootSignature)
 {	
@@ -73,7 +76,16 @@ void Material::PrepareShaders(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	m_pSkinnedAnimationWireFrameShader = new CSkinnedAnimationWireFrameShader();
 	m_pSkinnedAnimationWireFrameShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
 	m_pSkinnedAnimationWireFrameShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	m_pStandardShader = new StandardLightingShader();
+	m_pStandardShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+	m_pStandardShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	m_pSkinnedAnimationShader = new SkinnedAnimationShader();
+	m_pSkinnedAnimationShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+	m_pSkinnedAnimationShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
+
 
 void Material::LoadTextureFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, UINT nType, UINT nRootParameter, _TCHAR * pwstrTextureName, Texture ** ppTexture, SkinnedFrameObject * pParent, FILE * pInFile, BaseShader * pShader)
 {
