@@ -48,7 +48,7 @@ void Texture::UpdateShaderVariables(ID3D12GraphicsCommandList * pd3dCommandList)
 	if (m_nTextureType == RESOURCE_TEXTURE2D_ARRAY)
 		pd3dCommandList->SetGraphicsRootDescriptorTable(m_pRootArgumentInfos[0].m_nRootParameterIndex, m_pRootArgumentInfos[0].m_d3dSrvGpuDescriptorHandle);
 	else 
-		for (int i = 0; i < m_nTextures; i++)
+		for (int i = 0; i < m_nTextures; ++i)
 			pd3dCommandList->SetGraphicsRootDescriptorTable(m_pRootArgumentInfos[i].m_nRootParameterIndex, m_pRootArgumentInfos[i].m_d3dSrvGpuDescriptorHandle);
 }
 

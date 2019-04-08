@@ -67,6 +67,7 @@ public:
 
 	void SetWireFrameShader() { Material::SetShader(m_pWireFrameShader); }
 	void SetSkinnedAnimationWireFrameShader() { Material::SetShader(m_pSkinnedAnimationWireFrameShader); }
-
+	void SetStandardShader() { Material::SetShader(m_pStandardShader); }
+	void SetSkinnedAnimationShader() { Material::SetShader(m_pSkinnedAnimationShader); }
 };
 

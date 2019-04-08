@@ -104,14 +104,24 @@ void BaseObject::SetMaterial(int nMaterial, Material * pMaterial)
 
 void BaseObject::CreateShaderVariables(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList)
 {
+	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256ÀÇ ¹è¼ö
+	m_pd3dcbGameObject = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+
+	m_pd3dcbGameObject->Map(0, NULL, (void **)&m_pcbMappedGameObject);
 }
 
 void BaseObject::ReleaseShaderVariables()
 {
+	if (m_pd3dcbGameObject) {
+		m_pd3dcbGameObject->Unmap(0, NULL);
+		m_pd3dcbGameObject->Release();
+	}
+	// if (m_pMaterial) m_pMaterial->ReleaseShaderVariables();
 }
 
 void BaseObject::UpdateShaderVariables(ID3D12GraphicsCommandList * pd3dCommandList)
 {
+	XMStoreFloat4x4(&m_pcbMappedGameObject->m_xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4World)));
 }
 
 void BaseObject::UpdateShaderVariable(ID3D12GraphicsCommandList * pd3dCommandList, XMFLOAT4X4 * pxmf4x4World)
@@ -143,9 +153,8 @@ void BaseObject::OnPrepareRender()
 
 void BaseObject::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)
 {
-	/*
 	OnPrepareRender(pd3dCommandList, pCamera);
-
+/*
 	if (m_nMaterials > 0) {
 		for (int i = 0; i < m_nMaterials; i++) {
 			if (m_ppMaterials[i]) {
@@ -163,7 +172,7 @@ void BaseObject::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 				m_ppMeshes[i]->Render(pd3dCommandList);
 		}
 	}*/
-
+	
 	if (m_pMesh) {
 		UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 
@@ -174,7 +183,7 @@ void BaseObject::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 						m_ppMaterials[i]->m_pShader->Render(pd3dCommandList, pCamera);
 					m_ppMaterials[i]->UpdateShaderVariable(pd3dCommandList);
 				}
-
+				
 				m_pMesh->Render(pd3dCommandList, i);
 			}
 		}
@@ -279,9 +288,7 @@ unsigned int BaseObject::GetMeshType(int nIndex)
 {
 	/*
 	if (m_nMeshes >= nIndex)
-		return((m_ppMeshes[nIndex]) ? m_ppMeshes[nIndex]->GetType() : 0x00);
-	
-		
+		return((m_ppMeshes[nIndex]) ? m_ppMeshes[nIndex]->GetType() : 0x00);	
 		*/
 	return((m_pMesh) ? m_pMesh->GetType() : 0x00);
 }

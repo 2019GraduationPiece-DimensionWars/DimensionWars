@@ -88,7 +88,7 @@ BaseCamera * GrimReaperPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeEla
 		break;
 	}
 	Update(fTimeElapsed);
-
+	UpdateTransform(NULL);
 	return(m_pCamera);
 }
 

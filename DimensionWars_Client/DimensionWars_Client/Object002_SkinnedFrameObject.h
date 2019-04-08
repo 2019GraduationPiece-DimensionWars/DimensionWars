@@ -37,6 +37,8 @@ public:
 
 	void SetWireFrameShader();
 	void SetSkinnedAnimationWireFrameShader();
+	void SetStandardShader();
+	void SetSkinnedAnimationShader();
 
 	virtual void SetPosition(float x, float y, float z);
 	virtual void SetPosition(XMFLOAT3 xmf3Position);
@@ -48,6 +50,8 @@ public:
 	SkinnedFrameObject *GetParent() { return(m_pParent); }
 	void UpdateTransform(XMFLOAT4X4 *pxmf4x4Parent = nullptr);
 	SkinnedFrameObject *FindFrame(char *pstrFrameName);
+
+	Texture * FindReplicatedTexture(_TCHAR *pstrTextureName);
 
 	virtual void Rotate(float fPitch, float fYaw, float fRoll) override;
 	virtual void Rotate(XMFLOAT3 *pxmf3Axis, float fAngle) override final;
@@ -63,14 +67,18 @@ public:
 	void SetTrackAnimationSet(int nAnimationTrack, int nAnimationSet);
 	void SetTrackAnimationPosition(int nAnimationTrack, float fPosition);
 
+	void LoadMaterialsFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, SkinnedFrameObject *pParent, FILE *pInFile, BaseShader *pShader);
+	
 	static void LoadAnimationFromFile(FILE *pInFile, LoadedModelInfo *pLoadedModel);
 	static SkinnedFrameObject *LoadFrameHierarchyFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, SkinnedFrameObject *pParent, FILE *pInFile, BaseShader *pShader, int *pnSkinnedMeshes);
 
 	static LoadedModelInfo *LoadGeometryAndAnimationFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, char *pstrFileName, BaseShader *pShader, bool flag3DsMaxCoordinates = true);
+	
+
 
 	static void PrintFrameInfo(SkinnedFrameObject *pGameObject, SkinnedFrameObject *pParent);
 
-
+	
 
 	virtual void Animate(float fTimeElapsed);
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera = nullptr);

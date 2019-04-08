@@ -30,11 +30,6 @@ struct LIGHTS
 	int									m_nLights;
 };
 
-struct CB_GAMEOBJECT_INFO2
-{
-	XMFLOAT4X4	 m_xmf4x4World;
-};
-
 class BaseScene
 {
 protected:
@@ -112,8 +107,6 @@ protected:
 	// 오브젝트 관련
 	BaseObject					**m_ppObjects = nullptr;
 	unsigned int				m_nObjects = 0;
-	ID3D12Resource				*m_pd3dcbGameObjects = nullptr;
-	CB_GAMEOBJECT_INFO2			*m_pcbMappedGameObjects = nullptr;
 
 	// 조명 관련
 	XMFLOAT4					m_xmf4GlobalAmbient;

@@ -57,15 +57,15 @@ public:
 	int								m_nSkinningBones = 0;
 
 	char							(*m_ppstrSkinningBoneNames)[64];
-	SkinnedFrameObject				**m_ppSkinningBoneFrameCaches = NULL;
+	SkinnedFrameObject				**m_ppSkinningBoneFrameCaches = nullptr;
 
-	XMFLOAT4X4						*m_pxmf4x4BindPoseBoneOffsets = NULL;
+	XMFLOAT4X4						*m_pxmf4x4BindPoseBoneOffsets = nullptr;
 
-	ID3D12Resource					*m_pd3dcbBindPoseBoneOffsets = NULL;
-	XMFLOAT4X4						*m_pcbxmf4x4MappedBindPoseBoneOffsets = NULL; //Transposed
+	ID3D12Resource					*m_pd3dcbBindPoseBoneOffsets = nullptr;
+	XMFLOAT4X4						*m_pcbxmf4x4MappedBindPoseBoneOffsets = nullptr; //Transposed
 
-	ID3D12Resource					*m_pd3dcbSkinningBoneTransforms = NULL;
-	XMFLOAT4X4						*m_pcbxmf4x4MappedSkinningBoneTransforms = NULL;
+	ID3D12Resource					*m_pd3dcbSkinningBoneTransforms = nullptr;
+	XMFLOAT4X4						*m_pcbxmf4x4MappedSkinningBoneTransforms = nullptr;
 
 public:
 	void PrepareSkinning(SkinnedFrameObject *pModelRootObject);

@@ -26,7 +26,7 @@ public:
 public:
 	XMFLOAT4X4						m_xmf4x4World;
 
-	//int								m_nMeshes = 0;
+	//int							m_nMeshes = 0;
 	BaseMesh						*m_pMesh = nullptr;
 	
 	int								m_nMaterials = 0;
@@ -34,9 +34,11 @@ public:
 
 	D3D12_GPU_DESCRIPTOR_HANDLE		m_d3dCbvGPUDescriptorHandle;
 
-protected:
+
 	ID3D12Resource					*m_pd3dcbGameObject = nullptr;
 	CB_GAMEOBJECT_INFO				*m_pcbMappedGameObject = nullptr;
+protected:
+	
 
 public:
 	void SetMesh(BaseMesh *pMesh, int nIndex = 0);

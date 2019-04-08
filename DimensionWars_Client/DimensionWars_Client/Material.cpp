@@ -2,6 +2,7 @@
 #include "Material.h"
 #include "Texture.h"
 
+#include "Scene000_BaseScene.h"
 #include "Shader004_SkinnedAnimationShader.h"
 #include "Object002_SkinnedFrameObject.h"
 
@@ -49,6 +50,12 @@ void Material::SetTexture(Texture * pTexture, unsigned int nTexture)
 
 void Material::UpdateShaderVariable(ID3D12GraphicsCommandList * pd3dCommandList)
 {
+	//pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &m_xmf4AmbientColor, 16);
+	//pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &m_xmf4AlbedoColor, 20);
+	//pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &m_xmf4SpecularColor, 24);
+	//pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &m_xmf4EmissiveColor, 28);
+
+	//pd3dCommandList->SetGraphicsRoot32BitConstants(1, 1, &m_nType, 32);
 	for (int i = 0; i < m_nTextures; i++)
 		if (m_ppTextures[i]) 
 			m_ppTextures[i]->UpdateShaderVariable(pd3dCommandList, 0);
@@ -89,7 +96,7 @@ void Material::PrepareShaders(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 
 void Material::LoadTextureFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, UINT nType, UINT nRootParameter, _TCHAR * pwstrTextureName, Texture ** ppTexture, SkinnedFrameObject * pParent, FILE * pInFile, BaseShader * pShader)
 {
-	/*
+	
 	char pstrTextureName[64] = { '\0' };
 
 	BYTE nStrLength = 64;
@@ -126,7 +133,8 @@ void Material::LoadTextureFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsComm
 			(*ppTexture)->LoadTextureFromFile(pd3dDevice, pd3dCommandList, pwstrTextureName, 0, true);
 			if (*ppTexture) (*ppTexture)->AddRef();
 
-			if (pShader) pShader->CreateShaderResourceViews(pd3dDevice, *ppTexture, nRootParameter, false);
+			//if (pShader) 
+			BaseScene::CreateShaderResourceViews(pd3dDevice, *ppTexture, nRootParameter, false);
 		}
 		else
 		{
@@ -143,5 +151,4 @@ void Material::LoadTextureFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsComm
 			}
 		}
 	}
-	*/
 }

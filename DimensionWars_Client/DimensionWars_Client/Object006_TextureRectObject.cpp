@@ -19,9 +19,9 @@ TextureRectObject::TextureRectObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCom
 	TextureRectangleShader *pTextureShader = new TextureRectangleShader();
 	pTextureShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
 	pTextureShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	BaseScene::CreateShaderResourceViews(pd3dDevice, titleImage, 14, false);
-
+	
+	BaseScene::CreateShaderResourceViews(pd3dDevice, titleImage, 15, true);
+	
 	Material * titleMaterial = new Material(1);
 	titleMaterial->SetTexture(titleImage);
 	titleMaterial->SetShader(pTextureShader);

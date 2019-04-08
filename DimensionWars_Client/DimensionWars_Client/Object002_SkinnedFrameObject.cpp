@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "AnimationController.h"
+#include "Material.h"
 #include "Object002_SkinnedFrameObject.h"
 #include "Mesh002_HierarchyMesh.h"
 #include "Mesh003_SkinnedMesh.h"
-#include "Material.h"
 #include "Shader000_BaseShader.h"
 
 
@@ -81,6 +81,26 @@ void SkinnedFrameObject::SetSkinnedAnimationWireFrameShader()
 	SetMaterial(0, pMaterial);
 }
 
+void SkinnedFrameObject::SetStandardShader()
+{
+	m_nMaterials = 1;
+	m_ppMaterials = new Material*[m_nMaterials];
+	m_ppMaterials[0] = nullptr;
+	Material *pMaterial = new Material(0);
+	pMaterial->SetStandardShader();
+	SetMaterial(0, pMaterial);
+}
+
+void SkinnedFrameObject::SetSkinnedAnimationShader()
+{
+	m_nMaterials = 1;
+	m_ppMaterials = new Material*[m_nMaterials];
+	m_ppMaterials[0] = nullptr;
+	Material *pMaterial = new Material(0);
+	pMaterial->SetSkinnedAnimationShader();
+	SetMaterial(0, pMaterial);
+}
+
 void SkinnedFrameObject::SetPosition(float x, float y, float z)
 {
 	m_xmf4x4ToParent._41 = x;
@@ -147,6 +167,25 @@ SkinnedFrameObject * SkinnedFrameObject::FindFrame(char * pstrFrameName)
 	return nullptr;
 }
 
+Texture * SkinnedFrameObject::FindReplicatedTexture(_TCHAR * pstrTextureName)
+{
+	for (int i = 0; i < m_nMaterials; i++)
+		if (m_ppMaterials[i])
+			for (int j = 0; j < m_ppMaterials[i]->m_nTextures; j++)
+				if (m_ppMaterials[i]->m_ppTextures[j])
+					if (!_tcsncmp(m_ppMaterials[i]->m_ppstrTextureNames[j], pstrTextureName, _tcslen(pstrTextureName))) 
+						return(m_ppMaterials[i]->m_ppTextures[j]);
+	Texture *pTexture = NULL;
+	if (m_pSibling) 
+		if (pTexture = m_pSibling->FindReplicatedTexture(pstrTextureName)) 
+			return(pTexture);
+	if (m_pChild) 
+		if (pTexture = m_pChild->FindReplicatedTexture(pstrTextureName)) 
+			return(pTexture);
+
+	return nullptr;
+}
+
 void SkinnedFrameObject::Rotate(float fPitch, float fYaw, float fRoll)
 {
 	XMMATRIX mtxRotate = XMMatrixRotationRollPitchYaw(XMConvertToRadians(fPitch), XMConvertToRadians(fYaw), XMConvertToRadians(fRoll));
@@ -201,6 +240,113 @@ void SkinnedFrameObject::SetTrackAnimationSet(int nAnimationTrack, int nAnimatio
 void SkinnedFrameObject::SetTrackAnimationPosition(int nAnimationTrack, float fPosition)
 {
 	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->SetTrackPosition(nAnimationTrack, fPosition);
+}
+
+void SkinnedFrameObject::LoadMaterialsFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, SkinnedFrameObject * pParent, FILE * pInFile, BaseShader * pShader)
+{
+	char pstrToken[64] = { '\0' };
+	int nMaterial = 0;
+	UINT nReads = 0;
+
+	m_nMaterials = ReadIntegerFromFile(pInFile);
+
+	m_ppMaterials = new Material*[m_nMaterials];
+	for (int i = 0; i < m_nMaterials; i++) m_ppMaterials[i] = NULL;
+
+	Material *pMaterial = NULL;
+
+	for (; ; )
+	{
+		::ReadStringFromFile(pInFile, pstrToken);
+
+		if (!strcmp(pstrToken, "<Material>:"))
+		{
+			nMaterial = ReadIntegerFromFile(pInFile);
+
+			pMaterial = new Material(7); //0:Albedo, 1:Specular, 2:Metallic, 3:Normal, 4:Emission, 5:DetailAlbedo, 6:DetailNormal
+
+			if (!pShader)
+			{
+				UINT nMeshType = GetMeshType();
+				if (nMeshType & VERTEXT_NORMAL_TANGENT_TEXTURE)
+				{
+					if (nMeshType & VERTEXT_BONE_INDEX_WEIGHT)
+					{
+						pMaterial->SetSkinnedAnimationShader();
+					}
+					else
+					{
+						pMaterial->SetStandardShader();
+					}
+				}
+			}
+			SetMaterial(nMaterial, pMaterial);
+		}
+		else if (!strcmp(pstrToken, "<AlbedoColor>:"))
+		{
+			nReads = (UINT)::fread(&(pMaterial->m_xmf4AlbedoColor), sizeof(float), 4, pInFile);
+		}
+		else if (!strcmp(pstrToken, "<EmissiveColor>:"))
+		{
+			nReads = (UINT)::fread(&(pMaterial->m_xmf4EmissiveColor), sizeof(float), 4, pInFile);
+		}
+		else if (!strcmp(pstrToken, "<SpecularColor>:"))
+		{
+			nReads = (UINT)::fread(&(pMaterial->m_xmf4SpecularColor), sizeof(float), 4, pInFile);
+		}
+		else if (!strcmp(pstrToken, "<Glossiness>:"))
+		{
+			nReads = (UINT)::fread(&(pMaterial->m_fGlossiness), sizeof(float), 1, pInFile);
+		}
+		else if (!strcmp(pstrToken, "<Smoothness>:"))
+		{
+			nReads = (UINT)::fread(&(pMaterial->m_fSmoothness), sizeof(float), 1, pInFile);
+		}
+		else if (!strcmp(pstrToken, "<Metallic>:"))
+		{
+			nReads = (UINT)::fread(&(pMaterial->m_fSpecularHighlight), sizeof(float), 1, pInFile);
+		}
+		else if (!strcmp(pstrToken, "<SpecularHighlight>:"))
+		{
+			nReads = (UINT)::fread(&(pMaterial->m_fMetallic), sizeof(float), 1, pInFile);
+		}
+		else if (!strcmp(pstrToken, "<GlossyReflection>:"))
+		{
+			nReads = (UINT)::fread(&(pMaterial->m_fGlossyReflection), sizeof(float), 1, pInFile);
+		}
+		else if (!strcmp(pstrToken, "<AlbedoMap>:"))
+		{
+			pMaterial->LoadTextureFromFile(pd3dDevice, pd3dCommandList, MATERIAL_ALBEDO_MAP, 3, pMaterial->m_ppstrTextureNames[0], &(pMaterial->m_ppTextures[0]), pParent, pInFile, pShader);
+		}
+		else if (!strcmp(pstrToken, "<SpecularMap>:"))
+		{
+			m_ppMaterials[nMaterial]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, MATERIAL_SPECULAR_MAP, 4, pMaterial->m_ppstrTextureNames[1], &(pMaterial->m_ppTextures[1]), pParent, pInFile, pShader);
+		}
+		else if (!strcmp(pstrToken, "<NormalMap>:"))
+		{
+			m_ppMaterials[nMaterial]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, MATERIAL_NORMAL_MAP, 5, pMaterial->m_ppstrTextureNames[2], &(pMaterial->m_ppTextures[2]), pParent, pInFile, pShader);
+		}
+		else if (!strcmp(pstrToken, "<MetallicMap>:"))
+		{
+			m_ppMaterials[nMaterial]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, MATERIAL_METALLIC_MAP, 6, pMaterial->m_ppstrTextureNames[3], &(pMaterial->m_ppTextures[3]), pParent, pInFile, pShader);
+		}
+		else if (!strcmp(pstrToken, "<EmissionMap>:"))
+		{
+			m_ppMaterials[nMaterial]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, MATERIAL_EMISSION_MAP, 7, pMaterial->m_ppstrTextureNames[4], &(pMaterial->m_ppTextures[4]), pParent, pInFile, pShader);
+		}
+		else if (!strcmp(pstrToken, "<DetailAlbedoMap>:"))
+		{
+			m_ppMaterials[nMaterial]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, MATERIAL_DETAIL_ALBEDO_MAP, 8, pMaterial->m_ppstrTextureNames[5], &(pMaterial->m_ppTextures[5]), pParent, pInFile, pShader);
+		}
+		else if (!strcmp(pstrToken, "<DetailNormalMap>:"))
+		{
+			m_ppMaterials[nMaterial]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, MATERIAL_DETAIL_NORMAL_MAP, 9, pMaterial->m_ppstrTextureNames[6], &(pMaterial->m_ppTextures[6]), pParent, pInFile, pShader);
+		}
+		else if (!strcmp(pstrToken, "</Materials>"))
+		{
+			break;
+		}
+	}
 }
 
 void SkinnedFrameObject::LoadAnimationFromFile(FILE * pInFile, LoadedModelInfo * pLoadedModel)
@@ -304,7 +450,7 @@ SkinnedFrameObject * SkinnedFrameObject::LoadFrameHierarchyFromFile(ID3D12Device
 			pMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
 			pFrameObject->SetMesh(pMesh);
 			
-			/**/pFrameObject->SetWireFrameShader();
+			/**/pFrameObject->SetStandardShader();
 		}
 		else if (!strcmp(pstrToken, "<SkinDeformations>:")) {
 			if (pnSkinnedMeshes) (*pnSkinnedMeshes)++;
@@ -319,6 +465,7 @@ SkinnedFrameObject * SkinnedFrameObject::LoadFrameHierarchyFromFile(ID3D12Device
 			pFrameObject->SetMesh(pSkinnedMesh);
 
 			/**/pFrameObject->SetSkinnedAnimationWireFrameShader();
+			//pFrameObject->SetSkinnedAnimationShader();	// 이자식에 하자가 있다, 수정 요망
 		}
 		else if (!strcmp(pstrToken, "<Children>:")) {
 			int nChilds = ::ReadIntegerFromFile(pInFile);
@@ -389,8 +536,7 @@ LoadedModelInfo * SkinnedFrameObject::LoadGeometryAndAnimationFromFile(ID3D12Dev
 #endif
 
 	::fclose(pInFile);
-	if (flag3DsMaxCoordinates)
-		pLoadedModel->m_pModelRootObject->Rotate(90.0f, 0.0f, 0.0f);	// 3D Max의 좌표계를 강제로 변환하기 위한 회전
+	if (flag3DsMaxCoordinates) pLoadedModel->m_pModelRootObject->Rotate(90.0f, 0.0f, 0.0f);	// 3D Max의 좌표계를 강제로 변환하기 위한 회전
 	return(pLoadedModel);
 }
 
