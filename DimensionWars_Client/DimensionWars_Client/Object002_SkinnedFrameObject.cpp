@@ -175,7 +175,7 @@ Texture * SkinnedFrameObject::FindReplicatedTexture(_TCHAR * pstrTextureName)
 				if (m_ppMaterials[i]->m_ppTextures[j])
 					if (!_tcsncmp(m_ppMaterials[i]->m_ppstrTextureNames[j], pstrTextureName, _tcslen(pstrTextureName))) 
 						return(m_ppMaterials[i]->m_ppTextures[j]);
-	Texture *pTexture = NULL;
+	Texture *pTexture = nullptr;
 	if (m_pSibling) 
 		if (pTexture = m_pSibling->FindReplicatedTexture(pstrTextureName)) 
 			return(pTexture);
@@ -208,6 +208,49 @@ void SkinnedFrameObject::Rotate(XMFLOAT4 * pxmf4Quaternion)
 	m_xmf4x4ToParent = Matrix4x4::Multiply(mtxRotate, m_xmf4x4ToParent);
 
 	UpdateTransform(nullptr);
+}
+
+SkinnedFrameObject * SkinnedFrameObject::GetRootSkinnedGameObject()
+{
+	if (m_pSkinnedAnimationController) return(this);
+
+	SkinnedFrameObject *pRootSkinnedGameObject = NULL;
+	if (m_pSibling) if (pRootSkinnedGameObject = m_pSibling->GetRootSkinnedGameObject()) return(pRootSkinnedGameObject);
+	if (m_pChild) if (pRootSkinnedGameObject = m_pChild->GetRootSkinnedGameObject()) return(pRootSkinnedGameObject);
+
+	return nullptr;
+}
+
+void SkinnedFrameObject::SetAnimationSet(int nAnimationSet)
+{
+	//if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->SetAnimationSet(nAnimationSet);
+
+	if (m_pSibling) m_pSibling->SetAnimationSet(nAnimationSet);
+	if (m_pChild) m_pChild->SetAnimationSet(nAnimationSet);
+}
+
+void SkinnedFrameObject::CacheSkinningBoneFrames(SkinnedFrameObject * pRootFrame)
+{
+	if (m_pMesh && (m_pMesh->GetType() & VERTEXT_BONE_INDEX_WEIGHT))
+	{
+		SkinnedMesh *pSkinnedMesh = (SkinnedMesh *)m_pMesh;
+		for (int i = 0; i < pSkinnedMesh->m_nSkinningBones; i++)
+		{
+			pSkinnedMesh->m_ppSkinningBoneFrameCaches[i] = pRootFrame->FindFrame(pSkinnedMesh->m_ppstrSkinningBoneNames[i]);
+#ifdef _WITH_DEBUG_SKINNING_BONE
+			TCHAR pstrDebug[256] = { 0 };
+			TCHAR pwstrBoneCacheName[64] = { 0 };
+			TCHAR pwstrSkinningBoneName[64] = { 0 };
+			size_t nConverted = 0;
+			mbstowcs_s(&nConverted, pwstrBoneCacheName, 64, pSkinnedMesh->m_ppSkinningBoneFrameCaches[i]->m_pstrFrameName, _TRUNCATE);
+			mbstowcs_s(&nConverted, pwstrSkinningBoneName, 64, pSkinnedMesh->m_ppstrSkinningBoneNames[i], _TRUNCATE);
+			_stprintf_s(pstrDebug, 256, _T("SkinningBoneFrame:: Cache(%s) Bone(%s)\n"), pwstrBoneCacheName, pwstrSkinningBoneName);
+			OutputDebugString(pstrDebug);
+#endif
+		}
+	}
+	if (m_pSibling) m_pSibling->CacheSkinningBoneFrames(pRootFrame);
+	if (m_pChild) m_pChild->CacheSkinningBoneFrames(pRootFrame);
 }
 
 SkinnedMesh * SkinnedFrameObject::FindSkinnedMesh(char * pstrSkinnedMeshName)
@@ -583,7 +626,6 @@ void SkinnedFrameObject::Render(ID3D12GraphicsCommandList * pd3dCommandList, Bas
 			}
 		}
 	}
-
 	if (m_pSibling) m_pSibling->Render(pd3dCommandList, pCamera);
 	if (m_pChild) m_pChild->Render(pd3dCommandList, pCamera);
 }

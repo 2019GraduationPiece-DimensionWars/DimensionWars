@@ -64,11 +64,11 @@ protected:
 //////////
 // Test Shaders
 
-class CWireFrameShader : public BaseShader
+class TestColorShader : public BaseShader
 {
 public:
-	CWireFrameShader();
-	virtual ~CWireFrameShader();
+	TestColorShader();
+	virtual ~TestColorShader();
 
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
@@ -79,36 +79,15 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class CSkinnedAnimationWireFrameShader : public BaseShader
+class SkinnedAnimationTestColorShader : public BaseShader
 {
 public:
-	CSkinnedAnimationWireFrameShader();
-	virtual ~CSkinnedAnimationWireFrameShader();
+	SkinnedAnimationTestColorShader();
+	virtual ~SkinnedAnimationTestColorShader();
 
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
 
 	virtual D3D12_SHADER_BYTECODE CreateVertexShader();
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader();
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-class CSkinnedAnimationObjectsWireFrameShader : public CSkinnedAnimationWireFrameShader
-{
-public:
-	CSkinnedAnimationObjectsWireFrameShader();
-	virtual ~CSkinnedAnimationObjectsWireFrameShader();
-
-	virtual void BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, LoadedModelInfo *pModel, void *pContext = NULL);
-	virtual void AnimateObjects(float fTimeElapsed);
-	virtual void ReleaseObjects();
-
-	virtual void ReleaseUploadBuffers();
-
-	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera);
-
-protected:
-	BaseObject						**m_ppObjects = 0;
-	int								m_nObjects = 0;
 };

@@ -228,15 +228,15 @@ void BaseShader::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CWireFrameShader::CWireFrameShader()
+TestColorShader::TestColorShader()
 {
 }
 
-CWireFrameShader::~CWireFrameShader()
+TestColorShader::~TestColorShader()
 {
 }
 
-D3D12_RASTERIZER_DESC CWireFrameShader::CreateRasterizerState()
+D3D12_RASTERIZER_DESC TestColorShader::CreateRasterizerState()
 {
 	D3D12_RASTERIZER_DESC rasterizerDesc;
 	::ZeroMemory(&rasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
@@ -259,7 +259,7 @@ D3D12_RASTERIZER_DESC CWireFrameShader::CreateRasterizerState()
 	return(rasterizerDesc);
 }
 
-D3D12_INPUT_LAYOUT_DESC CWireFrameShader::CreateInputLayout()
+D3D12_INPUT_LAYOUT_DESC TestColorShader::CreateInputLayout()
 {
 	UINT nInputElementDescs = 1;
 	D3D12_INPUT_ELEMENT_DESC *pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
@@ -273,27 +273,27 @@ D3D12_INPUT_LAYOUT_DESC CWireFrameShader::CreateInputLayout()
 	return(d3dInputLayoutDesc);
 }
 
-D3D12_SHADER_BYTECODE CWireFrameShader::CreateVertexShader()
+D3D12_SHADER_BYTECODE TestColorShader::CreateVertexShader()
 {
 	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "VSWireFrame", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
-D3D12_SHADER_BYTECODE CWireFrameShader::CreatePixelShader()
+D3D12_SHADER_BYTECODE TestColorShader::CreatePixelShader()
 {
 	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "PSWireFrame", "ps_5_1", &m_pd3dPixelShaderBlob));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CSkinnedAnimationWireFrameShader::CSkinnedAnimationWireFrameShader()
+SkinnedAnimationTestColorShader::SkinnedAnimationTestColorShader()
 {
 }
 
-CSkinnedAnimationWireFrameShader::~CSkinnedAnimationWireFrameShader()
+SkinnedAnimationTestColorShader::~SkinnedAnimationTestColorShader()
 {
 }
 
-D3D12_INPUT_LAYOUT_DESC CSkinnedAnimationWireFrameShader::CreateInputLayout()
+D3D12_INPUT_LAYOUT_DESC SkinnedAnimationTestColorShader::CreateInputLayout()
 {
 	UINT nInputElementDescs = 3;
 	D3D12_INPUT_ELEMENT_DESC *pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
@@ -309,7 +309,7 @@ D3D12_INPUT_LAYOUT_DESC CSkinnedAnimationWireFrameShader::CreateInputLayout()
 	return(d3dInputLayoutDesc);
 }
 
-D3D12_RASTERIZER_DESC CSkinnedAnimationWireFrameShader::CreateRasterizerState()
+D3D12_RASTERIZER_DESC SkinnedAnimationTestColorShader::CreateRasterizerState()
 {
 	D3D12_RASTERIZER_DESC d3dRasterizerDesc;
 	::ZeroMemory(&d3dRasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
@@ -332,59 +332,12 @@ D3D12_RASTERIZER_DESC CSkinnedAnimationWireFrameShader::CreateRasterizerState()
 	return(d3dRasterizerDesc);
 }
 
-D3D12_SHADER_BYTECODE CSkinnedAnimationWireFrameShader::CreateVertexShader()
+D3D12_SHADER_BYTECODE SkinnedAnimationTestColorShader::CreateVertexShader()
 {
 	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "VSSkinnedAnimationWireFrame", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
-D3D12_SHADER_BYTECODE CSkinnedAnimationWireFrameShader::CreatePixelShader()
+D3D12_SHADER_BYTECODE SkinnedAnimationTestColorShader::CreatePixelShader()
 {
 	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "PSSkinnedAnimationWireFrame", "ps_5_1", &m_pd3dPixelShaderBlob));
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CSkinnedAnimationObjectsWireFrameShader::CSkinnedAnimationObjectsWireFrameShader()
-{
-}
-
-CSkinnedAnimationObjectsWireFrameShader::~CSkinnedAnimationObjectsWireFrameShader()
-{
-}
-
-
-void CSkinnedAnimationObjectsWireFrameShader::ReleaseObjects()
-{
-	if (m_ppObjects) {
-		for (int j = 0; j < m_nObjects; j++) if (m_ppObjects[j]) m_ppObjects[j]->Release();
-		delete[] m_ppObjects;
-	}
-}
-
-void CSkinnedAnimationObjectsWireFrameShader::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, ID3D12RootSignature * pd3dGraphicsRootSignature, LoadedModelInfo * pModel, void * pContext)
-{
-}
-
-void CSkinnedAnimationObjectsWireFrameShader::AnimateObjects(float fTimeElapsed)
-{
-	m_fElapsedTime = fTimeElapsed;
-}
-
-void CSkinnedAnimationObjectsWireFrameShader::ReleaseUploadBuffers()
-{
-	for (int j = 0; j < m_nObjects; j++) if (m_ppObjects[j]) m_ppObjects[j]->ReleaseUploadBuffers();
-}
-
-void CSkinnedAnimationObjectsWireFrameShader::Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera)
-{
-	CSkinnedAnimationWireFrameShader::Render(pd3dCommandList, pCamera);
-
-	for (int j = 0; j < m_nObjects; j++)
-	{
-		if (m_ppObjects[j])
-		{
-			m_ppObjects[j]->Animate(m_fElapsedTime);
-			m_ppObjects[j]->Render(pd3dCommandList, pCamera);
-		}
-	}
 }

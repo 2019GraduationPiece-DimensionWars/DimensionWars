@@ -1,19 +1,18 @@
 #include "stdafx.h"
-#include "Object002_SkinnedFrameObject.h"
-#include "Object101_GrimReaperPlayer.h"
+#include "Object102_GamblerPlayer.h"
 #include "Camera002_ThirdPersonCamera.h"
 #include "AnimationController.h"
 
 
-GrimReaperPlayer::GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext)
+GamblerPlayer::GamblerPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext)
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	LoadedModelInfo *GrimReaperModel = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/GrimReaper.bin", nullptr);
+	LoadedModelInfo *GrimReaperModel = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Gambler.bin", nullptr);
 	SetChild(GrimReaperModel->m_pModelRootObject, true);
 
 	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, GrimReaperModel);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);	
+	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	/*
 	m_pSkinnedAnimationController->SetCallbackKeys(0, 0);
 	#ifdef _WITH_SOUND_RESOURCE
@@ -38,16 +37,16 @@ GrimReaperPlayer::GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 	SetGravity(XMFLOAT3(0.0f, 0.0f, 0.0f));
 
 	SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
-	
+
 	SetScale(XMFLOAT3(1.0f, 1.0f, 1.0f));
 }
 
 
-GrimReaperPlayer::~GrimReaperPlayer()
+GamblerPlayer::~GamblerPlayer()
 {
 }
 
-void GrimReaperPlayer::OnPrepareRender()
+void GamblerPlayer::OnPrepareRender()
 {
 	BasePlayer::OnPrepareRender();
 
@@ -55,7 +54,7 @@ void GrimReaperPlayer::OnPrepareRender()
 	m_xmf4x4ToParent = Matrix4x4::Multiply(XMMatrixRotationX(-90.0f), m_xmf4x4ToParent);
 }
 
-BaseCamera * GrimReaperPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
+BaseCamera * GamblerPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 {
 	DWORD nCurrentCameraMode = (m_pCamera) ? m_pCamera->GetMode() : 0x00;
 	if (nCurrentCameraMode == nNewCameraMode) return(m_pCamera);
@@ -79,7 +78,7 @@ BaseCamera * GrimReaperPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeEla
 		m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.25f);
 		m_pCamera->SetOffset(XMFLOAT3(0.0f, 50.0f, -350.0f));
-		m_pCamera->SetPosition(Vector3::Add(m_xmf3Position, m_pCamera->GetOffset()));		
+		m_pCamera->SetPosition(Vector3::Add(m_xmf3Position, m_pCamera->GetOffset()));
 		m_pCamera->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 60.0f);
 		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
@@ -88,21 +87,20 @@ BaseCamera * GrimReaperPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeEla
 		break;
 	}
 	Update(fTimeElapsed);
-	
+
 	return(m_pCamera);
 }
 
-void GrimReaperPlayer::Update(float fTimeElapsed) 
+void GamblerPlayer::Update(float fTimeElapsed)
 {
 	BasePlayer::Update(fTimeElapsed);
-
 }
 
-void GrimReaperPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
+void GamblerPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 {
 }
 
-void GrimReaperPlayer::OnCameraUpdateCallback(float fTimeElapsed)
+void GamblerPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 {
 	XMFLOAT3 xmf3CameraPosition = m_pCamera->GetPosition();
 

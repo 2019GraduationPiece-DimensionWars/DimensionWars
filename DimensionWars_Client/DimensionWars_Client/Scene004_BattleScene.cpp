@@ -3,6 +3,7 @@
 #include "Scene004_BattleScene.h"
 #include "Object003_SkyBox.h"
 #include "Object101_GrimReaperPlayer.h"
+#include "Object102_GamblerPlayer.h"
 #include "Camera000_BaseCamera.h"
 #include "Material.h"
 
@@ -27,6 +28,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	BuildLightsAndMaterials();
 
 
+	// GamblerPlayer *pPlayer = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, nullptr);
 	GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, nullptr);
 	m_pPlayer = pPlayer;
 
@@ -88,13 +90,14 @@ bool BattleScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 	float cxDelta = 0.0f, cyDelta = 0.0f;
 	POINT ptCursorPos;
-	if (GetCapture() == m_pFramework->GetHandle())
+	//if (GetCapture() == m_pFramework->GetHandle())
 	{
 		SetCursor(NULL);
 		GetCursorPos(&ptCursorPos);
 		cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
 		cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
-		SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+		// SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+		m_ptOldCursorPos = ptCursorPos;
 	}
 
 	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))

@@ -76,11 +76,11 @@ BaseShader *Material::m_pSkinnedAnimationShader = nullptr;
 
 void Material::PrepareShaders(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, ID3D12RootSignature * pd3dGraphicsRootSignature)
 {	
-	m_pWireFrameShader = new CWireFrameShader();
+	m_pWireFrameShader = new TestColorShader();
 	m_pWireFrameShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
 	m_pWireFrameShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	m_pSkinnedAnimationWireFrameShader = new CSkinnedAnimationWireFrameShader();
+	m_pSkinnedAnimationWireFrameShader = new SkinnedAnimationTestColorShader();
 	m_pSkinnedAnimationWireFrameShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
 	m_pSkinnedAnimationWireFrameShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 

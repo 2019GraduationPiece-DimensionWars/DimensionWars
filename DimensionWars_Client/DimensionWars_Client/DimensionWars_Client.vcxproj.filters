@@ -43,6 +43,15 @@
     <Filter Include="Texture">
       <UniqueIdentifier>{209ed2dc-a879-49a3-842c-b7f292348740}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\PlayerObject">
+      <UniqueIdentifier>{ea0d23b8-10a3-4d53-9d4c-ff1a85c40349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\TextureObject">
+      <UniqueIdentifier>{0c5b925f-177e-4734-b554-c4501d1d5c0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\EnvironmentObject">
+      <UniqueIdentifier>{4305a41e-9e9f-416b-8fbf-dbf4f6ea82ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -117,9 +126,6 @@
     <ClInclude Include="Scene001_TitleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Object003_SkyBox.h">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh004_SkyBoxMesh.h">
       <Filter>Mesh</Filter>
     </ClInclude>
@@ -129,16 +135,7 @@
     <ClInclude Include="Object001_NoneSkinnedFrameObject.h">
       <Filter>Object</Filter>
     </ClInclude>
-    <ClInclude Include="Object004_DimensionCube.h">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="Object005_SkinModelObject.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Object100_BasePlayer.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Object101_GrimReaperPlayer.h">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Camera001_LockedCamera.h">
@@ -168,14 +165,29 @@
     <ClInclude Include="Shader004_SkinnedAnimationShader.h">
       <Filter>Shader</Filter>
     </ClInclude>
-    <ClInclude Include="Object006_TextureRectObject.h">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh005_TextureRectangleMesh.h">
       <Filter>Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Shader005_TextureRectangleShader.h">
       <Filter>Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Object100_BasePlayer.h">
+      <Filter>Object\PlayerObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object101_GrimReaperPlayer.h">
+      <Filter>Object\PlayerObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object102_GamblerPlayer.h">
+      <Filter>Object\PlayerObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object006_TextureRectObject.h">
+      <Filter>Object\TextureObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object003_SkyBox.h">
+      <Filter>Object\EnvironmentObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object004_DimensionCube.h">
+      <Filter>Object\EnvironmentObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -236,9 +248,6 @@
     <ClCompile Include="Scene001_TitleScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Object003_SkyBox.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh004_SkyBoxMesh.cpp">
       <Filter>Mesh</Filter>
     </ClCompile>
@@ -248,16 +257,7 @@
     <ClCompile Include="Object001_NoneSkinnedFrameObject.cpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="Object004_DimensionCube.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
     <ClCompile Include="Object005_SkinModelObject.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Object100_BasePlayer.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Object101_GrimReaperPlayer.cpp">
       <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="Camera001_LockedCamera.cpp">
@@ -287,14 +287,29 @@
     <ClCompile Include="Shader004_SkinnedAnimationShader.cpp">
       <Filter>Shader</Filter>
     </ClCompile>
-    <ClCompile Include="Object006_TextureRectObject.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh005_TextureRectangleMesh.cpp">
       <Filter>Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Shader005_TextureRectangleShader.cpp">
       <Filter>Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Object100_BasePlayer.cpp">
+      <Filter>Object\PlayerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object101_GrimReaperPlayer.cpp">
+      <Filter>Object\PlayerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object102_GamblerPlayer.cpp">
+      <Filter>Object\PlayerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object006_TextureRectObject.cpp">
+      <Filter>Object\TextureObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object003_SkyBox.cpp">
+      <Filter>Object\EnvironmentObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object004_DimensionCube.cpp">
+      <Filter>Object\EnvironmentObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

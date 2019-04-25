@@ -61,6 +61,11 @@ public:
 
 	AnimationController 			*m_pSkinnedAnimationController = nullptr;
 
+	SkinnedFrameObject *GetRootSkinnedGameObject();
+
+	void SetAnimationSet(int nAnimationSet);
+	void CacheSkinningBoneFrames(SkinnedFrameObject *pRootFrame);
+
 	SkinnedMesh *FindSkinnedMesh(char *pstrSkinnedMeshName);
 	void FindAndSetSkinnedMesh(SkinnedMesh **ppSkinnedMeshes, int *pnSkinnedMesh);
 

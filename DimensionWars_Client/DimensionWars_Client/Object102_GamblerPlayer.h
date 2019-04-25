@@ -1,13 +1,12 @@
 #pragma once
 #include "Object100_BasePlayer.h"
-
-
-class GrimReaperPlayer :
+class GamblerPlayer :
 	public BasePlayer
 {
 public:
-	GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext = nullptr);
-	virtual ~GrimReaperPlayer();
+	GamblerPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext);
+	virtual ~GamblerPlayer();
+
 
 	virtual void OnPrepareRender();
 	virtual BaseCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed);
@@ -17,4 +16,3 @@ public:
 	virtual void OnPlayerUpdateCallback(float fTimeElapsed);
 	virtual void OnCameraUpdateCallback(float fTimeElapsed);
 };
-
