@@ -58,4 +58,4 @@
 
 #define ANIMATION_CALLBACK_EPSILON	0.015f
 
-
+const double const keyFrameUnit = 1.0 / 30.0;

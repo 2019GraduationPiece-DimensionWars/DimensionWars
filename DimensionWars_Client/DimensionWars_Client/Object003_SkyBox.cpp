@@ -15,7 +15,7 @@ SkyBox::SkyBox(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandL
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 	Texture *pSkyBoxTexture = new Texture(1, RESOURCE_TEXTURE_CUBE, 0);
-	pSkyBoxTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/SkyBox/SkyBox_1.dds", 0);
+	pSkyBoxTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/SkyBox/SkyBox_0.dds", 0);
 
 	SkyBoxShader *pSkyBoxShader = new SkyBoxShader();
 	pSkyBoxShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);

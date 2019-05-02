@@ -86,11 +86,12 @@ XMFLOAT4X4 AnimationLayer::GetSRT(int nBoneFrame, float fPosition)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-AnimationSet::AnimationSet(float fStartTime, float fEndTime, char * pstrName)
+AnimationSet::AnimationSet(float fStartTime, float fEndTime, char * pstrName, int nType)
 {
 	m_fStartTime = fStartTime;
 	m_fEndTime = fEndTime;
 	m_fLength = fEndTime - fStartTime;
+	m_nType = nType;
 
 	strcpy_s(m_pstrAnimationSetName, 64, pstrName);
 }
@@ -106,19 +107,36 @@ AnimationSet::~AnimationSet()
 void AnimationSet::SetPosition(float fTrackPosition)
 {
 	m_fPosition = fTrackPosition;
+	float fNowPosition = (m_fLength == 0.0f)? 0.0f:(::fmod(fTrackPosition, m_fLength));	// ::fmod(fTrackPosition, m_fLength)는 현재 진행된 애니메이션의 시간.  == fTrackPosition % m_fLength
 	switch (m_nType)
 	{
 	case ANIMATION_TYPE_LOOP:
 	{
-		m_fPosition = m_fStartTime + ::fmod(fTrackPosition, m_fLength);
+		m_fPosition = m_fStartTime + fNowPosition;
 		break;
 	}
-	case ANIMATION_TYPE_ONCE:
+	case ANIMATION_TYPE_ONCE: 
+	{
+		if (!m_bEndTrigger) m_fPosition = m_fStartTime + fTrackPosition;
+		m_bEndTrigger = (fTrackPosition >= m_fLength) ? true : false;
 		break;
+	}
 	case ANIMATION_TYPE_PINGPONG:
+	{
+		if (m_bEndTrigger) {
+			m_fPosition = m_fEndTime - fNowPosition;
+			if (m_fPosition <= m_fStartTime)
+				m_bEndTrigger = false;
+		}
+		else {
+			m_fPosition = m_fStartTime + fNowPosition;
+			if (m_fPosition >= m_fEndTime)
+				m_bEndTrigger = true;
+		}
 		break;
 	}
-
+	}
+	//printf("%s : TrackPos : %.2f / Length : %.2f / m_fPosition : %.2f / (%.2f ~ %.2f) / %.2f\n", m_pstrAnimationSetName, fTrackPosition, m_fLength, m_fPosition, m_fStartTime, m_fEndTime, fNowPosition);
 	if (m_pAnimationCallbackHandler)
 	{
 		void *pCallbackData = GetCallbackData();
@@ -173,30 +191,34 @@ void * AnimationSet::GetCallbackData()
 AnimationSets::AnimationSets(int nAnimationSets)
 {
 	m_nAnimationSets = nAnimationSets;
-	m_ppAnimationSets = new AnimationSet*[m_nAnimationSets];
+	m_ppInitalAnimationSets = new AnimationSet*[m_nAnimationSets];
+
+	std::vector<AnimationSet*> temp(&m_ppInitalAnimationSets[0],&m_ppInitalAnimationSets[m_nAnimationSets]);
+	m_AnimationSets = temp;
 }
 
 AnimationSets::~AnimationSets()
 {
-	for (int i = 0; i < m_nAnimationSets; i++) if (m_ppAnimationSets[i]) delete m_ppAnimationSets[i];
-	if (m_ppAnimationSets) delete[] m_ppAnimationSets;
+	for (int i = 0; i < m_nAnimationSets; i++) if (m_ppInitalAnimationSets[i]) delete m_ppInitalAnimationSets[i];
+	if (m_ppInitalAnimationSets) delete[] m_ppInitalAnimationSets;
+	for (auto & data : m_AnimationSets) if (data) delete data;
 }
 
 void AnimationSets::SetCallbackKeys(int nAnimationSet, int nCallbackKeys)
 {
-	m_ppAnimationSets[nAnimationSet]->m_nCallbackKeys = nCallbackKeys;
-	m_ppAnimationSets[nAnimationSet]->m_pCallbackKeys = new CALLBACKKEY[nCallbackKeys];
+	m_ppInitalAnimationSets[nAnimationSet]->m_nCallbackKeys = nCallbackKeys;
+	m_ppInitalAnimationSets[nAnimationSet]->m_pCallbackKeys = new CALLBACKKEY[nCallbackKeys];
 }
 
 void AnimationSets::SetCallbackKey(int nAnimationSet, int nKeyIndex, float fKeyTime, void * pData)
 {
-	m_ppAnimationSets[nAnimationSet]->m_pCallbackKeys[nKeyIndex].m_fTime = fKeyTime;
-	m_ppAnimationSets[nAnimationSet]->m_pCallbackKeys[nKeyIndex].m_pCallbackData = pData;
+	m_ppInitalAnimationSets[nAnimationSet]->m_pCallbackKeys[nKeyIndex].m_fTime = fKeyTime;
+	m_ppInitalAnimationSets[nAnimationSet]->m_pCallbackKeys[nKeyIndex].m_pCallbackData = pData;
 }
 
 void AnimationSets::SetAnimationCallbackHandler(int nAnimationSet, AnimationCallbackHandler * pCallbackHandler)
 {
-	m_ppAnimationSets[nAnimationSet]->SetAnimationCallbackHandler(pCallbackHandler);
+	m_ppInitalAnimationSets[nAnimationSet]->SetAnimationCallbackHandler(pCallbackHandler);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -221,20 +243,20 @@ void LoadedModelInfo::PrepareSkinning()
 AnimationController::AnimationController(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, int nAnimationTracks, LoadedModelInfo * pModel)
 {
 	m_nAnimationTracks = nAnimationTracks;
-	m_pAnimationTracks = new CAnimationTrack[nAnimationTracks];
-
+	m_pAnimationTracks = new AnimationTrack[nAnimationTracks];
+	
 	m_pAnimationSets = pModel->m_pAnimationSets;
 	m_pAnimationSets->AddRef();
 
 	m_nSkinnedMeshes = pModel->m_nSkinnedMeshes;
 	m_ppSkinnedMeshes = new SkinnedMesh*[m_nSkinnedMeshes];
-	for (int i = 0; i < m_nSkinnedMeshes; i++) m_ppSkinnedMeshes[i] = pModel->m_ppSkinnedMeshes[i];
+	for (int i = 0; i < m_nSkinnedMeshes; ++i) m_ppSkinnedMeshes[i] = pModel->m_ppSkinnedMeshes[i];
 
 	m_ppd3dcbSkinningBoneTransforms = new ID3D12Resource*[m_nSkinnedMeshes];
 	m_ppcbxmf4x4MappedSkinningBoneTransforms = new XMFLOAT4X4*[m_nSkinnedMeshes];
 
 	unsigned int ncbElementBytes = (((sizeof(XMFLOAT4X4) * SKINNED_ANIMATION_BONES) + 255) & ~255); //256의 배수
-	for (int i = 0; i < m_nSkinnedMeshes; i++) {
+	for (int i = 0; i < m_nSkinnedMeshes; ++i) {
 		m_ppd3dcbSkinningBoneTransforms[i] = ::CreateBufferResource(pd3dDevice, pd3dCommandList, nullptr, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, nullptr);
 		m_ppd3dcbSkinningBoneTransforms[i]->Map(0, nullptr, (void **)&m_ppcbxmf4x4MappedSkinningBoneTransforms[i]);
 	}
@@ -246,8 +268,8 @@ AnimationController::~AnimationController()
 
 	if (m_pAnimationSets) m_pAnimationSets->Release();
 
-	for (int i = 0; i < m_nSkinnedMeshes; i++) {
-		m_ppd3dcbSkinningBoneTransforms[i]->Unmap(0, NULL);
+	for (int i = 0; i < m_nSkinnedMeshes; ++i) {
+		m_ppd3dcbSkinningBoneTransforms[i]->Unmap(0, nullptr);
 		m_ppd3dcbSkinningBoneTransforms[i]->Release();
 	}
 	if (m_ppd3dcbSkinningBoneTransforms) delete[] m_ppd3dcbSkinningBoneTransforms;
@@ -258,7 +280,7 @@ AnimationController::~AnimationController()
 
 void AnimationController::UpdateShaderVariables(ID3D12GraphicsCommandList * pd3dCommandList)
 {
-	for (int i = 0; i < m_nSkinnedMeshes; i++) {
+	for (int i = 0; i < m_nSkinnedMeshes; ++i) {
 		m_ppSkinnedMeshes[i]->m_pd3dcbSkinningBoneTransforms = m_ppd3dcbSkinningBoneTransforms[i];
 		m_ppSkinnedMeshes[i]->m_pcbxmf4x4MappedSkinningBoneTransforms = m_ppcbxmf4x4MappedSkinningBoneTransforms[i];
 	}
@@ -304,16 +326,26 @@ void AnimationController::SetAnimationCallbackHandler(int nAnimationSet, Animati
 	if (m_pAnimationSets) m_pAnimationSets->SetAnimationCallbackHandler(nAnimationSet, pCallbackHandler);
 }
 
+void AnimationController::SetAnimationSet(int nAnimationSet)
+{
+	if (m_pAnimationSets && (nAnimationSet < m_pAnimationSets->GetNumberOfAnimationSets()))
+	{
+	//	m_nAnimationSet = nAnimationSet;
+		m_pAnimationTracks[m_nAnimationTrack].SetAnimationSet(nAnimationSet);
+	}
+}
+
 void AnimationController::AdvanceTime(float fElapsedTime, SkinnedFrameObject * pRootGameObject)
 {
 	m_fTime += fElapsedTime;
+	
 	if (m_pAnimationTracks) {
-		for (int i = 0; i < m_nAnimationTracks; i++) m_pAnimationTracks[i].m_fPosition += (fElapsedTime * m_pAnimationTracks[i].m_fSpeed);
+		for (int i = 0; i < m_nAnimationTracks; ++i) m_pAnimationTracks[i].SetPosition(m_pAnimationTracks[i].GetPosition() + (fElapsedTime * m_pAnimationTracks[i].GetSpeed()));
 
-		for (int k = 0; k < m_nAnimationTracks; k++){
-			if (m_pAnimationTracks[k].m_bEnable) {
-				AnimationSet *pAnimationSet = m_pAnimationSets->m_ppAnimationSets[m_pAnimationTracks[k].m_nAnimationSet];
-				pAnimationSet->Animate(m_pAnimationTracks[k].m_fPosition, m_pAnimationTracks[k].m_fWeight);
+		for (int i = 0; i < m_nAnimationTracks; ++i){
+			if (m_pAnimationTracks[i].isEnable()) {
+				AnimationSet *pAnimationSet = m_pAnimationSets->GetAnimationSet(m_pAnimationTracks[i].GetAnimationSet());
+				pAnimationSet->Animate(m_pAnimationTracks[i].GetPosition(), m_pAnimationTracks[i].GetWeight());
 			}
 		}
 

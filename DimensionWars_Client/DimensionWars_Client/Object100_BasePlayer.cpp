@@ -241,3 +241,61 @@ void BasePlayer::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 	DWORD nCameraMode = (pCamera) ? pCamera->GetMode() : 0x00;
 	if (nCameraMode == THIRD_PERSON_CAMERA) SkinnedFrameObject::Render(pd3dCommandList, pCamera);
 }
+
+void BasePlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
+{
+	DWORD dwDirection = 0;
+	if (pKeysBuffer[VK_UP] & 0xF0) dwDirection |= DIR_FORWARD;
+	if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
+	if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
+	if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
+	if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
+	if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
+
+	float cxDelta = 0.0f, cyDelta = 0.0f;
+	POINT ptCursorPos;
+	//if (GetCapture() == m_pFramework->GetHandle())
+	{
+		SetCursor(NULL);
+		GetCursorPos(&ptCursorPos);
+		cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+		cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+		// SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+		m_ptOldCursorPos = ptCursorPos;
+	}
+
+	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
+	{
+		if (cxDelta || cyDelta)
+		{
+			if (pKeysBuffer[VK_RBUTTON] & 0xF0)
+				Rotate(cyDelta, 0.0f, -cxDelta);
+			else
+				Rotate(cyDelta, cxDelta, 0.0f);
+		}
+		if (dwDirection) Move(dwDirection, 12.25f, true);
+	}
+
+	Update(fTimeElapsed);
+}
+
+bool BasePlayer::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
+{
+	switch (nMessageID)
+	{
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+		::SetCapture(hWnd);
+		::GetCursorPos(&m_ptOldCursorPos);
+		break;
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+		::ReleaseCapture();
+		break;
+	case WM_MOUSEMOVE:
+		break;
+	default:
+		break;
+	}
+	return false;
+}

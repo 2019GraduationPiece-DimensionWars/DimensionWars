@@ -14,6 +14,21 @@ GrimReaperPlayer::GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 
 	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, GrimReaperModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);	
+	m_pSkinnedAnimationController->AddAnimationSet(0, 40.0 * keyFrameUnit, "Idle");
+	m_pSkinnedAnimationController->AddAnimationSet(42.0 * keyFrameUnit, 63.0 * keyFrameUnit, "OnHit", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(64.0 * keyFrameUnit, 104.0 * keyFrameUnit, "Guard");
+	m_pSkinnedAnimationController->AddAnimationSet(106.0 * keyFrameUnit, 146.0 * keyFrameUnit, "Burf", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(148.0 * keyFrameUnit, 208.0 * keyFrameUnit, "Hide Invasion", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(210.0 * keyFrameUnit, 330.0 * keyFrameUnit, "Full Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(332.0 * keyFrameUnit, 382.0 * keyFrameUnit, "Slash Wave", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(384.0 * keyFrameUnit, 454.0 * keyFrameUnit, "Beheading");
+	m_pSkinnedAnimationController->AddAnimationSet(456.0 * keyFrameUnit, 476.0 * keyFrameUnit, "Move Forward");
+	m_pSkinnedAnimationController->AddAnimationSet(478.0 * keyFrameUnit, 498.0 * keyFrameUnit, "Move Right");
+	m_pSkinnedAnimationController->AddAnimationSet(500.0 * keyFrameUnit, 520.0 * keyFrameUnit, "Move Left");
+	m_pSkinnedAnimationController->AddAnimationSet(522.0 * keyFrameUnit, 542.0 * keyFrameUnit, "Move Backward");
+	m_pSkinnedAnimationController->AddAnimationSet(544.0 * keyFrameUnit, 574.0 * keyFrameUnit, "Down");
+	m_pSkinnedAnimationController->SetAnimationSet(Idle);
+	// m_pSkinnedAnimationController->SetTrackSpeed(0, 2.0f);
 	/*
 	m_pSkinnedAnimationController->SetCallbackKeys(0, 0);
 	#ifdef _WITH_SOUND_RESOURCE
@@ -95,7 +110,6 @@ BaseCamera * GrimReaperPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeEla
 void GrimReaperPlayer::Update(float fTimeElapsed) 
 {
 	BasePlayer::Update(fTimeElapsed);
-
 }
 
 void GrimReaperPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
@@ -108,4 +122,92 @@ void GrimReaperPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 
 	ThirdPersonCamera *p3rdPersonCamera = (ThirdPersonCamera *)m_pCamera;
 	p3rdPersonCamera->SetLookAt(GetPosition());
+}
+
+void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
+{
+	DWORD dwDirection = 0;
+	if (isCancleEnabled()) {
+		if (pKeysBuffer['w'] & 0xF0 || pKeysBuffer['W'] & 0xF0) {
+			dwDirection |= DIR_FORWARD;
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
+		}
+		if (pKeysBuffer['s'] & 0xF0 || pKeysBuffer['S'] & 0xF0) {
+			dwDirection |= DIR_BACKWARD;
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Backward);
+		}
+		if (pKeysBuffer['a'] & 0xF0 || pKeysBuffer['A'] & 0xF0) {
+			dwDirection |= DIR_LEFT;
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left);
+		}
+		if (pKeysBuffer['d'] & 0xF0 || pKeysBuffer['D'] & 0xF0) {
+			dwDirection |= DIR_RIGHT;
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right);
+		}
+		if (pKeysBuffer[VK_SPACE] & 0xF0) {
+			dwDirection |= DIR_UP;
+		}
+		if (pKeysBuffer['f'] & 0xF0 || pKeysBuffer['F'] & 0xF0) {
+			dwDirection |= DIR_DOWN;
+		}
+
+		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_LEFT))
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
+		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_RIGHT))
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
+		if ((dwDirection & DIR_BACKWARD) && (dwDirection & DIR_LEFT))
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Backward);
+		if ((dwDirection & DIR_BACKWARD) && (dwDirection & DIR_RIGHT))
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Backward);
+
+		if ((dwDirection & DIR_LEFT) && (dwDirection & DIR_RIGHT)) {
+			if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_BACKWARD))
+				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+			else if (dwDirection & DIR_FORWARD)
+				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
+			else if (dwDirection & DIR_BACKWARD)
+				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Backward);
+			else
+				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+
+		}
+		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_BACKWARD)) {
+			if ((dwDirection & DIR_LEFT) && (dwDirection & DIR_RIGHT))
+				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+			else if (dwDirection & DIR_LEFT)
+				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left);
+			else if (dwDirection & DIR_RIGHT)
+				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right);
+			else
+				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+		}
+	}
+	if (!dwDirection)
+		m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+
+	float cxDelta = 0.0f, cyDelta = 0.0f;
+	POINT ptCursorPos;
+	//if (GetCapture() == m_pFramework->GetHandle())
+	{
+		SetCursor(NULL);
+		GetCursorPos(&ptCursorPos);
+		cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+		cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+		// SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+		m_ptOldCursorPos = ptCursorPos;
+	}
+
+	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
+	{
+		if (cxDelta || cyDelta)
+		{
+			if (pKeysBuffer[VK_RBUTTON] & 0xF0)
+				Rotate(cyDelta, 0.0f, -cxDelta);
+			else
+				Rotate(cyDelta, cxDelta, 0.0f);
+		}
+		if (dwDirection) Move(dwDirection, 12.25f * fTimeElapsed, true);
+	}
+
+	Update(fTimeElapsed);
 }

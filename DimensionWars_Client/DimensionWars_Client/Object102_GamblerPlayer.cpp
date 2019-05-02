@@ -13,6 +13,36 @@ GamblerPlayer::GamblerPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList
 
 	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, GrimReaperModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_pSkinnedAnimationController->AddAnimationSet(0, 40.0 * keyFrameUnit, "Idle");
+	m_pSkinnedAnimationController->AddAnimationSet(42.0 * keyFrameUnit, 62.0 * keyFrameUnit, "OnHit", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(64.0 * keyFrameUnit, 104.0 * keyFrameUnit, "Guard");
+	m_pSkinnedAnimationController->AddAnimationSet(106.0 * keyFrameUnit, 131.0 * keyFrameUnit, "Burf", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(133.0 * keyFrameUnit, 173.0 * keyFrameUnit, "Shuffle", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(175.0 * keyFrameUnit, 195.0 * keyFrameUnit, "Idle Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(197.0 * keyFrameUnit, 217.0 * keyFrameUnit, "Multi Shot", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(219.0 * keyFrameUnit, 249.0 * keyFrameUnit, "Wild Card", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(252.0 * keyFrameUnit, 286.0 * keyFrameUnit, "Jump", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(288.0 * keyFrameUnit, 323.0 * keyFrameUnit, "Jump Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(325.0 * keyFrameUnit, 345.0 * keyFrameUnit, "Fall");
+	m_pSkinnedAnimationController->AddAnimationSet(347.0 * keyFrameUnit, 367.0 * keyFrameUnit, "Fall Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(369.0 * keyFrameUnit, 399.0 * keyFrameUnit, "Move Forward");
+	m_pSkinnedAnimationController->AddAnimationSet(401.0 * keyFrameUnit, 431.0 * keyFrameUnit, "Move Forward Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(433.0 * keyFrameUnit, 463.0 * keyFrameUnit, "Move Right Forward");
+	m_pSkinnedAnimationController->AddAnimationSet(465.0 * keyFrameUnit, 495.0 * keyFrameUnit, "Move Right Forward Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(497.0 * keyFrameUnit, 527.0 * keyFrameUnit, "Move Left Forward");
+	m_pSkinnedAnimationController->AddAnimationSet(529.0 * keyFrameUnit, 559.0 * keyFrameUnit, "Move Right Forward Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(561.0 * keyFrameUnit, 591.0 * keyFrameUnit, "Move Right");
+	m_pSkinnedAnimationController->AddAnimationSet(593.0 * keyFrameUnit, 623.0 * keyFrameUnit, "Move Right Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(625.0 * keyFrameUnit, 655.0 * keyFrameUnit, "Move Left");
+	m_pSkinnedAnimationController->AddAnimationSet(657.0 * keyFrameUnit, 687.0 * keyFrameUnit, "Move Left Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(689.0 * keyFrameUnit, 719.0 * keyFrameUnit, "Move Backward");
+	m_pSkinnedAnimationController->AddAnimationSet(689.0 * keyFrameUnit, 719.0 * keyFrameUnit, "Move Backward Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(753.0 * keyFrameUnit, 783.0 * keyFrameUnit, "Move Right Backward");
+	m_pSkinnedAnimationController->AddAnimationSet(785.0 * keyFrameUnit, 815.0 * keyFrameUnit, "Move Right Backward Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(817.0 * keyFrameUnit, 847.0 * keyFrameUnit, "Move Left Backward");
+	m_pSkinnedAnimationController->AddAnimationSet(849.0 * keyFrameUnit, 879.0 * keyFrameUnit, "Move Left Backward Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(881.0 * keyFrameUnit, 904.0 * keyFrameUnit, "Down", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->SetAnimationSet(Idle);
 	/*
 	m_pSkinnedAnimationController->SetCallbackKeys(0, 0);
 	#ifdef _WITH_SOUND_RESOURCE
@@ -106,4 +136,83 @@ void GamblerPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 
 	ThirdPersonCamera *p3rdPersonCamera = (ThirdPersonCamera *)m_pCamera;
 	p3rdPersonCamera->SetLookAt(GetPosition());
+}
+
+void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
+{
+	DWORD dwDirection = 0;
+	if (isCancleEnabled()) {
+		if (pKeysBuffer['w'] & 0xF0 || pKeysBuffer['W'] & 0xF0) {
+			dwDirection |= DIR_FORWARD;
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
+		}
+		if (pKeysBuffer['s'] & 0xF0 || pKeysBuffer['S'] & 0xF0) {
+			dwDirection |= DIR_BACKWARD;
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Backward);
+		}
+		if (pKeysBuffer['a'] & 0xF0 || pKeysBuffer['A'] & 0xF0) {
+			dwDirection |= DIR_LEFT;
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left);
+		}
+		if (pKeysBuffer['d'] & 0xF0 || pKeysBuffer['D'] & 0xF0) {
+			dwDirection |= DIR_RIGHT;
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right);
+		}
+		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_LEFT))
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left_Forward);
+		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_RIGHT))
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right_Forward);
+		if ((dwDirection & DIR_BACKWARD) && (dwDirection & DIR_LEFT))
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left_Backward);
+		if ((dwDirection & DIR_BACKWARD) && (dwDirection & DIR_RIGHT))
+			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right_Backward);
+
+		if ((dwDirection & DIR_LEFT) && (dwDirection & DIR_RIGHT)) {
+			if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_BACKWARD))
+				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+			else if (dwDirection & DIR_FORWARD)
+				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
+			else if (dwDirection & DIR_BACKWARD)
+				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Backward);
+			else
+				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+
+		}
+		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_BACKWARD)) {
+			if ((dwDirection & DIR_LEFT) && (dwDirection & DIR_RIGHT))
+				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+			else if (dwDirection & DIR_LEFT)
+				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left);
+			else if (dwDirection & DIR_RIGHT)
+				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right);
+			else
+				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+		}
+	}
+	if (!dwDirection)
+		m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+
+	float cxDelta = 0.0f, cyDelta = 0.0f;
+	POINT ptCursorPos;
+	//if (GetCapture() == m_pFramework->GetHandle())
+	{
+		SetCursor(NULL);
+		GetCursorPos(&ptCursorPos);
+		cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+		cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+		// SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+		m_ptOldCursorPos = ptCursorPos;
+	}
+
+	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f)) {
+		if (cxDelta || cyDelta)
+		{
+			//if (pKeysBuffer[VK_RBUTTON] & 0xF0) Rotate(cyDelta, 0.0f, -cxDelta);
+			// else
+				Rotate(cyDelta, cxDelta, 0.0f);
+		}
+		if (dwDirection) Move(dwDirection, 12.25f * fTimeElapsed, true);
+	}
+
+	Update(fTimeElapsed);
 }

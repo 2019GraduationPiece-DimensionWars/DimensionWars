@@ -6,7 +6,6 @@ class BattleScene :
 	public BaseScene
 {
 private:
-	POINT m_ptOldCursorPos = { 0, 0 };
 	SkyBox * m_pSkyBox = nullptr;
 public:
 	BattleScene();

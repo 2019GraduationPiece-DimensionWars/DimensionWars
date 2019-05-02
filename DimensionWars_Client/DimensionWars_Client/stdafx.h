@@ -28,6 +28,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <map>
 #include <sstream>
 
 // DirectX 관련 헤더

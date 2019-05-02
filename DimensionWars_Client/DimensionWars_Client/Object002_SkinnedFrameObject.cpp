@@ -27,7 +27,7 @@ SkinnedFrameObject::SkinnedFrameObject()
 {
 	m_xmf4x4ToParent = Matrix4x4::Identity();
 	m_xmf4x4World = Matrix4x4::Identity();
-	Rotate(-90.0f, 0.0f, 0.0f);
+	//Rotate(-90.0f, 0.0f, 0.0f);
 }
 
 SkinnedFrameObject::SkinnedFrameObject(unsigned int nMaterials, unsigned int nMeshes) : SkinnedFrameObject()
@@ -71,7 +71,7 @@ void SkinnedFrameObject::SetWireFrameShader()
 	SetMaterial(0, pMaterial);
 }
 
-void SkinnedFrameObject::SetSkinnedAnimationWireFrameShader()
+void SkinnedFrameObject::SetSkinnedAnimationTestShader()
 {
 	m_nMaterials = 1;
 	m_ppMaterials = new Material*[m_nMaterials];
@@ -413,15 +413,18 @@ void SkinnedFrameObject::LoadAnimationFromFile(FILE * pInFile, LoadedModelInfo *
 			float fStartTime = ::ReadFloatFromFile(pInFile);
 			float fEndTime = ::ReadFloatFromFile(pInFile);
 
-			pLoadedModel->m_pAnimationSets->m_ppAnimationSets[nAnimationSet] = new AnimationSet(fStartTime, fEndTime, pstrToken);
-			AnimationSet *pAnimationSet = pLoadedModel->m_pAnimationSets->m_ppAnimationSets[nAnimationSet];
+			//pLoadedModel->m_pAnimationSets->m_ppAnimationSets[nAnimationSet] = new AnimationSet(fStartTime, fEndTime, pstrToken);
+			pLoadedModel->m_pAnimationSets->SetAnimationSet(nAnimationSet, new AnimationSet(fStartTime, fEndTime, pstrToken));
+
+			AnimationSet *pAnimationSet = pLoadedModel->m_pAnimationSets->GetAnimationSet(nAnimationSet); //m_ppAnimationSets[nAnimationSet];
+
 
 			::ReadStringFromFile(pInFile, pstrToken);
 			if (!strcmp(pstrToken, "<AnimationLayers>:")) {
 				pAnimationSet->m_nAnimationLayers = ::ReadIntegerFromFile(pInFile);
 				pAnimationSet->m_pAnimationLayers = new AnimationLayer[pAnimationSet->m_nAnimationLayers];
 
-				for (int i = 0; i < pAnimationSet->m_nAnimationLayers; i++) {
+				for (int i = 0; i < pAnimationSet->m_nAnimationLayers; ++i) {
 					::ReadStringFromFile(pInFile, pstrToken);
 					if (!strcmp(pstrToken, "<AnimationLayer>:")) {
 						int nAnimationLayer = ::ReadIntegerFromFile(pInFile);
@@ -430,16 +433,16 @@ void SkinnedFrameObject::LoadAnimationFromFile(FILE * pInFile, LoadedModelInfo *
 						pAnimationLayer->m_nAnimatedBoneFrames = ::ReadIntegerFromFile(pInFile);
 
 						pAnimationLayer->m_ppAnimatedBoneFrameCaches = new SkinnedFrameObject *[pAnimationLayer->m_nAnimatedBoneFrames];
-						pAnimationLayer->m_ppAnimationCurves = new AnimationCurve *[pAnimationLayer->m_nAnimatedBoneFrames][9];
+						pAnimationLayer->m_ppAnimationCurves = new AnimationCurve *[pAnimationLayer->m_nAnimatedBoneFrames][9];	// 트랜스 로테이트 스케일의 각 x, y, z가 있으므로 총 9칸의 배열
 
 						pAnimationLayer->m_fWeight = ::ReadFloatFromFile(pInFile);
 
-						for (int j = 0; j < pAnimationLayer->m_nAnimatedBoneFrames; j++) {
+						for (int j = 0; j < pAnimationLayer->m_nAnimatedBoneFrames; ++j) {
 							::ReadStringFromFile(pInFile, pstrToken);
 							if (!strcmp(pstrToken, "<AnimationCurve>:")) {
 								int nCurveNode = ::ReadIntegerFromFile(pInFile); //j
 
-								for (int k = 0; k < 9; k++) pAnimationLayer->m_ppAnimationCurves[j][k] = NULL;
+								for (int k = 0; k < 9; ++k) pAnimationLayer->m_ppAnimationCurves[j][k] = nullptr;	// 트랜스 로테이트 스케일의 각 x, y, z가 있으므로 총 9칸의 배열
 
 								::ReadStringFromFile(pInFile, pstrToken);
 								pAnimationLayer->m_ppAnimatedBoneFrameCaches[j] = pLoadedModel->m_pModelRootObject->FindFrame(pstrToken);
@@ -507,7 +510,7 @@ SkinnedFrameObject * SkinnedFrameObject::LoadFrameHierarchyFromFile(ID3D12Device
 
 			pFrameObject->SetMesh(pSkinnedMesh);
 
-			/**/pFrameObject->SetSkinnedAnimationWireFrameShader();
+			/**/pFrameObject->SetSkinnedAnimationTestShader();
 			//pFrameObject->SetSkinnedAnimationShader();	// 이자식에 하자가 있다, 수정 요망
 		}
 		else if (!strcmp(pstrToken, "<Children>:")) {
@@ -579,7 +582,11 @@ LoadedModelInfo * SkinnedFrameObject::LoadGeometryAndAnimationFromFile(ID3D12Dev
 #endif
 
 	::fclose(pInFile);
-	if (flag3DsMaxCoordinates) pLoadedModel->m_pModelRootObject->Rotate(90.0f, 0.0f, 0.0f);	// 3D Max의 좌표계를 강제로 변환하기 위한 회전
+	if (flag3DsMaxCoordinates) { 
+		//pLoadedModel->m_pModelRootObject->Rotate(90.0f, 0.0f, 0.0f);// 3D Max의 좌표계를 강제로 변환하기 위한 회전
+	}
+	
+	
 	return(pLoadedModel);
 }
 

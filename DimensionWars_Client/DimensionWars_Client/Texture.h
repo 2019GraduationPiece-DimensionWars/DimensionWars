@@ -26,10 +26,12 @@ private:
 	D3D12_GPU_DESCRIPTOR_HANDLE		*m_pSamplerGpuDescriptorHandles = nullptr;
 
 public:
+
+	SRVROOTARGUMENTINFO				*m_pRootArgumentInfos = nullptr;
+
 	Texture(int nTextureResources = 1, unsigned int nResourceType = RESOURCE_TEXTURE2D, int nSamplers = 0);
 	virtual ~Texture();
 
-	SRVROOTARGUMENTINFO				*m_pRootArgumentInfos = NULL;
 
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }

@@ -28,7 +28,8 @@ protected:
 
 	BaseCamera					*m_pCamera = nullptr;
 
-
+	POINT						m_ptOldCursorPos = { 0, 0 };	// 마우스 제어용 기존 마우스좌표 저장
+	bool						m_bAnimationLockTrigger = false;	// 이 변수가 true인 경우 SetAnimation을 하지 않는다. 모션 캔슬 방지용
 public:
 	BasePlayer();
 	virtual ~BasePlayer();
@@ -76,7 +77,16 @@ public:
 	BaseCamera *OnChangeCamera(DWORD nNewCameraMode, DWORD nCurrentCameraMode);
 
 	virtual BaseCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed) { return(nullptr); }
+
+
 	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera = nullptr);
+
+	
+	virtual void ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed);
+
+	virtual bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+
+	virtual bool isCancleEnabled() const = 0;
 };
 

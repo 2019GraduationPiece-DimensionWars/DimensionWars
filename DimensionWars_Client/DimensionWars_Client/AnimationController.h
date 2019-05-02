@@ -47,9 +47,9 @@ public:
 	float							m_fWeight = 1.0f;
 
 	int								m_nAnimatedBoneFrames = 0;
-	SkinnedFrameObject				**m_ppAnimatedBoneFrameCaches = NULL; //[m_nAnimatedBoneFrames]
+	SkinnedFrameObject				**m_ppAnimatedBoneFrameCaches = nullptr; //[m_nAnimatedBoneFrames]
 
-	AnimationCurve					*(*m_ppAnimationCurves)[9] = NULL;
+	AnimationCurve					*(*m_ppAnimationCurves)[9] = nullptr;	// S, R, T 벡터 각각의 x,y,z 원소
 
 public:
 	void LoadAnimationKeyValues(int nBoneFrame, int nCurve, FILE *pInFile);
@@ -60,7 +60,7 @@ public:
 class AnimationSet
 {
 public:
-	AnimationSet(float fStartTime, float fEndTime, char *pstrName);
+	AnimationSet(float fStartTime, float fEndTime, char *pstrName, int nType = ANIMATION_TYPE_LOOP);
 	~AnimationSet();
 
 public:
@@ -75,6 +75,7 @@ public:
 
 	float 							m_fPosition = 0.0f;
 	int 							m_nType = ANIMATION_TYPE_LOOP; //Once, Loop, PingPong
+	bool							m_bEndTrigger = false;	// Once, PingPong일 때 이 애니메이션이 끝났는지를 검사하기 위함
 
 	int 							m_nCallbackKeys = 0;
 	CALLBACKKEY 					*m_pCallbackKeys = nullptr;
@@ -91,38 +92,57 @@ public:
 	void SetAnimationCallbackHandler(AnimationCallbackHandler *pCallbackHandler);
 
 	void *GetCallbackData();
+
+	void SetEndOff() { m_bEndTrigger = false; }
+	void SetEndOn() { m_bEndTrigger = true; }
+	const bool isEnd() const { return m_bEndTrigger; }
 };
 
 class AnimationSets
 {
 private:
 	int								m_nReferences = 0;
+	int								m_nAnimationSets = 0;
+	AnimationSet					**m_ppInitalAnimationSets = nullptr;
+
+	std::vector<AnimationSet*>		m_AnimationSets;
 
 public:
-	void AddRef() { m_nReferences++; }
+	void AddRef() { ++m_nReferences; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
 
 public:
 	AnimationSets(int nAnimationSets);
 	~AnimationSets();
-
-public:
-	int								m_nAnimationSets = 0;
-	AnimationSet					**m_ppAnimationSets = nullptr;
-
-public:
+	
 	void SetCallbackKeys(int nAnimationSet, int nCallbackKeys);
 	void SetCallbackKey(int nAnimationSet, int nKeyIndex, float fTime, void *pData);
 	void SetAnimationCallbackHandler(int nAnimationSet, AnimationCallbackHandler *pCallbackHandler);
+
+	int GetNumberOfAnimationSets() const { return m_nAnimationSets; }
+	void AddAnimationSet(AnimationSet* other) {
+		++m_nAnimationSets;
+		m_AnimationSets.emplace_back(other); 
+		m_AnimationSets[m_nAnimationSets - 1]->m_nAnimationLayers = m_AnimationSets[m_nAnimationSets - 2]->m_nAnimationLayers;
+		m_AnimationSets[m_nAnimationSets - 1]->m_pAnimationLayers = m_AnimationSets[m_nAnimationSets - 2]->m_pAnimationLayers;
+	}
+	void SetAnimationSet(int nAnimationSet, AnimationSet* other) { m_AnimationSets[nAnimationSet] = other; }
+	AnimationSet* GetAnimationSet(int nAnimationSet) const { return m_AnimationSets[nAnimationSet]; }
+	void AddAnimationSet(float fStartTime, float fEndTime, char *pstrName, int nType = ANIMATION_TYPE_LOOP) { 
+		++m_nAnimationSets;
+		m_AnimationSets.emplace_back(new AnimationSet(fStartTime, fEndTime, pstrName, nType)); 
+		m_AnimationSets[m_nAnimationSets - 1]->m_nAnimationLayers = m_AnimationSets[m_nAnimationSets - 2]->m_nAnimationLayers;
+		m_AnimationSets[m_nAnimationSets - 1]->m_pAnimationLayers = m_AnimationSets[m_nAnimationSets - 2]->m_pAnimationLayers;
+	}
 };
 
-class CAnimationTrack
+class AnimationTrack
 {
 public:
-	CAnimationTrack() { }
-	~CAnimationTrack() { }
+	AnimationTrack() { }
+	~AnimationTrack() { }
 
-public:
+private:
 	BOOL 							m_bEnable = true;
 	float 							m_fSpeed = 1.0f;
 	float 							m_fPosition = 0.0f;
@@ -132,11 +152,19 @@ public:
 
 public:
 	void SetAnimationSet(int nAnimationSet) { m_nAnimationSet = nAnimationSet; }
+	int GetAnimationSet() const { return m_nAnimationSet; }
 
 	void SetEnable(bool bEnable) { m_bEnable = bEnable; }
+	bool isEnable() const { return m_bEnable; }
+
 	void SetSpeed(float fSpeed) { m_fSpeed = fSpeed; }
+	float GetSpeed() const { return m_fSpeed; }
+
 	void SetWeight(float fWeight) { m_fWeight = fWeight; }
+	float GetWeight() const { return m_fWeight; }
+
 	void SetPosition(float fPosition) { m_fPosition = fPosition; }
+	float GetPosition() const { return m_fPosition; }
 };
 
 class LoadedModelInfo
@@ -166,10 +194,11 @@ public:
 public:
 	float 							m_fTime = 0.0f;
 
-	int 							m_nAnimationTracks = 0;
-	CAnimationTrack 				*m_pAnimationTracks = nullptr;
+	int								m_nAnimationTrack = 0;	// 현재 재생중인 트랙
+	int 							m_nAnimationTracks = 0; // 총 트랙 갯수
+	AnimationTrack 					*m_pAnimationTracks = nullptr;
 
-	AnimationSets					*m_pAnimationSets = nullptr;
+	AnimationSets					*m_pAnimationSets = nullptr;	// 애니메이션셋 들을 관리하는 클래스
 
 	int 							m_nSkinnedMeshes = 0;
 	SkinnedMesh						**m_ppSkinnedMeshes = nullptr; //[SkinnedMeshes], Skinned Mesh Cache
@@ -189,6 +218,10 @@ public:
 	void SetCallbackKeys(int nAnimationSet, int nCallbackKeys);
 	void SetCallbackKey(int nAnimationSet, int nKeyIndex, float fTime, void *pData);
 	void SetAnimationCallbackHandler(int nAnimationSet, AnimationCallbackHandler *pCallbackHandler);
+
+	void SetAnimationSet(int nAnimationSet);
+
+	void AddAnimationSet(float fStartTime, float fEndTime, char *pstrName, int nType = ANIMATION_TYPE_LOOP) { if (m_pAnimationSets) m_pAnimationSets->AddAnimationSet(fStartTime, fEndTime, pstrName, nType); }
 
 	void AdvanceTime(float fElapsedTime, SkinnedFrameObject *pRootGameObject);
 };

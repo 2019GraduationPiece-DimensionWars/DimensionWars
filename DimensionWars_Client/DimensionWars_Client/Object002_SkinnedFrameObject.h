@@ -36,7 +36,7 @@ public:
 	virtual ~SkinnedFrameObject();	
 
 	void SetWireFrameShader();
-	void SetSkinnedAnimationWireFrameShader();
+	void SetSkinnedAnimationTestShader();
 	void SetStandardShader();
 	void SetSkinnedAnimationShader();
 
