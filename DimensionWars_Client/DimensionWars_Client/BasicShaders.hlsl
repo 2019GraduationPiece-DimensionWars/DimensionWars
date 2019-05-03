@@ -56,7 +56,7 @@ Texture2DArray TextureArray : register(t4);
 #define MATERIAL_DETAIL_ALBEDO_MAP	0x20
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
 
-Texture2D gtxtTexture : register(t15);
+Texture2D gtxtTexture : register(t14);
 
 Texture2D gtxtAlbedoTexture : register(t6);
 Texture2D gtxtSpecularTexture : register(t7);
