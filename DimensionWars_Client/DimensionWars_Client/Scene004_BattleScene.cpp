@@ -35,25 +35,20 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	XMFLOAT4 xmf4Color(0.1f, 0.1f, 0.1f, 0.5f);
 	//m_pTerrain = new HeightMapTerrain(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, _T("Texture/HeightMap.raw"), 257, 257, xmf3Scale, xmf4Color);
 
-	 //GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain);
+	// GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain);
 	GamblerPlayer *pPlayer = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain);
 	// ElfArcherPlayer *pPlayer = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain);
 	m_pPlayer = pPlayer;
 
 	m_nCubeObjects = 50;
 	m_ppCubeObjects = new DiffuseCubeObject*[m_nCubeObjects];
-	for (int i = 0; i < m_nCubeObjects; ++i) {
-#ifdef USE_CONSOLE_WINDOW
-		printf("Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", i, cubeSize[i], cubePos[i].x, cubePos[i].y, cubePos[i].z, cubeRot[i].x, cubeRot[i].y, cubeRot[i].z);
-#endif
-		if (i < 5) cubeSize[i] = 300.0f;
-		else if (i < 10) cubeSize[i] = 400.0f;
-		else if (i < 20) cubeSize[i] = 500.0f;
-		else if (i < 30) cubeSize[i] = 600.0f;
-		else if (i < 50) cubeSize[i] = 700.0f;
-		m_ppCubeObjects[i] = new DiffuseCubeObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, cubeSize[i]);
-		m_ppCubeObjects[i]->SetPosition(cubePos[i].x, cubePos[i].y, cubePos[i].z);
-		m_ppCubeObjects[i]->Rotate(cubeRot[i].x, cubeRot[i].y, cubeRot[i].z);
+	for (unsigned int i = 0; i < m_nCubeObjects; ++i) {
+		if (i < 5) m_pFramework->cubeSize[i] = 300.0f;
+		else if (i < 10) m_pFramework->cubeSize[i] = 400.0f;
+		else if (i < 20) m_pFramework->cubeSize[i] = 500.0f;
+		else if (i < 30) m_pFramework->cubeSize[i] = 600.0f;
+		else if (i < 50) m_pFramework->cubeSize[i] = 700.0f;
+		m_ppCubeObjects[i] = new DiffuseCubeObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pFramework->cubeSize[i]);
 	}
 
 	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
@@ -137,14 +132,13 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 void BattleScene::BuildCube()
 {
 	if (!isBuilded) {
-		for (int i = 0; i < m_nCubeObjects; ++i) {
-			{
+		for (unsigned int i = 0; i < m_nCubeObjects; ++i) {
 #ifdef USE_CONSOLE_WINDOW
-				printf("UP Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", i, cubeSize[i], cubePos[i].x, cubePos[i].y, cubePos[i].z, cubeRot[i].x, cubeRot[i].y, cubeRot[i].z);
+			// printf("UP Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", i, m_pFramework->cubeSize[i], m_pFramework->cubePos[i].x, m_pFramework->cubePos[i].y, m_pFramework->cubePos[i].z, m_pFramework->cubeRot[i].x, m_pFramework->cubeRot[i].y, m_pFramework->cubeRot[i].z);
 #endif
-				m_ppCubeObjects[i]->SetPosition(cubePos[i].x, cubePos[i].y, cubePos[i].z);
-				m_ppCubeObjects[i]->Rotate(cubeRot[i].x, cubeRot[i].y, cubeRot[i].z);
-			}
+			m_ppCubeObjects[i]->SetPosition(m_pFramework->cubePos[i].x, m_pFramework->cubePos[i].y, m_pFramework->cubePos[i].z);
+			m_ppCubeObjects[i]->Rotate(m_pFramework->cubeRot[i].x, m_pFramework->cubeRot[i].y, m_pFramework->cubeRot[i].z);
 		}
+		isBuilded = true;
 	}
 }

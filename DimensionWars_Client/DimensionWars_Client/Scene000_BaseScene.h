@@ -109,10 +109,6 @@ public:
 	void SendMoveDirection();
 	BasePlayer					*m_pPlayer = nullptr;
 
-	float  cubeSize[50];
-	XMFLOAT3 cubePos[50];
-	XMFLOAT3 cubeRot[50];
-
 protected:
 	ID3D12RootSignature			*m_pGraphicsRootSignature = nullptr;
 
@@ -132,7 +128,5 @@ protected:
 
 	SceneTag					m_Tag;
 	RuntimeFrameWork			*m_pFramework;
-
-
 };
 

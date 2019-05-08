@@ -222,6 +222,12 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 		}
 	}
+
+
+	if (pKeysBuffer[VK_LBUTTON])
+		m_pSkinnedAnimationController->SetAnimationSet(state = First_Attack);
+
+
 	if (!dwDirection)
 		m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 
@@ -248,4 +254,22 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 	}
 
 	Update(fTimeElapsed);
+}
+
+bool GrimReaperPlayer::isCancleEnabled() const
+{
+	if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger) {
+		m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger = false;
+		return true;
+	}
+	switch (state) {
+	case Idle:
+	case Move_Forward:
+	case Move_Left:
+	case Move_Right:
+	case Move_Backward:
+		return true;
+	default:	// 위 상태가 아니면 현재 모션을 캔슬 할 수 없다.
+		return false;
+	}
 }

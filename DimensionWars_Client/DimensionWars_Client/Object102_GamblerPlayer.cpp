@@ -206,6 +206,13 @@ void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 			dwDirection |= DIR_RIGHT;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right);
 		}
+		if (pKeysBuffer[VK_SPACE] & 0xF0) {
+			dwDirection |= DIR_UP;
+		}
+		if (pKeysBuffer['f'] & 0xF0 || pKeysBuffer['F'] & 0xF0) {
+			dwDirection |= DIR_DOWN;
+		}
+
 		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_LEFT))
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left_Forward);
 		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_RIGHT))
@@ -236,9 +243,16 @@ void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 			else
 				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 		}
+
+		
 	}
+	
 	if (!dwDirection)
 		m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+
+	if (pKeysBuffer['q'] & 0xF0 || pKeysBuffer['Q'] & 0xF0) {
+		m_pSkinnedAnimationController->SetAnimationSet(state = Wild_Card);
+	}
 
 	float cxDelta = 0.0f, cyDelta = 0.0f;
 	POINT ptCursorPos;
@@ -263,4 +277,26 @@ void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 	}
 
 	Update(fTimeElapsed);
+}
+
+bool GamblerPlayer::isCancleEnabled() const
+{
+	if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger) {
+		m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger = false;
+		return true;
+	}
+	switch (state) {
+	case Idle:
+	case Move_Forward:
+	case Move_Left_Forward:
+	case Move_Right_Forward:
+	case Move_Left:
+	case Move_Right:
+	case Move_Backward:
+	case Move_Left_Backward:
+	case Move_Right_Backward:
+		return true;
+	default:	// 위 상태가 아니면 현재 모션을 캔슬 할 수 없다.
+		return false;
+	}
 }

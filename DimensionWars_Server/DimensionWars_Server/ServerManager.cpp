@@ -107,7 +107,7 @@ void ServerManager::AcceptThread()
 		objects[new_id].over.is_recv = true;
 		std::random_device rd;
 		std::default_random_engine dre(rd());
-		std::uniform_real_distribution<> startPos(0.0, 100.0);
+		std::uniform_real_distribution<> startPos(0.0, 0.0);
 
 		objects[new_id].position = { static_cast<float>(startPos(dre)), static_cast<float>(startPos(dre)), static_cast<float>(startPos(dre)) };
 		objects[new_id].viewlist.clear();
@@ -141,10 +141,8 @@ void ServerManager::AcceptThread()
 			}
 		}
 
-
-		for (int i = Cube_start; i < Cube_start + 50; ++i) {
+		for (int i = Cube_start; i < Cube_start + 50; ++i)
 			SendMapInfoPacket(new_id, i);
-		}
 
 
 		RecvPacket(new_id);
@@ -211,11 +209,11 @@ void ServerManager::ObjectInitialize()
 {
 	std::random_device rd;
 	std::default_random_engine dre(rd());
-	//std::uniform_real_distribution<> startPos(-2650.0,2650.0);
-	//std::uniform_real_distribution<> startYPos(0, 2650.0);
+	std::uniform_real_distribution<> startPos(-2650.0,2650.0);
+	std::uniform_real_distribution<> startYPos(0, 2650.0);
 	std::uniform_real_distribution<> startRotate(0, 90.0);
-	std::uniform_real_distribution<> startPos(0.0, 500.0);
-	std::uniform_real_distribution<> startYPos(0, 250.0);
+	//std::uniform_real_distribution<> startPos(0.0, 500.0);
+	//std::uniform_real_distribution<> startYPos(0, 250.0);
 
 	for (int i = Cube_start; i < Cube_start+5; ++i) {
 		objects[i].position.x = startPos(dre);

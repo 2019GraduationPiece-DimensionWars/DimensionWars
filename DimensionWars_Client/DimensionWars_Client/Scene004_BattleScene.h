@@ -14,6 +14,8 @@ private:
 	HeightMapTerrain * m_pTerrain = nullptr;
 
 	bool isBuilded = false;
+
+	BasePlayer **m_ppOtherPlayers = nullptr;
 public:
 	BattleScene();
 	BattleScene(SceneTag tag, RuntimeFrameWork* pFramework)

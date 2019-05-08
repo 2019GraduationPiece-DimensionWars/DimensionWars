@@ -552,7 +552,7 @@ void BaseScene::ProcessPacket(char * ptr)
 	{
 		//printf("%d", myid);
 		SCPacket_Position *my_packet = reinterpret_cast<SCPacket_Position *>(ptr);
-		char other_id = my_packet->id;
+		unsigned short other_id = my_packet->id;
 		if (other_id == myid) {
 			//	printf("move");
 			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
@@ -606,12 +606,12 @@ void BaseScene::ProcessPacket(char * ptr)
 		SCPacket_MapInfo *my_packet = reinterpret_cast<SCPacket_MapInfo *>(ptr);
 
 		unsigned short id = my_packet->id - Cube_start;
-		cubeSize[id] = my_packet->cube_size;
-		cubePos[id] = XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z);
-		cubeRot[id] = XMFLOAT3(my_packet->rotate.x, my_packet->rotate.y, my_packet->rotate.z);
+		m_pFramework->cubeSize[id] = my_packet->cube_size;
+		m_pFramework->cubePos[id] = XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z);
+		m_pFramework->cubeRot[id] = XMFLOAT3(my_packet->rotate.x, my_packet->rotate.y, my_packet->rotate.z);
 
 #ifdef USE_CONSOLE_WINDOW
-		 printf("MAPINFO Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", id, cubeSize[id], cubePos[id].x, cubePos[id].y, cubePos[id].z, cubeRot[id].x, cubeRot[id].y, cubeRot[id].z);
+		// printf("MAPINFO Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", id, m_pFramework->cubeSize[id], m_pFramework->cubePos[id].x, m_pFramework->cubePos[id].y, m_pFramework->cubePos[id].z, m_pFramework->cubeRot[id].x, m_pFramework->cubeRot[id].y, m_pFramework->cubeRot[id].z);
 #endif
 		break;
 	}

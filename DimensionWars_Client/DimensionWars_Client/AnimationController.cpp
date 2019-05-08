@@ -117,8 +117,9 @@ void AnimationSet::SetPosition(float fTrackPosition)
 	}
 	case ANIMATION_TYPE_ONCE: 
 	{
-		if (!m_bEndTrigger) m_fPosition = m_fStartTime + fTrackPosition;
-		m_bEndTrigger = (fTrackPosition >= m_fLength) ? true : false;
+		if (!m_bEndTrigger) m_fPosition = m_fStartTime + fNowPosition;
+		m_bEndTrigger = (m_fPosition >= m_fEndTime) ? true : false;
+		printf("%s : TrackPos : %.2f / Length : %.2f / m_fPosition : %.2f / (%.2f ~ %.2f) / %.2f\n", m_pstrAnimationSetName, fTrackPosition, m_fLength, m_fPosition, m_fStartTime, m_fEndTime, fNowPosition);
 		break;
 	}
 	case ANIMATION_TYPE_PINGPONG:
@@ -136,7 +137,7 @@ void AnimationSet::SetPosition(float fTrackPosition)
 		break;
 	}
 	}
-	//printf("%s : TrackPos : %.2f / Length : %.2f / m_fPosition : %.2f / (%.2f ~ %.2f) / %.2f\n", m_pstrAnimationSetName, fTrackPosition, m_fLength, m_fPosition, m_fStartTime, m_fEndTime, fNowPosition);
+		
 	if (m_pAnimationCallbackHandler)
 	{
 		void *pCallbackData = GetCallbackData();

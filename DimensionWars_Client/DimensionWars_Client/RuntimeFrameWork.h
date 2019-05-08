@@ -104,8 +104,10 @@ public:
 
 	char* GetSendBuf() { return send_buffer; }
 
+	float cubeSize[50];
+	XMFLOAT3 cubePos[50];
+	XMFLOAT3 cubeRot[50];
 
-	BaseScene::SceneTag m_CurrSceneTag = BaseScene::SceneTag::Title;
 private:
 	FrameTimer m_Timer;
 	BasePlayer * m_pPlayer = nullptr;
@@ -113,7 +115,7 @@ private:
 	BaseScene * arrScene[BaseScene::SceneTag::Count];
 	BaseScene * m_pCurrScene = nullptr;
 	BaseScene * m_pPrevScene = nullptr;
-
+	BaseScene::SceneTag m_CurrSceneTag = BaseScene::SceneTag::Title;
 
 	SOCKET mySocket; // 소켓
 	char server_ip[17] = "127.0.0.1"; // 서버 IP

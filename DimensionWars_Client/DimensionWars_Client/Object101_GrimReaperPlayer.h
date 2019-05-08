@@ -1,7 +1,7 @@
 #pragma once
 #include "Object100_BasePlayer.h"
 
-
+class AnimationController;
 class GrimReaperPlayer :
 	public BasePlayer
 {
@@ -25,7 +25,7 @@ public:
 		Move_Backward = 14,
 		Down = 15
 	};
-	State state;
+	State state = Idle;
 
 	GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext = nullptr);
 	virtual ~GrimReaperPlayer();
@@ -40,17 +40,6 @@ public:
 
 	virtual void ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed) override;
 
-	virtual bool isCancleEnabled() const {
-		switch (state) {
-		case Idle:
-		case Move_Forward:
-		case Move_Left:
-		case Move_Right:
-		case Move_Backward:
-			return true;
-		default:	// 위 상태가 아니면 현재 모션을 캔슬 할 수 없다.
-			return false;
-		}
-	}
+	virtual bool isCancleEnabled() const;
 };
 

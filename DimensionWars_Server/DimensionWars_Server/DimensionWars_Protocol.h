@@ -10,7 +10,7 @@ constexpr unsigned short BUFSIZE = 1024;		// 버퍼의 크기
 
 constexpr unsigned short MAX_USER = 500;	// 한 방과 한 전투에 플레이어는 6명. 이 게임은 투사체가 많지 플레이어가 많은 것이 아니다.
 constexpr unsigned short Cube_start = 450;
-constexpr unsigned char MAX_PLAYER = MAX_USER;	// 코딩 할 때 불편하지 않도록 같은 이름을 쓰기 위함
+constexpr unsigned short MAX_PLAYER = MAX_USER;	// 코딩 할 때 불편하지 않도록 같은 이름을 쓰기 위함
 
 constexpr unsigned int MAX_OBJECTS = 1000;		// 총 서버가 관리할 플레이어, 투사체 등의 정보를 포함한 게임 월드의 모든 오브젝트 숫자
 // 플레이어 6명, 큐브 50개, 투사체 X개 

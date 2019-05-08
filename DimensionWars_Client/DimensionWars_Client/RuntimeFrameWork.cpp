@@ -75,7 +75,7 @@ bool RuntimeFrameWork::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	BuildAllScene();
 	ChangeScene(BaseScene::SceneTag::Title);
-	
+	ChangeScene(BaseScene::SceneTag::Game);
 	BuildObjects();
 
 	// 네트워크 초기화
@@ -425,9 +425,6 @@ void RuntimeFrameWork::FrameAdvance()
 	m_Timer.Tick(60.0f);
 
 	BattleScene *pScene = reinterpret_cast<BattleScene*>(arrScene[BaseScene::SceneTag::Game]);
-	memcpy(pScene->cubeSize, arrScene[BaseScene::SceneTag::Title]->cubeSize, sizeof(pScene->cubeSize) * 50);
-	memcpy(pScene->cubePos, arrScene[BaseScene::SceneTag::Title]->cubePos, sizeof(pScene->cubePos) * 50);
-	memcpy(pScene->cubeRot, arrScene[BaseScene::SceneTag::Title]->cubeRot, sizeof(pScene->cubeRot) * 50);
 
 	pScene->BuildCube();
 	ProcessInput();
@@ -496,8 +493,8 @@ void RuntimeFrameWork::FrameAdvance()
 
 	m_Timer.GetFrameRate(m_pszFrameRate + 24, 50);
 	size_t nLength = _tcslen(m_pszFrameRate);
-	//XMFLOAT3 xmf3Position = m_pPlayer->GetPosition();
-	//_stprintf_s(m_pszFrameRate + nLength, 70 - nLength, _T("(%1f, %1f, %1f)")/*, xmf3Position.x, xmf3Position.y, xmf3Position.z*/);
+	XMFLOAT3 xmf3Position = m_pPlayer->GetPosition();
+	_stprintf_s(m_pszFrameRate + nLength, 70 - nLength, _T("(%.1f, %.1f, %.1f)"), xmf3Position.x, xmf3Position.y, xmf3Position.z);
 	::SetWindowText(m_hWnd, m_pszFrameRate);
 
 }

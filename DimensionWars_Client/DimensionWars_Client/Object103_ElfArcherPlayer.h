@@ -1,5 +1,8 @@
 #pragma once
 #include "Object100_BasePlayer.h"
+
+class AnimationController;
+
 class ElfArcherPlayer :
 	public BasePlayer
 {
@@ -29,7 +32,7 @@ public:
 		Move_Left_Backward = 20,	// Move_Left_Backward = 21,
 		Down = 22
 	};
-	State state;
+	State state = Idle;
 
 	ElfArcherPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext);
 	virtual ~ElfArcherPlayer();
@@ -45,20 +48,5 @@ public:
 
 	virtual void ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed) override;
 
-	virtual bool isCancleEnabled() const {
-		switch (state) {
-		case Idle:
-		case Move_Forward:
-		case Move_Left_Forward:
-		case Move_Right_Forward:
-		case Move_Left:
-		case Move_Right:
-		case Move_Backward:
-		case Move_Left_Backward:
-		case Move_Right_Backward:
-			return true;
-		default:	// 위 상태가 아니면 현재 모션을 캔슬 할 수 없다.
-			return false;
-		}
-	}
+	virtual bool isCancleEnabled() const;
 };
