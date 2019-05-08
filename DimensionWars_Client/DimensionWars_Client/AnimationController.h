@@ -67,7 +67,7 @@ public:
 	char							m_pstrAnimationSetName[64];
 
 	int								m_nAnimationLayers = 0;
-	AnimationLayer					*m_pAnimationLayers = nullptr;
+	AnimationLayer					*m_pAnimationLayers = nullptr;	// 유니크포인터로 바꿔주는 공사가 필요하다.
 
 	float							m_fStartTime = 0.0f;
 	float							m_fEndTime = 0.0f;

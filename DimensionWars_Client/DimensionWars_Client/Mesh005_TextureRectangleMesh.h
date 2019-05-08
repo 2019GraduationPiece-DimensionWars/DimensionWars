@@ -1,18 +1,6 @@
 #pragma once
 #include "Mesh000_BaseMesh.h"
 
-class Vertex
-{
-public:
-	XMFLOAT3						m_xmf3Position;
-
-public:
-	Vertex() { m_xmf3Position = XMFLOAT3(0.0f, 0.0f, 0.0f); }
-	Vertex(XMFLOAT3 xmf3Position) { m_xmf3Position = xmf3Position; }
-	~Vertex() { }
-};
-
-
 class TexturedVertex : public Vertex
 {
 public:

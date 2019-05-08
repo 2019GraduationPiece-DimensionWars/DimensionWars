@@ -3,6 +3,7 @@
 #include "Object101_GrimReaperPlayer.h"
 #include "Camera002_ThirdPersonCamera.h"
 #include "AnimationController.h"
+#include "Object008_HeightmapTerrain.h"
 
 
 GrimReaperPlayer::GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext)
@@ -14,19 +15,22 @@ GrimReaperPlayer::GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 
 	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, GrimReaperModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);	
-	m_pSkinnedAnimationController->AddAnimationSet(0, 40.0 * keyFrameUnit, "Idle");
-	m_pSkinnedAnimationController->AddAnimationSet(42.0 * keyFrameUnit, 63.0 * keyFrameUnit, "OnHit", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(64.0 * keyFrameUnit, 104.0 * keyFrameUnit, "Guard");
-	m_pSkinnedAnimationController->AddAnimationSet(106.0 * keyFrameUnit, 146.0 * keyFrameUnit, "Burf", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(148.0 * keyFrameUnit, 208.0 * keyFrameUnit, "Hide Invasion", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(210.0 * keyFrameUnit, 330.0 * keyFrameUnit, "Full Attack", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(332.0 * keyFrameUnit, 382.0 * keyFrameUnit, "Slash Wave", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(384.0 * keyFrameUnit, 454.0 * keyFrameUnit, "Beheading");
-	m_pSkinnedAnimationController->AddAnimationSet(456.0 * keyFrameUnit, 476.0 * keyFrameUnit, "Move Forward");
-	m_pSkinnedAnimationController->AddAnimationSet(478.0 * keyFrameUnit, 498.0 * keyFrameUnit, "Move Right");
-	m_pSkinnedAnimationController->AddAnimationSet(500.0 * keyFrameUnit, 520.0 * keyFrameUnit, "Move Left");
-	m_pSkinnedAnimationController->AddAnimationSet(522.0 * keyFrameUnit, 542.0 * keyFrameUnit, "Move Backward");
-	m_pSkinnedAnimationController->AddAnimationSet(544.0 * keyFrameUnit, 574.0 * keyFrameUnit, "Down");
+	m_pSkinnedAnimationController->AddAnimationSet(0.0f, 40.0f * keyFrameUnit, "Idle");
+	m_pSkinnedAnimationController->AddAnimationSet(42.0f * keyFrameUnit, 62.0f * keyFrameUnit, "OnHit", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(64.0f * keyFrameUnit, 104.0f * keyFrameUnit, "Guard");
+	m_pSkinnedAnimationController->AddAnimationSet(106.0f * keyFrameUnit, 146.0f * keyFrameUnit, "Burf", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(148.0f * keyFrameUnit, 208.0f * keyFrameUnit, "Hide Invasion", ANIMATION_TYPE_ONCE);
+	// m_pSkinnedAnimationController->AddAnimationSet(210.0 * keyFrameUnit, 330.0 * keyFrameUnit, "Full Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(210.0f * keyFrameUnit, 235.0f * keyFrameUnit, "First Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(235.0f * keyFrameUnit, 271.0f * keyFrameUnit, "Second Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(271.0f * keyFrameUnit, 330.0f * keyFrameUnit, "Third Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(332.0f * keyFrameUnit, 382.0f * keyFrameUnit, "Slash Wave", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(384.0f * keyFrameUnit, 454.0f * keyFrameUnit, "Beheading");
+	m_pSkinnedAnimationController->AddAnimationSet(456.0f * keyFrameUnit, 476.0f * keyFrameUnit, "Move Forward");
+	m_pSkinnedAnimationController->AddAnimationSet(478.0f * keyFrameUnit, 498.0f * keyFrameUnit, "Move Right");
+	m_pSkinnedAnimationController->AddAnimationSet(500.0f * keyFrameUnit, 520.0f * keyFrameUnit, "Move Left");
+	m_pSkinnedAnimationController->AddAnimationSet(522.0f * keyFrameUnit, 542.0f * keyFrameUnit, "Move Backward");
+	m_pSkinnedAnimationController->AddAnimationSet(544.0f * keyFrameUnit, 574.0f * keyFrameUnit, "Down");
 	m_pSkinnedAnimationController->SetAnimationSet(Idle);
 	// m_pSkinnedAnimationController->SetTrackSpeed(0, 2.0f);
 	/*
@@ -114,14 +118,50 @@ void GrimReaperPlayer::Update(float fTimeElapsed)
 
 void GrimReaperPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 {
+	HeightMapTerrain *pTerrain = (HeightMapTerrain *)m_pPlayerUpdatedContext;
+	XMFLOAT3 xmf3Scale = pTerrain->GetScale();
+	XMFLOAT3 xmf3PlayerPosition = GetPosition();
+	int z = (int)(xmf3PlayerPosition.z / xmf3Scale.z);
+	bool bReverseQuad = ((z % 2) != 0);
+	float fHeight = pTerrain->GetHeight(xmf3PlayerPosition.x, xmf3PlayerPosition.z, bReverseQuad) + 0.0f;
+	if (xmf3PlayerPosition.y < fHeight)
+	{
+		XMFLOAT3 xmf3PlayerVelocity = GetVelocity();
+		xmf3PlayerVelocity.y = 0.0f;
+		SetVelocity(xmf3PlayerVelocity);
+		xmf3PlayerPosition.y = fHeight;
+		SetPosition(xmf3PlayerPosition);
+	}
 }
 
 void GrimReaperPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 {
+	HeightMapTerrain *pTerrain = (HeightMapTerrain *)m_pCameraUpdatedContext;
+	XMFLOAT3 xmf3Scale = pTerrain->GetScale();
+	XMFLOAT3 xmf3CameraPosition = m_pCamera->GetPosition();
+	int z = (int)(xmf3CameraPosition.z / xmf3Scale.z);
+	bool bReverseQuad = ((z % 2) != 0);
+	float fHeight = pTerrain->GetHeight(xmf3CameraPosition.x, xmf3CameraPosition.z, bReverseQuad) + 15.0f;
+	if (xmf3CameraPosition.y <= fHeight)
+	{
+		xmf3CameraPosition.y = fHeight;
+		m_pCamera->SetPosition(xmf3CameraPosition);
+		if (m_pCamera->GetMode() == THIRD_PERSON_CAMERA)
+		{
+			ThirdPersonCamera *p3rdPersonCamera = (ThirdPersonCamera *)m_pCamera;
+			p3rdPersonCamera->SetLookAt(GetPosition());
+		}
+
+		XMFLOAT3 xmf3CameraPosition = m_pCamera->GetPosition();
+
+		ThirdPersonCamera *p3rdPersonCamera = (ThirdPersonCamera *)m_pCamera;
+		p3rdPersonCamera->SetLookAt(GetPosition());
+	}
+	/*
 	XMFLOAT3 xmf3CameraPosition = m_pCamera->GetPosition();
 
 	ThirdPersonCamera *p3rdPersonCamera = (ThirdPersonCamera *)m_pCamera;
-	p3rdPersonCamera->SetLookAt(GetPosition());
+	p3rdPersonCamera->SetLookAt(GetPosition());*/
 }
 
 void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
@@ -197,16 +237,14 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 		m_ptOldCursorPos = ptCursorPos;
 	}
 
-	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
-	{
-		if (cxDelta || cyDelta)
-		{
+	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f)) {
+		if (cxDelta || cyDelta){
 			if (pKeysBuffer[VK_RBUTTON] & 0xF0)
 				Rotate(cyDelta, 0.0f, -cxDelta);
 			else
 				Rotate(cyDelta, cxDelta, 0.0f);
 		}
-		if (dwDirection) Move(dwDirection, 12.25f * fTimeElapsed, true);
+		if (dwDirection) Move(dwDirection, 6000.0f * fTimeElapsed, true);
 	}
 
 	Update(fTimeElapsed);

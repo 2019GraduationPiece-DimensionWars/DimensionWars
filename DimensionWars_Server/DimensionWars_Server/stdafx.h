@@ -339,4 +339,9 @@ struct SOCKETINFO
 
 	std::unordered_set <unsigned short int> viewlist;	// id를 저장
 	std::mutex vl_lock;	// viewlist를 잠그기 위함
+	
+	// 맵 정보
+	float cube_size;
+	//XMFLOAT3 position;
+	XMFLOAT3 rotate;
 };

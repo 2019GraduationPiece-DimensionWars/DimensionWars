@@ -1,11 +1,11 @@
-// stdafx.cpp : í‘œì¤€ í¬í•¨ íŒŒì¼ë§Œ ë“¤ì–´ ìˆëŠ” ì†ŒìŠ¤ íŒŒì¼ì…ë‹ˆë‹¤.
-// $safeprojectname$.pchëŠ” ë¯¸ë¦¬ ì»´íŒŒì¼ëœ í—¤ë”ê°€ ë©ë‹ˆë‹¤.
-// stdafx.objì—ëŠ” ë¯¸ë¦¬ ì»´íŒŒì¼ëœ í˜•ì‹ ì •ë³´ê°€ í¬í•¨ë©ë‹ˆë‹¤.
+// stdafx.cpp : Ç¥ÁØ Æ÷ÇÔ ÆÄÀÏ¸¸ µé¾î ÀÖ´Â ¼Ò½º ÆÄÀÏÀÔ´Ï´Ù.
+// $safeprojectname$.pch´Â ¹Ì¸® ÄÄÆÄÀÏµÈ Çì´õ°¡ µË´Ï´Ù.
+// stdafx.obj¿¡´Â ¹Ì¸® ÄÄÆÄÀÏµÈ Çü½Ä Á¤º¸°¡ Æ÷ÇÔµË´Ï´Ù.
 
 #include "stdafx.h"
 
-// TODO: í•„ìš”í•œ ì¶”ê°€ í—¤ë”ëŠ”
-// ì´ íŒŒì¼ì´ ì•„ë‹Œ STDAFX.Hì—ì„œ ì°¸ì¡°í•©ë‹ˆë‹¤.
+// TODO: ÇÊ¿äÇÑ Ãß°¡ Çì´õ´Â
+// ÀÌ ÆÄÀÏÀÌ ¾Æ´Ñ STDAFX.H¿¡¼­ ÂüÁ¶ÇÕ´Ï´Ù.
 #include "DDSTextureLoader12.h"
 #include "WICTextureLoader12.h"
 
@@ -117,7 +117,7 @@ ID3D12Resource *CreateTextureResourceFromDDSFile(ID3D12Device *pd3dDevice, ID3D1
 
 	D3D12_RESOURCE_DESC d3dResourceDesc;
 	::ZeroMemory(&d3dResourceDesc, sizeof(D3D12_RESOURCE_DESC));
-	d3dResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER; //Upload Heapì—ëŠ” í…ìŠ¤ì³ë¥¼ ìƒì„±í•  ìˆ˜ ì—†ìŒ
+	d3dResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER; //Upload Heap¿¡´Â ÅØ½ºÃÄ¸¦ »ı¼ºÇÒ ¼ö ¾øÀ½
 	d3dResourceDesc.Alignment = 0;
 	d3dResourceDesc.Width = nBytes;
 	d3dResourceDesc.Height = 1;
@@ -173,7 +173,7 @@ ID3D12Resource *CreateTextureResourceFromWICFile(ID3D12Device *pd3dDevice, ID3D1
 
 	D3D12_RESOURCE_DESC d3dResourceDesc;
 	::ZeroMemory(&d3dResourceDesc, sizeof(D3D12_RESOURCE_DESC));
-	d3dResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER; //Upload Heapì—ëŠ” í…ìŠ¤ì³ë¥¼ ìƒì„±í•  ìˆ˜ ì—†ìŒ
+	d3dResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER; //Upload Heap¿¡´Â ÅØ½ºÃÄ¸¦ »ı¼ºÇÒ ¼ö ¾øÀ½
 	d3dResourceDesc.Alignment = 0;
 	d3dResourceDesc.Width = nBytes;
 	d3dResourceDesc.Height = 1;

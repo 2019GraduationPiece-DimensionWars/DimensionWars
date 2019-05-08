@@ -1,12 +1,19 @@
 #pragma once
 #include "Scene000_BaseScene.h"
 class SkyBox;
+class DiffuseCubeObject;
+class HeightMapTerrain;
 
 class BattleScene :
 	public BaseScene
 {
 private:
 	SkyBox * m_pSkyBox = nullptr;
+	DiffuseCubeObject ** m_ppCubeObjects = nullptr;
+	unsigned int m_nCubeObjects = 0;
+	HeightMapTerrain * m_pTerrain = nullptr;
+
+	bool isBuilded = false;
 public:
 	BattleScene();
 	BattleScene(SceneTag tag, RuntimeFrameWork* pFramework)
@@ -26,5 +33,8 @@ public:
 	virtual bool ProcessInput(UCHAR *pKeysBuffer, float fTimeElapsed = 0.0f);
 	virtual void AnimateObjects(float fTimeElapsed);
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera = nullptr);
+
+	void BuildCube();
+//	virtual void ProcessPacket(char *ptr) override;
 };
 

@@ -273,7 +273,7 @@ void BasePlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 			else
 				Rotate(cyDelta, cxDelta, 0.0f);
 		}
-		if (dwDirection) Move(dwDirection, 12.25f, true);
+		if (dwDirection) Move(dwDirection, 1000.0f * fTimeElapsed, true);
 	}
 
 	Update(fTimeElapsed);
@@ -297,5 +297,10 @@ bool BasePlayer::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 	default:
 		break;
 	}
+	return false;
+}
+
+bool BasePlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
+{
 	return false;
 }

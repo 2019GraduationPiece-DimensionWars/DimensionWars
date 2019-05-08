@@ -38,7 +38,7 @@ public:
 	ID3D12Resource					*m_pd3dcbGameObject = nullptr;
 	CB_GAMEOBJECT_INFO				*m_pcbMappedGameObject = nullptr;
 protected:
-	
+	char directionBit = 0;
 
 public:
 	void SetMesh(BaseMesh *pMesh, int nIndex = 0);
@@ -90,4 +90,7 @@ public:
 	virtual void Rotate(XMFLOAT4 *pxmf4Quaternion);
 
 	unsigned int GetMeshType(int nIndex = 0);
+
+	char GetDirectionBit() const { return directionBit; }
+
 };

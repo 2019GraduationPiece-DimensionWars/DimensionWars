@@ -22,6 +22,7 @@ ServerManager::~ServerManager()
 
 void ServerManager::Run()
 {
+	ObjectInitialize();
 	_wsetlocale(LC_ALL, L"korean");
 	std::wcout.imbue(std::locale("korean"));
 
@@ -29,6 +30,7 @@ void ServerManager::Run()
 	for (int i = 0; i < 4; ++i)
 		workerThreads.emplace_back(std::thread{ RegisterWorkerThread, (LPVOID)this });
 	std::thread accept_thread{ RegisterAcceptThread, (LPVOID)this };
+	
 
 	accept_thread.join();
 	for (auto & thread : workerThreads) thread.join();
@@ -117,8 +119,9 @@ void ServerManager::AcceptThread()
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientSocket), hIOCP, new_id, 0);
 
 		objects[new_id].connected = true;
-		serverPrint("Client [%d] Connected\n", new_id);
 
+		serverPrint("Client [%d] Connected\n", new_id);
+		
 		SendLoginOKPacket(new_id);
 		SendPutPlayerPacket(new_id, new_id); // 나 자신에게 미리 알려준다.
 		for (int i = 0; i < MAX_USER; ++i) {
@@ -137,6 +140,13 @@ void ServerManager::AcceptThread()
 				SendPutPlayerPacket(new_id, i);
 			}
 		}
+
+
+		for (int i = Cube_start; i < Cube_start + 50; ++i) {
+			SendMapInfoPacket(new_id, i);
+		}
+
+
 		RecvPacket(new_id);
 	}
 }
@@ -199,10 +209,76 @@ void ServerManager::WorkerThread()
 
 void ServerManager::ObjectInitialize()
 {
-	for (auto &cl : objects) {
+	std::random_device rd;
+	std::default_random_engine dre(rd());
+	//std::uniform_real_distribution<> startPos(-2650.0,2650.0);
+	//std::uniform_real_distribution<> startYPos(0, 2650.0);
+	std::uniform_real_distribution<> startRotate(0, 90.0);
+	std::uniform_real_distribution<> startPos(0.0, 500.0);
+	std::uniform_real_distribution<> startYPos(0, 250.0);
+
+	for (int i = Cube_start; i < Cube_start+5; ++i) {
+		objects[i].position.x = startPos(dre);
+		objects[i].position.y = startYPos(dre);
+		objects[i].position.z = startPos(dre);
+
+		objects[i].rotate.x = startRotate(dre);
+		objects[i].rotate.y = startRotate(dre);
+		objects[i].rotate.z = startRotate(dre);
+		
+		objects[i].cube_size = 300;
+
+	}
+	for (int i = Cube_start+5; i < Cube_start + 10; ++i) {
+		objects[i].position.x = startPos(dre);
+		objects[i].position.y = startYPos(dre);
+		objects[i].position.z = startPos(dre);
+
+		objects[i].rotate.x = startRotate(dre);
+		objects[i].rotate.y = startRotate(dre);
+		objects[i].rotate.z = startRotate(dre);
+
+		objects[i].cube_size = 400;
+	}
+	for (int i = Cube_start+10; i < Cube_start + 20; ++i) {
+		objects[i].position.x = startPos(dre);
+		objects[i].position.y = startYPos(dre);
+		objects[i].position.z = startPos(dre);
+
+		objects[i].rotate.x = startRotate(dre);
+		objects[i].rotate.y = startRotate(dre);
+		objects[i].rotate.z = startRotate(dre);
+
+		objects[i].cube_size = 500;
+	}
+	for (int i = Cube_start+20; i < Cube_start + 30; ++i) {
+		objects[i].position.x = startPos(dre);
+		objects[i].position.y = startYPos(dre);
+		objects[i].position.z = startPos(dre);
+
+		objects[i].rotate.x = startRotate(dre);
+		objects[i].rotate.y = startRotate(dre);
+		objects[i].rotate.z = startRotate(dre);
+
+		objects[i].cube_size = 600;
+	}
+	for (int i = Cube_start+30; i < Cube_start + 50; ++i) {
+		objects[i].position.x = startPos(dre);
+		objects[i].position.y = startYPos(dre);
+		objects[i].position.z = startPos(dre);
+
+		objects[i].rotate.x = startRotate(dre);
+		objects[i].rotate.y = startRotate(dre);
+		objects[i].rotate.z = startRotate(dre);
+
+		objects[i].cube_size = 700;
+	}
+
+
+	/*for (auto &cl : objects) {
 		cl.connected = false;
 		cl.viewlist.clear();
-	}
+	}*/
 }
 
 void ServerManager::SendPacket(unsigned short int id, char * packet)
@@ -256,7 +332,7 @@ void ServerManager::SendPutPlayerPacket(unsigned short int to, unsigned short in
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
-void ServerManager::SendPositionPacket(unsigned short int to, unsigned short int obj)
+void ServerManager::SendPositionPacket(unsigned short to, unsigned short obj)
 {
 	// obj가 움직였다고 to 소켓에다 보내줘야 한다.
 	SCPacket_Position packet;
@@ -277,6 +353,19 @@ void ServerManager::SendRemovePlayerPacket(unsigned short int to, unsigned short
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
+void ServerManager::SendMapInfoPacket(unsigned short to, unsigned short obj)
+{
+	SCPacket_MapInfo packet;
+	packet.id = obj;
+	packet.size = sizeof(packet);
+	packet.type = SC_Type::MapInfo;
+	packet.cube_size = objects[obj].cube_size;
+	packet.position = XMFLOAT3(objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);
+	packet.rotate = XMFLOAT3(objects[obj].rotate.x, objects[obj].rotate.y, objects[obj].rotate.z);
+
+	SendPacket(to, reinterpret_cast<char *>(&packet));
+}
+
 void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 {
 	CSPacket_Move * packet = reinterpret_cast<CSPacket_Move *>(buf);
@@ -285,6 +374,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	switch (packet->type) {
 	case CS_Type::Move:
 	{
+		
 		if ((DIR_FORWARD & packet->dir) && pos.y < WORLD_HEIGHT - 1) ++pos.y;
 		if ((DIR_BACKWARD & packet->dir) && pos.y > 0) --pos.y;
 		if ((DIR_LEFT & packet->dir) && pos.x > 0) --pos.x;

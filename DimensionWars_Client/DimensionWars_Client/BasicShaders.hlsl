@@ -56,7 +56,7 @@ Texture2DArray TextureArray : register(t4);
 #define MATERIAL_DETAIL_ALBEDO_MAP	0x20
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
 
-Texture2D gtxtTexture : register(t14);
+Texture2D gtxtTexture : register(t0);
 
 Texture2D gtxtAlbedoTexture : register(t6);
 Texture2D gtxtSpecularTexture : register(t7);
@@ -447,3 +447,35 @@ float4 PSTextureVertex(GS_TEXTUREVERTEX_OUTPUT input) : SV_TARGET
     return (cColor);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+
+//정점 셰이더의 입력을 위한 구조체를 선언한다. 
+struct VS_DIFFUSED_INPUT
+{
+    float3 position : POSITION;
+    float4 color : COLOR;
+};
+
+//정점 셰이더의 출력(픽셀 셰이더의 입력)을 위한 구조체를 선언한다. 
+struct VS_DIFFUSED_OUTPUT
+{
+    float4 position : SV_POSITION;
+    float4 color : COLOR;
+};
+
+VS_DIFFUSED_OUTPUT VSDiffused(VS_DIFFUSED_INPUT input)
+{
+    VS_DIFFUSED_OUTPUT output;
+
+    output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxProjection);
+    output.color = input.color;
+
+    return (output);
+}
+
+float4 PSDiffused(VS_DIFFUSED_OUTPUT input) : SV_TARGET
+{
+    return (input.color);
+}

@@ -98,9 +98,9 @@ AnimationSet::AnimationSet(float fStartTime, float fEndTime, char * pstrName, in
 
 AnimationSet::~AnimationSet()
 {
-	if (m_pAnimationLayers) delete[] m_pAnimationLayers;
+	// if (m_pAnimationLayers) delete[] m_pAnimationLayers;
 
-	if (m_pCallbackKeys) delete[] m_pCallbackKeys;
+	// if (m_pCallbackKeys) delete[] m_pCallbackKeys;
 	if (m_pAnimationCallbackHandler) delete m_pAnimationCallbackHandler;
 }
 
@@ -199,7 +199,9 @@ AnimationSets::AnimationSets(int nAnimationSets)
 
 AnimationSets::~AnimationSets()
 {
+	//if (m_ppInitalAnimationSets[0] && m_ppInitalAnimationSets[0]->m_pAnimationLayers) delete[] m_ppInitalAnimationSets[0]->m_pAnimationLayers;
 	for (int i = 0; i < m_nAnimationSets; i++) if (m_ppInitalAnimationSets[i]) delete m_ppInitalAnimationSets[i];
+	
 	if (m_ppInitalAnimationSets) delete[] m_ppInitalAnimationSets;
 	for (auto & data : m_AnimationSets) if (data) delete data;
 }

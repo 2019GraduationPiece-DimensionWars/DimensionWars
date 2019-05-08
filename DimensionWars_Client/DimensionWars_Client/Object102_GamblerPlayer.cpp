@@ -2,46 +2,63 @@
 #include "Object102_GamblerPlayer.h"
 #include "Camera002_ThirdPersonCamera.h"
 #include "AnimationController.h"
+#include "Object008_HeightmapTerrain.h"
 
 
 GamblerPlayer::GamblerPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext)
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	LoadedModelInfo *GrimReaperModel = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Gambler.bin", nullptr);
-	SetChild(GrimReaperModel->m_pModelRootObject, true);
+	LoadedModelInfo *GamblerModel = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Gambler.bin", nullptr);
+	SetChild(GamblerModel->m_pModelRootObject, true);
 
-	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, GrimReaperModel);
+	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, GamblerModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_pSkinnedAnimationController->AddAnimationSet(0, 40.0 * keyFrameUnit, "Idle");
-	m_pSkinnedAnimationController->AddAnimationSet(42.0 * keyFrameUnit, 62.0 * keyFrameUnit, "OnHit", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(64.0 * keyFrameUnit, 104.0 * keyFrameUnit, "Guard");
-	m_pSkinnedAnimationController->AddAnimationSet(106.0 * keyFrameUnit, 131.0 * keyFrameUnit, "Burf", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(133.0 * keyFrameUnit, 173.0 * keyFrameUnit, "Shuffle", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(175.0 * keyFrameUnit, 195.0 * keyFrameUnit, "Idle Attack", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(197.0 * keyFrameUnit, 217.0 * keyFrameUnit, "Multi Shot", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(219.0 * keyFrameUnit, 249.0 * keyFrameUnit, "Wild Card", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(252.0 * keyFrameUnit, 286.0 * keyFrameUnit, "Jump", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(288.0 * keyFrameUnit, 323.0 * keyFrameUnit, "Jump Attack", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(325.0 * keyFrameUnit, 345.0 * keyFrameUnit, "Fall");
-	m_pSkinnedAnimationController->AddAnimationSet(347.0 * keyFrameUnit, 367.0 * keyFrameUnit, "Fall Attack", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(369.0 * keyFrameUnit, 399.0 * keyFrameUnit, "Move Forward");
-	m_pSkinnedAnimationController->AddAnimationSet(401.0 * keyFrameUnit, 431.0 * keyFrameUnit, "Move Forward Attack", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(433.0 * keyFrameUnit, 463.0 * keyFrameUnit, "Move Right Forward");
-	m_pSkinnedAnimationController->AddAnimationSet(465.0 * keyFrameUnit, 495.0 * keyFrameUnit, "Move Right Forward Attack", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(497.0 * keyFrameUnit, 527.0 * keyFrameUnit, "Move Left Forward");
-	m_pSkinnedAnimationController->AddAnimationSet(529.0 * keyFrameUnit, 559.0 * keyFrameUnit, "Move Right Forward Attack", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(561.0 * keyFrameUnit, 591.0 * keyFrameUnit, "Move Right");
-	m_pSkinnedAnimationController->AddAnimationSet(593.0 * keyFrameUnit, 623.0 * keyFrameUnit, "Move Right Attack", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(625.0 * keyFrameUnit, 655.0 * keyFrameUnit, "Move Left");
-	m_pSkinnedAnimationController->AddAnimationSet(657.0 * keyFrameUnit, 687.0 * keyFrameUnit, "Move Left Attack", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(689.0 * keyFrameUnit, 719.0 * keyFrameUnit, "Move Backward");
-	m_pSkinnedAnimationController->AddAnimationSet(689.0 * keyFrameUnit, 719.0 * keyFrameUnit, "Move Backward Attack", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(753.0 * keyFrameUnit, 783.0 * keyFrameUnit, "Move Right Backward");
-	m_pSkinnedAnimationController->AddAnimationSet(785.0 * keyFrameUnit, 815.0 * keyFrameUnit, "Move Right Backward Attack", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(817.0 * keyFrameUnit, 847.0 * keyFrameUnit, "Move Left Backward");
-	m_pSkinnedAnimationController->AddAnimationSet(849.0 * keyFrameUnit, 879.0 * keyFrameUnit, "Move Left Backward Attack", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(881.0 * keyFrameUnit, 904.0 * keyFrameUnit, "Down", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(0.0f, 40.0f * keyFrameUnit, "Idle");
+	m_pSkinnedAnimationController->AddAnimationSet(42.0f * keyFrameUnit, 62.0f * keyFrameUnit, "OnHit", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(64.0f * keyFrameUnit, 104.0f * keyFrameUnit, "Guard");
+	m_pSkinnedAnimationController->AddAnimationSet(106.0f * keyFrameUnit, 131.0f * keyFrameUnit, "Burf", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(133.0f * keyFrameUnit, 173.0f * keyFrameUnit, "Shuffle", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(175.0f * keyFrameUnit, 195.0f * keyFrameUnit, "Idle Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(197.0f * keyFrameUnit, 217.0f * keyFrameUnit, "Multi Shot", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(219.0f * keyFrameUnit, 249.0f * keyFrameUnit, "Wild Card", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(252.0f * keyFrameUnit, 286.0f * keyFrameUnit, "Jump", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(288.0f * keyFrameUnit, 323.0f * keyFrameUnit, "Jump Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(325.0f * keyFrameUnit, 345.0f * keyFrameUnit, "Fall");
+	m_pSkinnedAnimationController->AddAnimationSet(347.0f * keyFrameUnit, 367.0f * keyFrameUnit, "Fall Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(369.0f * keyFrameUnit, 399.0f * keyFrameUnit, "Move Forward");
+	// m_pSkinnedAnimationController->AddAnimationSet(401.0 * keyFrameUnit, 431.0 * keyFrameUnit, "Move Forward Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(401.0f * keyFrameUnit, 416.0f * keyFrameUnit, "Move Forward Attack1", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(416.0f * keyFrameUnit, 431.0f * keyFrameUnit, "Move Forward Attack2", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(433.0f * keyFrameUnit, 463.0f * keyFrameUnit, "Move Right Forward");
+	// m_pSkinnedAnimationController->AddAnimationSet(465.0 * keyFrameUnit, 495.0 * keyFrameUnit, "Move Right Forward Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(465.0f * keyFrameUnit, 480.0f * keyFrameUnit, "Move Right Forward Attack1", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(480.0f * keyFrameUnit, 495.0f * keyFrameUnit, "Move Right Forward Attack2", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(497.0f * keyFrameUnit, 527.0f * keyFrameUnit, "Move Left Forward");
+	// m_pSkinnedAnimationController->AddAnimationSet(529.0 * keyFrameUnit, 559.0 * keyFrameUnit, "Move Left Forward Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(529.0f * keyFrameUnit, 544.0f * keyFrameUnit, "Move Left Forward Attack1", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(544.0f * keyFrameUnit, 559.0f * keyFrameUnit, "Move Left Forward Attack2", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(561.0f * keyFrameUnit, 591.0f * keyFrameUnit, "Move Right");
+	// m_pSkinnedAnimationController->AddAnimationSet(593.0 * keyFrameUnit, 623.0 * keyFrameUnit, "Move Right Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(593.0f * keyFrameUnit, 608.0f * keyFrameUnit, "Move Right Attack1", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(608.0f * keyFrameUnit, 623.0f * keyFrameUnit, "Move Right Attack2", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(625.0f * keyFrameUnit, 655.0f * keyFrameUnit, "Move Left");
+	// m_pSkinnedAnimationController->AddAnimationSet(657.0 * keyFrameUnit, 687.0 * keyFrameUnit, "Move Left Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(657.0f * keyFrameUnit, 672.0f * keyFrameUnit, "Move Left Attack1", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(672.0f * keyFrameUnit, 687.0f * keyFrameUnit, "Move Left Attack2", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(689.0f * keyFrameUnit, 719.0f * keyFrameUnit, "Move Backward");
+	// m_pSkinnedAnimationController->AddAnimationSet(721.0 * keyFrameUnit, 751.0 * keyFrameUnit, "Move Backward Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(721.0f * keyFrameUnit, 736.0f * keyFrameUnit, "Move Backward Attack1", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(736.0f * keyFrameUnit, 751.0f * keyFrameUnit, "Move Backward Attack2", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(753.0f * keyFrameUnit, 783.0f * keyFrameUnit, "Move Right Backward");
+	// m_pSkinnedAnimationController->AddAnimationSet(785.0 * keyFrameUnit, 815.0 * keyFrameUnit, "Move Right Backward Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(785.0f * keyFrameUnit, 800.0f * keyFrameUnit, "Move Right Backward Attack1", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(800.0f * keyFrameUnit, 815.0f * keyFrameUnit, "Move Right Backward Attack2", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(817.0f * keyFrameUnit, 847.0f * keyFrameUnit, "Move Left Backward");
+	//m_pSkinnedAnimationController->AddAnimationSet(849.0 * keyFrameUnit, 879.0 * keyFrameUnit, "Move Left Backward Attack", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(849.0f * keyFrameUnit, 864.0f * keyFrameUnit, "Move Left Backward Attack1", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(864.0f * keyFrameUnit, 879.0f * keyFrameUnit, "Move Left Backward Attack2", ANIMATION_TYPE_ONCE);
+	m_pSkinnedAnimationController->AddAnimationSet(881.0f * keyFrameUnit, 904.0f * keyFrameUnit, "Down", ANIMATION_TYPE_ONCE);
 	m_pSkinnedAnimationController->SetAnimationSet(Idle);
 	/*
 	m_pSkinnedAnimationController->SetCallbackKeys(0, 0);
@@ -60,7 +77,7 @@ GamblerPlayer::GamblerPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
 
-	if (GrimReaperModel) delete GrimReaperModel;
+	if (GamblerModel) delete GamblerModel;
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
@@ -128,14 +145,45 @@ void GamblerPlayer::Update(float fTimeElapsed)
 
 void GamblerPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 {
+	HeightMapTerrain *pTerrain = (HeightMapTerrain *)m_pPlayerUpdatedContext;
+	XMFLOAT3 xmf3Scale = pTerrain->GetScale();
+	XMFLOAT3 xmf3PlayerPosition = GetPosition();
+	int z = (int)(xmf3PlayerPosition.z / xmf3Scale.z);
+	bool bReverseQuad = ((z % 2) != 0);
+	float fHeight = pTerrain->GetHeight(xmf3PlayerPosition.x, xmf3PlayerPosition.z, bReverseQuad) + 0.0f;
+	if (xmf3PlayerPosition.y < fHeight)
+	{
+		XMFLOAT3 xmf3PlayerVelocity = GetVelocity();
+		xmf3PlayerVelocity.y = 0.0f;
+		SetVelocity(xmf3PlayerVelocity);
+		xmf3PlayerPosition.y = fHeight;
+		SetPosition(xmf3PlayerPosition);
+	}
 }
 
 void GamblerPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 {
+	HeightMapTerrain *pTerrain = (HeightMapTerrain *)m_pCameraUpdatedContext;
+	XMFLOAT3 xmf3Scale = pTerrain->GetScale();
 	XMFLOAT3 xmf3CameraPosition = m_pCamera->GetPosition();
+	int z = (int)(xmf3CameraPosition.z / xmf3Scale.z);
+	bool bReverseQuad = ((z % 2) != 0);
+	float fHeight = pTerrain->GetHeight(xmf3CameraPosition.x, xmf3CameraPosition.z, bReverseQuad) + 15.0f;
+	if (xmf3CameraPosition.y <= fHeight)
+	{
+		xmf3CameraPosition.y = fHeight;
+		m_pCamera->SetPosition(xmf3CameraPosition);
+		if (m_pCamera->GetMode() == THIRD_PERSON_CAMERA)
+		{
+			ThirdPersonCamera *p3rdPersonCamera = (ThirdPersonCamera *)m_pCamera;
+			p3rdPersonCamera->SetLookAt(GetPosition());
+		}
 
-	ThirdPersonCamera *p3rdPersonCamera = (ThirdPersonCamera *)m_pCamera;
-	p3rdPersonCamera->SetLookAt(GetPosition());
+		XMFLOAT3 xmf3CameraPosition = m_pCamera->GetPosition();
+
+		ThirdPersonCamera *p3rdPersonCamera = (ThirdPersonCamera *)m_pCamera;
+		p3rdPersonCamera->SetLookAt(GetPosition());
+	}
 }
 
 void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
@@ -211,7 +259,7 @@ void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 			// else
 				Rotate(cyDelta, cxDelta, 0.0f);
 		}
-		if (dwDirection) Move(dwDirection, 12.25f * fTimeElapsed, true);
+		if (dwDirection) Move(dwDirection, 10000000.0f * fTimeElapsed, true);
 	}
 
 	Update(fTimeElapsed);

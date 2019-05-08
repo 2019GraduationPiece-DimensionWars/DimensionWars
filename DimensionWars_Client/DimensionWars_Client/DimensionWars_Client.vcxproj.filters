@@ -34,14 +34,8 @@
     <Filter Include="Mesh">
       <UniqueIdentifier>{287b746c-e6c3-4cb8-86bb-373413b06659}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Material">
-      <UniqueIdentifier>{94b7c375-f0e4-4a5d-923a-6ebf8be73719}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Animation">
       <UniqueIdentifier>{23d014c3-caef-4daf-8b7f-b1e217158f56}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Texture">
-      <UniqueIdentifier>{209ed2dc-a879-49a3-842c-b7f292348740}</UniqueIdentifier>
     </Filter>
     <Filter Include="Object\PlayerObject">
       <UniqueIdentifier>{ea0d23b8-10a3-4d53-9d4c-ff1a85c40349}</UniqueIdentifier>
@@ -51,6 +45,15 @@
     </Filter>
     <Filter Include="Object\EnvironmentObject">
       <UniqueIdentifier>{4305a41e-9e9f-416b-8fbf-dbf4f6ea82ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Texture">
+      <UniqueIdentifier>{209ed2dc-a879-49a3-842c-b7f292348740}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\HLSL">
+      <UniqueIdentifier>{754fef8f-35ed-4baa-bc3f-a745c44c8870}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Material">
+      <UniqueIdentifier>{94b7c375-f0e4-4a5d-923a-6ebf8be73719}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -85,10 +88,10 @@
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Texture</Filter>
+      <Filter>Shader\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Material</Filter>
+      <Filter>Shader\Material</Filter>
     </ClInclude>
     <ClInclude Include="d3dx12.h">
       <Filter>API</Filter>
@@ -189,6 +192,30 @@
     <ClInclude Include="Object004_DimensionCube.h">
       <Filter>Object\EnvironmentObject</Filter>
     </ClInclude>
+    <ClInclude Include="Mesh006_DiffuseCubeMesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Object007_DiffuseCubeObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object103_ElfArcherPlayer.h">
+      <Filter>Object\PlayerObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader006_DiffuseShader.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Object008_HeightmapTerrain.h">
+      <Filter>Object\EnvironmentObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader007_TerrainShader.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="HeightMapImage.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh007_HeightMapGridMesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -213,10 +240,10 @@
       <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Texture</Filter>
+      <Filter>Shader\Texture</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
-      <Filter>Material</Filter>
+      <Filter>Shader\Material</Filter>
     </ClCompile>
     <ClCompile Include="DDSTextureLoader12.cpp">
       <Filter>API</Filter>
@@ -311,6 +338,30 @@
     <ClCompile Include="Object004_DimensionCube.cpp">
       <Filter>Object\EnvironmentObject</Filter>
     </ClCompile>
+    <ClCompile Include="Mesh006_DiffuseCubeMesh.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Object007_DiffuseCubeObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object103_ElfArcherPlayer.cpp">
+      <Filter>Object\PlayerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader006_DiffuseShader.cpp">
+      <Filter>Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Object008_HeightmapTerrain.cpp">
+      <Filter>Object\EnvironmentObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader007_TerrainShader.cpp">
+      <Filter>Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="HeightMapImage.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh007_HeightMapGridMesh.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DimensionWarsClient.rc">
@@ -326,11 +377,11 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="BasicShaders.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="LightShader.hlsl">
-      <Filter>Shader</Filter>
+      <Filter>Shader\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="BasicShaders.hlsl">
+      <Filter>Shader\HLSL</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

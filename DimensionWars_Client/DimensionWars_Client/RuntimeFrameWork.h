@@ -96,6 +96,16 @@ public:
 
 	BaseScene::SceneTag GetNowTag() const { return m_CurrSceneTag; }
 	HWND GetHandle() const { return m_hWnd; }
+
+	void NetworkInitialize();
+
+	void ReadPacket(SOCKET sock);
+	void SendPacket(char * clientToServerPacket);
+
+	char* GetSendBuf() { return send_buffer; }
+
+
+	BaseScene::SceneTag m_CurrSceneTag = BaseScene::SceneTag::Title;
 private:
 	FrameTimer m_Timer;
 	BasePlayer * m_pPlayer = nullptr;
@@ -104,6 +114,16 @@ private:
 	BaseScene * m_pCurrScene = nullptr;
 	BaseScene * m_pPrevScene = nullptr;
 
-	BaseScene::SceneTag m_CurrSceneTag = BaseScene::SceneTag::Title;
+
+	SOCKET mySocket; // 소켓
+	char server_ip[17] = "127.0.0.1"; // 서버 IP
+									  // 전역변수
+	WSABUF  send_wsabuf;
+	char	send_buffer[BUFSIZE];
+	WSABUF	recv_wsabuf;
+	char	recv_buffer[BUFSIZE];
+	char	packet_buffer[BUFSIZE];
+	DWORD	in_packet_size = 0;
+	int		saved_packet_size = 0;
 };
 

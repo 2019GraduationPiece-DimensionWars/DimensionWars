@@ -33,6 +33,9 @@ struct LIGHTS
 class BaseScene
 {
 protected:
+	float MoveDelay = 0.0f;
+	unsigned short myid;
+
 	static ID3D12DescriptorHeap			*m_pd3dCbvSrvDescriptorHeap;
 
 	static D3D12_CPU_DESCRIPTOR_HANDLE	m_d3dCbvCPUDescriptorStartHandle;
@@ -98,7 +101,18 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUSrvDescriptorNextHandle() { return(m_d3dSrvCPUDescriptorNextHandle); }
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUSrvDescriptorNextHandle() { return(m_d3dSrvGPUDescriptorNextHandle); }
 
+
+
+	//virtual bool ProcessInput(UCHAR *keybuffer, float fTimeElapsed) override;
+	virtual void ProcessPacket(char *ptr);
+
+	void SendMoveDirection();
 	BasePlayer					*m_pPlayer = nullptr;
+
+	float  cubeSize[50];
+	XMFLOAT3 cubePos[50];
+	XMFLOAT3 cubeRot[50];
+
 protected:
 	ID3D12RootSignature			*m_pGraphicsRootSignature = nullptr;
 
@@ -118,5 +132,7 @@ protected:
 
 	SceneTag					m_Tag;
 	RuntimeFrameWork			*m_pFramework;
+
+
 };
 

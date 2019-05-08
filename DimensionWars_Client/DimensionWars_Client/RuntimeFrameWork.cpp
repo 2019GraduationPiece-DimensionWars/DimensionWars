@@ -60,6 +60,8 @@ bool RuntimeFrameWork::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	m_hInstance = hInstance;
 	m_hWnd = hMainWnd;
 
+	
+
 	// 클래스와 윈도우 프로시저 연결
 	::SetUserDataPtr(m_hWnd, this);
 
@@ -70,10 +72,14 @@ bool RuntimeFrameWork::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	CreateDSV();
 
 	// CreateOffScreenRenderTargetViews();
-	
+
 	BuildAllScene();
 	ChangeScene(BaseScene::SceneTag::Title);
+	
 	BuildObjects();
+
+	// 네트워크 초기화
+	NetworkInitialize();
 
 	return (m_hWnd != NULL);
 }
@@ -417,7 +423,13 @@ void RuntimeFrameWork::Update()
 void RuntimeFrameWork::FrameAdvance()
 {
 	m_Timer.Tick(60.0f);
-	
+
+	BattleScene *pScene = reinterpret_cast<BattleScene*>(arrScene[BaseScene::SceneTag::Game]);
+	memcpy(pScene->cubeSize, arrScene[BaseScene::SceneTag::Title]->cubeSize, sizeof(pScene->cubeSize) * 50);
+	memcpy(pScene->cubePos, arrScene[BaseScene::SceneTag::Title]->cubePos, sizeof(pScene->cubePos) * 50);
+	memcpy(pScene->cubeRot, arrScene[BaseScene::SceneTag::Title]->cubeRot, sizeof(pScene->cubeRot) * 50);
+
+	pScene->BuildCube();
 	ProcessInput();
 	
     Update();
@@ -545,7 +557,11 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 		switch (wParam)
 		{
 		case VK_ESCAPE:
-			::PostQuitMessage(0);
+			if (m_CurrSceneTag == BaseScene::SceneTag::Title)
+				ChangeScene(BaseScene::SceneTag::Game);
+			else
+				ChangeScene(BaseScene::SceneTag::Title);
+			break;
 			break;
 		case VK_RETURN:
 			break;
@@ -557,10 +573,6 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 		case VK_F9:
 			ChangeSwapChainState();
 		case VK_SPACE:
-			if (m_CurrSceneTag == BaseScene::SceneTag::Title)
-				ChangeScene(BaseScene::SceneTag::Game);
-			else
-				ChangeScene(BaseScene::SceneTag::Title);
 			break;
 		default:
 			break;
@@ -630,8 +642,25 @@ LRESULT RuntimeFrameWork::WndProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPA
 		::EndPaint(hWnd, &ps); // 그리고 지운다.
 	}
 		break;
+	case WM_SOCKET:
+		if (WSAGETSELECTERROR(lParam)) {
+			closesocket((SOCKET)wParam);
+			//exit(-1);
+			break;
+		}
+		switch (WSAGETSELECTEVENT(lParam))
+		{
+		case FD_READ:
+			self->ReadPacket((SOCKET)wParam);
+			break;
+		case FD_CLOSE:
+			closesocket((SOCKET)wParam);
+			//exit(-1);
+			break;
+		}
+		break;
 	case WM_DESTROY:
-		::SetUserDataPtr(hWnd, NULL);		
+		::SetUserDataPtr(hWnd, NULL);
 		::PostQuitMessage(0);
 		break;
 
@@ -647,4 +676,105 @@ void RuntimeFrameWork::ChangeScene(BaseScene::SceneTag tag, bool bDestroy)
 		m_pPrevScene = m_pCurrScene;
 		m_pCurrScene = arrScene[m_CurrSceneTag = tag];
 	}
+}
+
+void RuntimeFrameWork::NetworkInitialize()
+{
+	// 윈속 초기화
+	WSADATA wsa;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+#ifdef USE_CONSOLE_WINDOW
+		::puts("Error - Can't load 'winsock.dll' file");
+#endif
+		::PostQuitMessage(0);
+	}
+
+	// socket()
+	// client_sock = socket(AF_INET, SOCK_STREAM, 0);
+	mySocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0);//WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+	if (mySocket == INVALID_SOCKET) {
+#ifdef USE_CONSOLE_WINDOW
+		::printf("Error - Invalid socket\n");
+#endif
+		::PostQuitMessage(0);
+	}
+#ifdef USE_CONSOLE_WINDOW
+	printf("Client : %d\n", static_cast<int>(mySocket));
+#endif
+
+	// 서버정보 객체설정	
+	SOCKADDR_IN serveraddr;
+	ZeroMemory(&serveraddr, sizeof(serveraddr));
+	serveraddr.sin_family = AF_INET;
+	// serveraddr.sin_addr.s_addr = inet_addr(server_ip);
+	serveraddr.sin_addr.S_un.S_addr = inet_addr(server_ip);
+	serveraddr.sin_port = htons(SERVERPORT);
+
+	// connect()
+	// if (connect(client_sock, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) == SOCKET_ERROR) {
+	if (WSAConnect(mySocket, (struct sockaddr *)&serveraddr, sizeof(serveraddr), NULL, NULL, NULL, NULL) == SOCKET_ERROR) {
+#ifdef USE_CONSOLE_WINDOW
+		printf("%s IP Error - Fail to connect\n", server_ip);
+#endif
+		closesocket(mySocket);
+		WSACleanup();
+		::PostQuitMessage(0);
+	}
+
+	WSAAsyncSelect(mySocket, m_hWnd, WM_SOCKET, FD_CLOSE | FD_READ); // m_hWnd 초기화도 안하고 생성자에서 이걸 부르고 있었으니 당연히 안되지...
+
+	send_wsabuf.buf = send_buffer;
+	send_wsabuf.len = BUFSIZE;
+	recv_wsabuf.buf = recv_buffer;
+	recv_wsabuf.len = BUFSIZE;
+#ifdef USE_CONSOLE_WINDOW
+	puts("Server Connected");
+#endif
+
+	//ReadPacket((SOCKET)mySocket);
+}
+
+
+void RuntimeFrameWork::ReadPacket(SOCKET sock)
+{
+	DWORD iobyte, ioflag = 0;
+
+	int ret = WSARecv(sock, &recv_wsabuf, 1, &iobyte, &ioflag, NULL, NULL);
+	if (ret) {
+		int err_code = WSAGetLastError();
+#ifdef USE_CONSOLE_WINDOW
+		printf("Recv Error [%d]\n", err_code);
+#endif
+	}
+
+	BYTE *ptr = reinterpret_cast<BYTE *>(recv_buffer);
+
+	while (0 != iobyte) {
+		if (0 == in_packet_size) in_packet_size = ptr[0];
+		if (iobyte + saved_packet_size >= in_packet_size) {
+			memcpy(packet_buffer + saved_packet_size, ptr, in_packet_size - saved_packet_size);
+			m_pCurrScene->ProcessPacket(packet_buffer);
+			ptr += in_packet_size - saved_packet_size;
+			iobyte -= in_packet_size - saved_packet_size;
+			in_packet_size = 0;
+			saved_packet_size = 0;
+		}
+		else {
+			memcpy(packet_buffer + saved_packet_size, ptr, iobyte);
+			saved_packet_size += iobyte;
+			iobyte = 0;
+		}
+	}
+}
+
+void RuntimeFrameWork::SendPacket(char * clientToServerPacket)
+{
+	send_wsabuf.buf = send_buffer;
+	send_wsabuf.len = clientToServerPacket[0];	// size
+	DWORD ioByte = 0;
+
+	int nByteCheck = WSASend(mySocket, &send_wsabuf, 1, &ioByte, 0, NULL, NULL);
+#ifdef USE_CONSOLE_WINDOW
+	if (nByteCheck) printf("Error while sending packet [%d]", WSAGetLastError());
+#endif
 }

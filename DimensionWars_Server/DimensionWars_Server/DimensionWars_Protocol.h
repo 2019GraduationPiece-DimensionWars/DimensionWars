@@ -5,21 +5,22 @@
 #include <winsock2.h>
 #include <DirectXMath.h>
 
-const unsigned short int const SERVERPORT = 3500;	// 서버 포트
-const unsigned short int const BUFSIZE = 1024;		// 버퍼의 크기
+constexpr unsigned short SERVERPORT = 3500;	// 서버 포트
+constexpr unsigned short BUFSIZE = 1024;		// 버퍼의 크기
 
-constexpr unsigned char const MAX_USER = 6;	// 한 방과 한 전투에 플레이어는 6명. 이 게임은 투사체가 많지 플레이어가 많은 것이 아니다.
-const unsigned char const MAX_PLAYER = MAX_USER;	// 코딩 할 때 불편하지 않도록 같은 이름을 쓰기 위함
+constexpr unsigned short MAX_USER = 500;	// 한 방과 한 전투에 플레이어는 6명. 이 게임은 투사체가 많지 플레이어가 많은 것이 아니다.
+constexpr unsigned short Cube_start = 450;
+constexpr unsigned char MAX_PLAYER = MAX_USER;	// 코딩 할 때 불편하지 않도록 같은 이름을 쓰기 위함
 
-constexpr unsigned int const MAX_OBJECTS = 1000;		// 총 서버가 관리할 플레이어, 투사체 등의 정보를 포함한 게임 월드의 모든 오브젝트 숫자
+constexpr unsigned int MAX_OBJECTS = 1000;		// 총 서버가 관리할 플레이어, 투사체 등의 정보를 포함한 게임 월드의 모든 오브젝트 숫자
 // 플레이어 6명, 큐브 50개, 투사체 X개 
 
-const float const WORLD_HORIZONTAL = 25000.0f; // 월드의 가로
-const float const WORLD_WIDTH = WORLD_HORIZONTAL;	// 코딩 할 때 불편하지 않도록 같은 이름을 쓰기 위함
-const float const WORLD_HEIGHT = 25000.0f;		// 월드의 세로
-const float const WORLD_VERTICAL = 25000.0f;	// 월드의 높이
+constexpr float WORLD_HORIZONTAL = 25000.0f; // 월드의 가로
+constexpr float WORLD_WIDTH = WORLD_HORIZONTAL;	// 코딩 할 때 불편하지 않도록 같은 이름을 쓰기 위함
+constexpr float WORLD_HEIGHT = 25000.0f;		// 월드의 세로
+constexpr float WORLD_VERTICAL = 25000.0f;	// 월드의 높이
 
-const float const VIEW_RANGE = 2500.0f;	// 플레이어의 시야
+constexpr float VIEW_RANGE = 2500.0f;	// 플레이어의 시야
 
 
 // 플레이어의 키 입력 정보를 분석하기 위한 일종의 define 고정값. 6비트만 사용
@@ -41,7 +42,9 @@ namespace SC
 		Position = 4,
 		OnHit = 5, // 해당 클라이언트가 충돌당했으므로 경직 애니메이션을 재생해라.
 		Down = 6, // 해당 클라이언트가 다운 공격에 피격되었으므로 피격 애니메이션을 재생해라.
+		MapInfo =7,
 		Count
+
 	};
 }
 using SC_Type = SC::ServerToClientSocketType;	// 약자 형태로 사용할 것이다.
@@ -62,7 +65,7 @@ using CS_Type = CS::ClientToServerSocketType;	// 약자 형태로 사용할 것이다.
 struct SCPacket_Base {
 	char size;
 	char type;
-	char id;		// client의 ID
+	unsigned short id;		// client의 ID
 };
 
 using SCPacket_LoginOK = SCPacket_Base; // Login OK 패킷은 기본 패킷과 구성 요소가 동일하므로 단순 Using
@@ -70,6 +73,7 @@ using SCPacket_LoginOK = SCPacket_Base; // Login OK 패킷은 기본 패킷과 구성 요소
 struct SCPacket_Position : SCPacket_Base {
 	// 이 id를 가진 객체를 해당 좌표로
 	DirectX::XMFLOAT3 position;
+	
 };
 
 struct SCPacket_PutPlayer : SCPacket_Position {
@@ -78,6 +82,15 @@ struct SCPacket_PutPlayer : SCPacket_Position {
 
 struct SCPacket_RemovePlayer : SCPacket_Base {
 	// 이 id를 가진 객체를 화면에서 지운다
+};
+
+struct SCPacket_MapInfo : SCPacket_Base {
+	DirectX::XMFLOAT3 position; // 위치정보
+	DirectX::XMFLOAT3 rotate; // 회전정보
+	float cube_size; // 큐브의 크기(한 변의 길이
+
+
+	// 맵의 기본 정보
 };
 
 struct CSPacket_Base {

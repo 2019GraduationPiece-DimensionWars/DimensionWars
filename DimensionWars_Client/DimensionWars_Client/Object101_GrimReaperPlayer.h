@@ -13,14 +13,17 @@ public:
 		Guard = 3,
 		Burf = 4,
 		Hide_Invasion = 5,
-		Full_Attack = 6,
-		Slash_Wave = 7,
-		Beheading = 8,
-		Move_Forward = 9,
-		Move_Right = 10,
-		Move_Left = 11,
-		Move_Backward = 12,
-		Down = 13
+		// Full_Attack = 6,
+		First_Attack = 6,
+		Second_Attack = 7,
+		Third_Attack = 8,
+		Slash_Wave = 9,
+		Beheading = 10,
+		Move_Forward = 11,
+		Move_Right = 13,	//Move_Right = 12,
+		Move_Left = 12,		//Move_Left = 13,
+		Move_Backward = 14,
+		Down = 15
 	};
 	State state;
 

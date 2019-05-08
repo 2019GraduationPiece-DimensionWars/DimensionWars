@@ -1,8 +1,10 @@
 #include "stdafx.h"
+#include "RuntimeFrameWork.h"
 #include "Texture.h"
 #include "Material.h"
 #include "Scene000_BaseScene.h"
 #include "Camera000_BaseCamera.h"
+#include "Object100_BasePlayer.h"
 #include "Object000_BaseObject.h"
 #include "AnimationController.h"	// 로드모델 때문
 
@@ -315,7 +317,7 @@ void BaseScene::ReleaseObjects()
 */
 	if (m_ppObjects)
 	{
-		for (int i = 0; i < m_nObjects; i++) if (m_ppObjects[i]) m_ppObjects[i]->Release();
+		for (unsigned int i = 0; i < m_nObjects; i++) if (m_ppObjects[i]) m_ppObjects[i]->Release();
 		delete[] m_ppObjects;
 	}
 
@@ -447,7 +449,7 @@ void BaseScene::ReleaseUploadBuffers()
 	//if (m_pTerrain) m_pTerrain->ReleaseUploadBuffers();
 
 	//for (int i = 0; i < m_nShaders; i++) m_ppShaders[i]->ReleaseUploadBuffers();
-	for (int i = 0; i < m_nObjects; i++) m_ppObjects[i]->ReleaseUploadBuffers();
+	for (unsigned int i = 0; i < m_nObjects; i++) m_ppObjects[i]->ReleaseUploadBuffers();
 }
 
 void BaseScene::CreateCbvSrvDescriptorHeaps(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, int nConstantBufferViews, int nShaderResourceViews)
@@ -498,4 +500,137 @@ D3D12_GPU_DESCRIPTOR_HANDLE BaseScene::CreateShaderResourceViews(ID3D12Device * 
 		}
 	}
 	return(d3dSrvGPUDescriptorHandle);
+}
+
+void BaseScene::ProcessPacket(char * ptr)
+{
+	// printf("들어옴");
+	static bool first_time = true;
+	switch (ptr[1])
+	{
+	case SC_Type::LoginOK:
+	{
+		//printf("login\n");
+		SCPacket_LoginOK *packet = reinterpret_cast<SCPacket_LoginOK *>(ptr);
+		myid = packet->id;
+#ifdef USE_CONSOLE_WINDOW
+		printf("LOGIN\n");
+#endif
+		break;
+	}
+	case SC_Type::PutPlayer:
+	{
+#ifdef USE_CONSOLE_WINDOW
+		printf("Put Player\n");
+#endif
+		SCPacket_PutPlayer *my_packet = reinterpret_cast<SCPacket_PutPlayer *>(ptr);
+		unsigned int id = my_packet->id;
+		if (first_time) {
+			first_time = false;
+			myid = id;
+		}
+		if (id == myid) {
+			//m_pPlayer->SetPosition((XMFLOAT3(0,0,0)));
+			//m_pPlayer->SetVisible(true);
+#ifdef USE_CONSOLE_WINDOW
+			printf("Your [%d] : (%f, %f, %f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
+#endif
+		}
+		/*else if (id < MAX_USER) {
+		if (!m_ppOtherPlayers[id])
+		m_ppOtherPlayers[id] = new PlayerObject(OtherPlayerImage);
+		m_ppOtherPlayers[id]->SetPosition(my_packet->x, my_packet->y);
+		m_ppOtherPlayers[id]->SetVisible(true);
+		#ifdef USE_CONSOLE_WINDOW
+		printf("Put Player [%d] : (%d, %d)\n", my_packet->id, my_packet->x, my_packet->y);
+		#endif
+		}*/
+
+		break;
+	}
+	case SC_Type::Position:
+	{
+		//printf("%d", myid);
+		SCPacket_Position *my_packet = reinterpret_cast<SCPacket_Position *>(ptr);
+		char other_id = my_packet->id;
+		if (other_id == myid) {
+			//	printf("move");
+			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
+		}
+		/*else if (other_id < MAX_USER) {
+		if (!m_ppOtherPlayers[other_id])
+		m_ppOtherPlayers[other_id] = new PlayerObject(OtherPlayerImage);
+		m_ppOtherPlayers[other_id]->SetPosition(my_packet->x, my_packet->y);
+		}
+		else {
+		if (!m_ppNonePlayerObject[other_id - NPC_ID_START]) {
+		m_ppNonePlayerObject[other_id - NPC_ID_START] = new BaseObject(OtherNPCImage);
+		}
+		m_ppNonePlayerObject[other_id - NPC_ID_START]->SetPosition(my_packet->x, my_packet->y);
+		}*/
+#ifdef USE_CONSOLE_WINDOW
+		printf("Position\n");
+#endif
+		break;
+	}
+	case SC_Type::RemovePlayer:
+	{
+#ifdef USE_CONSOLE_WINDOW
+		printf("Remove\n");
+#endif
+		SCPacket_RemovePlayer *my_packet = reinterpret_cast<SCPacket_RemovePlayer *>(ptr);
+		unsigned int other_id = my_packet->id;
+		//if (other_id == myid) m_pPlayer->SetVisible(false);
+		/*else if (other_id < MAX_USER) {
+		if (m_ppOtherPlayers[other_id]) {
+		m_ppOtherPlayers[other_id]->SetVisible(false);
+		delete m_ppOtherPlayers[other_id];
+		m_ppOtherPlayers[other_id] = nullptr;
+		#ifdef USE_CONSOLE_WINDOW
+		printf("Player [%d] Remove from Screen\n", my_packet->id);
+		#endif
+		}
+		}
+		else {
+		if (m_ppNonePlayerObject[other_id - NPC_ID_START]) {
+		m_ppNonePlayerObject[other_id - NPC_ID_START]->SetVisible(false);
+		delete m_ppNonePlayerObject[other_id - NPC_ID_START];
+		m_ppNonePlayerObject[other_id - NPC_ID_START] = nullptr;
+		}
+		}*/
+		break;
+	}
+	case SC_Type::MapInfo:
+	{
+		//처리
+		SCPacket_MapInfo *my_packet = reinterpret_cast<SCPacket_MapInfo *>(ptr);
+
+		unsigned short id = my_packet->id - Cube_start;
+		cubeSize[id] = my_packet->cube_size;
+		cubePos[id] = XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z);
+		cubeRot[id] = XMFLOAT3(my_packet->rotate.x, my_packet->rotate.y, my_packet->rotate.z);
+
+#ifdef USE_CONSOLE_WINDOW
+		 printf("MAPINFO Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", id, cubeSize[id], cubePos[id].x, cubePos[id].y, cubePos[id].z, cubeRot[id].x, cubeRot[id].y, cubeRot[id].z);
+#endif
+		break;
+	}
+	default:
+#ifdef USE_CONSOLE_WINDOW
+		printf("Unknown PACKET type [%d]\n", ptr[1]);
+#endif
+	}
+}
+
+void BaseScene::SendMoveDirection()
+{
+
+	if (m_pPlayer && m_pPlayer->GetDirectionBit()) {
+		CSPacket_Move *myMovePacket = reinterpret_cast<CSPacket_Move *>(m_pFramework->GetSendBuf());
+		myMovePacket->size = sizeof(CSPacket_Move);
+		// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
+		myMovePacket->dir = m_pPlayer->GetDirectionBit();	// 이동에 딜레이를 주기 위함, 일종의 타일 위 이동속도와 유사
+		myMovePacket->type = CS_Type::Move;
+		m_pFramework->SendPacket(reinterpret_cast<char *>(myMovePacket));
+	}
 }

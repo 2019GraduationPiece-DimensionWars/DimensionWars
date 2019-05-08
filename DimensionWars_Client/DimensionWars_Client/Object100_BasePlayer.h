@@ -86,6 +86,7 @@ public:
 	virtual void ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed);
 
 	virtual bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+	virtual bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
 	virtual bool isCancleEnabled() const = 0;
 };

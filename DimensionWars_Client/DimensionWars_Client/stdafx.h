@@ -1,4 +1,4 @@
-// stdafx.h : 자주 사용하지만 자주 변경되지는 않는
+﻿// stdafx.h : 자주 사용하지만 자주 변경되지는 않는
 // 표준 시스템 포함 파일 또는 프로젝트 관련 포함 파일이
 // 들어 있는 포함 파일입니다.
 //
@@ -10,6 +10,13 @@
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용은 Windows 헤더에서 제외합니다.
 // Windows 헤더 파일:
 #include <windows.h>
+
+// Socket Programming
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // inet_addt 함수와 WSAAsyncSelect 함수의 SDL 검사
+#pragma warning(disable:4996)
+#include "../../DimensionWars_Server/DimensionWars_Server/DimensionWars_Protocol.h"
+#define WM_SOCKET	(WM_USER + 1)
+
 
 // C 런타임 헤더 파일입니다.
 #include <stdlib.h>
@@ -30,6 +37,8 @@
 #include <vector>
 #include <map>
 #include <sstream>
+#include <random>
+#include <memory>
 
 // DirectX 관련 헤더
 #include <d3d12.h>
@@ -399,6 +408,27 @@ inline D3D12_SHADER_RESOURCE_VIEW_DESC GetShaderResourceViewDesc(D3D12_RESOURCE_
 		break;
 	}
 	return(d3dShaderResourceViewDesc);
+}
+
+static std::random_device rd;
+static std::default_random_engine dre(rd());
+
+inline int rand_int(int min, int max)
+{
+	std::uniform_int_distribution<> uid(min, max);
+	return uid(dre);
+}
+
+inline double rand_double(float min, float max)
+{
+	std::uniform_real_distribution<> uid(min, max);
+	return uid(dre);
+}
+
+inline XMFLOAT4 random_color()
+{
+	std::uniform_real_distribution<> uid(0.0, 1.0);
+	return XMFLOAT4(static_cast<float>(uid(dre)), static_cast<float>(uid(dre)), static_cast<float>(uid(dre)), static_cast<float>(uid(dre)));
 }
 
 // 콘솔 창 띄움 여부, 디버그용
