@@ -16,7 +16,7 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
-
+#include <queue>
 #define PRINT	// 화면 입출력은 시스템콜이라 굉장히 비싼 연산이다.
 #ifdef PRINT
 #include <stdio.h>
@@ -318,12 +318,49 @@ namespace Plane
 	}
 }
 
+struct TimerEvent {
+public:
+	enum class Command : unsigned char {
+		None = 0,
+		Random_Move = 1,
+		Collision = 2
+	};
+
+	unsigned int objectID;
+	double startTime;
+	Command command = Command::None;
+
+	TimerEvent(unsigned int id, Command cmd, double t) : objectID(id), command(cmd), startTime(t) {}
+
+	bool operator> (TimerEvent& t) {
+		return (this->startTime > t.startTime);
+	}
+	bool operator< (TimerEvent& t) {
+		return (this->startTime < t.startTime);
+	}
+
+	struct Priority {
+		bool operator()(TimerEvent t, TimerEvent u) {
+			return t.startTime > u.startTime;
+		}
+	};
+};
+
+
 struct OVER_EX
 {
+	enum class Type : unsigned char { NONE, RECV, EVENT };
 	WSAOVERLAPPED overlapped;
 	WSABUF dataBuffer;
 	char messageBuffer[BUFSIZE];
-	bool is_recv;
+	Type type = Type::NONE;
+	
+	void ResetOverlapped() { memset(&overlapped, 0, sizeof(overlapped)); }
+	void init() {
+		dataBuffer.len = BUFSIZE; 
+		dataBuffer.buf = messageBuffer;
+		ResetOverlapped();
+	}
 };
 
 struct SOCKETINFO
@@ -344,4 +381,10 @@ struct SOCKETINFO
 	float cube_size;
 	//XMFLOAT3 position;
 	XMFLOAT3 rotate;
+	bool cube_stay = false;
+
+	//충돌 정보
+	BoundingOrientedBox colbox;
+
 };
+

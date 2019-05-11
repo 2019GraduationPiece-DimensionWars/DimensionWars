@@ -30,7 +30,9 @@ void ServerManager::Run()
 	for (int i = 0; i < 4; ++i)
 		workerThreads.emplace_back(std::thread{ RegisterWorkerThread, (LPVOID)this });
 	std::thread accept_thread{ RegisterAcceptThread, (LPVOID)this };
-	
+	std::thread timerThread{ RegisterTimerThread, (LPVOID)this };
+
+	timerThread.join();
 
 	accept_thread.join();
 	for (auto & thread : workerThreads) thread.join();
@@ -104,7 +106,7 @@ void ServerManager::AcceptThread()
 		objects[new_id].socket = clientSocket;
 		objects[new_id].over.dataBuffer.len = BUFSIZE;
 		objects[new_id].over.dataBuffer.buf = objects[clientSocket].over.messageBuffer;
-		objects[new_id].over.is_recv = true;
+		objects[new_id].over.type = OVER_EX::Type::RECV;
 		std::random_device rd;
 		std::default_random_engine dre(rd());
 		std::uniform_real_distribution<> startPos(0.0, 0.0);
@@ -127,24 +129,29 @@ void ServerManager::AcceptThread()
 		for (int i = 0; i < MAX_USER; ++i) {
 			if (false == objects[i].connected) continue;
 			if (i == new_id) continue; // 나 자신에게 나를 알려줄 필요는 없다.
-			if (true == isNearObject(i, new_id)) {
-				objects[i].viewlist.insert(new_id);
+			else {
+			//	objects[i].viewlist.insert(new_id);
+				//AddTimerEvent(new_id);
 				SendPutPlayerPacket(i, new_id);
 			}
 		}
 		for (int i = 0; i < MAX_USER; ++i) {
 			if (false == objects[i].connected) continue;
 			if (i == new_id) continue;
-			if (true == isNearObject(i, new_id)) {
-				objects[new_id].viewlist.insert(i);
+			else {
+				//objects[new_id].viewlist.insert(i);
+				
 				SendPutPlayerPacket(new_id, i);
 			}
 		}
-
+		
 		for (int i = Cube_start; i < Cube_start + 50; ++i)
+		{
+			//AddTimerEvent(i);
 			SendMapInfoPacket(new_id, i);
+		}
 
-
+		
 		RecvPacket(new_id);
 	}
 }
@@ -159,6 +166,7 @@ DWORD WINAPI ServerManager::RegisterWorkerThread(LPVOID self)
 
 void ServerManager::WorkerThread()
 {
+	
 	while (true) {
 		DWORD io_byte;
 		ULONG key;
@@ -173,21 +181,26 @@ void ServerManager::WorkerThread()
 		if (false == is_error) serverPrint("GetQueueCompletionStatus ERROR", WSAGetLastError());
 		if (0 == io_byte) DisConnect(key);
 
-		if (lpover_ex->is_recv) {
+		switch (lpover_ex->type) {
+		case OVER_EX::Type::NONE:
+			delete lpover_ex;
+			break;
+		case OVER_EX::Type::RECV:
+		{
 			int rest_size = io_byte;
 			char *ptr = lpover_ex->messageBuffer;
-			char packet_size = 0;
-			if (0 < objects[key].prev_size) packet_size = objects[key].packet_buf[0];
+			char packetSize = 0;
+			if (0 < objects[key].prev_size) packetSize = objects[key].packet_buf[0];
 			while (rest_size > 0) {
-				if (packet_size == 0)
-					packet_size = ptr[0];
-				int required = packet_size - objects[key].prev_size;
+				if (packetSize == 0)
+					packetSize = ptr[0];
+				int required = packetSize - objects[key].prev_size;
 				if (rest_size >= required) {
 					memcpy(objects[key].packet_buf + objects[key].prev_size, ptr, required);
 					ProcessPacket(key, objects[key].packet_buf);
 					rest_size -= required;
 					ptr += required;
-					packet_size = 0; // 패킷 처리가 끝남
+					packetSize = 0; // 패킷 처리가 끝남
 				}
 				else {
 					// 패킷을 더 이상 만들 수가 없다
@@ -197,11 +210,60 @@ void ServerManager::WorkerThread()
 			}
 			RecvPacket(key);
 		}
-		else {
-			// 오버랩구조체 delete
+		break;
+		case OVER_EX::Type::EVENT:
+		{
+			TimerEvent* pEvent = reinterpret_cast<TimerEvent*>(lpover_ex->messageBuffer);
+			if (pEvent->command == TimerEvent::Command::Collision)
+				Collision(key);
 			delete lpover_ex;
 		}
+		break;
+		default:
+			serverPrint("이런 패킷 타입을 만든 적이 없는데요...?\n");
+			// 오버랩구조체 delete
+			delete lpover_ex;
+			break;
+		}
 	}
+}
+
+DWORD ServerManager::RegisterTimerThread(LPVOID self)
+{
+	ServerManager* mySelf = static_cast<ServerManager*>(self);
+	mySelf->TimerThread();
+
+	return 0;
+}
+
+void ServerManager::TimerThread()
+{
+	do {
+		Sleep(1); // 1ms 강제로 쉬기
+		do {
+			timerQueue_Lock.lock();
+			if (!timerQueue.empty()) {
+				TimerEvent peek = timerQueue.top();
+				timerQueue_Lock.unlock();
+				std::chrono::duration<double> currentTime = std::chrono::high_resolution_clock::now().time_since_epoch();
+				if (peek.startTime > currentTime.count()) break;
+				//serverPrint("peek [%d] : start time : %.2lf, now : %.2lf\n" , peek.objectID, peek.startTime, currentTime.count());
+				timerQueue_Lock.lock();
+				timerQueue.pop();
+				timerQueue_Lock.unlock();
+
+				OVER_EX* lpover_ex = new OVER_EX;
+				memcpy(lpover_ex->messageBuffer, &peek, sizeof(TimerEvent));
+				lpover_ex->init();
+				lpover_ex->dataBuffer.len = sizeof(TimerEvent);
+				lpover_ex->type = OVER_EX::Type::EVENT;
+
+				PostQueuedCompletionStatus(hIOCP, 0, peek.objectID, reinterpret_cast<WSAOVERLAPPED*>(lpover_ex));
+			}
+			else
+				timerQueue_Lock.unlock();
+		} while (true);
+	} while (true);
 }
 
 
@@ -209,74 +271,88 @@ void ServerManager::ObjectInitialize()
 {
 	std::random_device rd;
 	std::default_random_engine dre(rd());
-	std::uniform_real_distribution<> startPos(-2650.0,2650.0);
-	std::uniform_real_distribution<> startYPos(0, 2650.0);
+	std::uniform_real_distribution<> startPos(-2500.0, 2500.0);
+	std::uniform_real_distribution<> startYPos(0, 5500.0);
 	std::uniform_real_distribution<> startRotate(0, 90.0);
-	//std::uniform_real_distribution<> startPos(0.0, 500.0);
-	//std::uniform_real_distribution<> startYPos(0, 250.0);
 
-	for (int i = Cube_start; i < Cube_start+5; ++i) {
-		objects[i].position.x = startPos(dre);
-		objects[i].position.y = startYPos(dre);
-		objects[i].position.z = startPos(dre);
+	for (int i = Cube_start; i < Cube_start + 5; ++i) {
 
 		objects[i].rotate.x = startRotate(dre);
 		objects[i].rotate.y = startRotate(dre);
 		objects[i].rotate.z = startRotate(dre);
-		
-		objects[i].cube_size = 300;
-
 	}
-	for (int i = Cube_start+5; i < Cube_start + 10; ++i) {
-		objects[i].position.x = startPos(dre);
-		objects[i].position.y = startYPos(dre);
-		objects[i].position.z = startPos(dre);
+	for (int i = Cube_start + 5; i < Cube_start + 15; ++i) {
 
 		objects[i].rotate.x = startRotate(dre);
 		objects[i].rotate.y = startRotate(dre);
 		objects[i].rotate.z = startRotate(dre);
-
-		objects[i].cube_size = 400;
 	}
-	for (int i = Cube_start+10; i < Cube_start + 20; ++i) {
-		objects[i].position.x = startPos(dre);
-		objects[i].position.y = startYPos(dre);
-		objects[i].position.z = startPos(dre);
+	for (int i = Cube_start + 15; i < Cube_start + 35; ++i) {
 
 		objects[i].rotate.x = startRotate(dre);
 		objects[i].rotate.y = startRotate(dre);
 		objects[i].rotate.z = startRotate(dre);
-
-		objects[i].cube_size = 500;
 	}
-	for (int i = Cube_start+20; i < Cube_start + 30; ++i) {
-		objects[i].position.x = startPos(dre);
-		objects[i].position.y = startYPos(dre);
-		objects[i].position.z = startPos(dre);
+	for (int i = Cube_start + 35; i < Cube_start + 45; ++i) {
 
 		objects[i].rotate.x = startRotate(dre);
 		objects[i].rotate.y = startRotate(dre);
 		objects[i].rotate.z = startRotate(dre);
-
-		objects[i].cube_size = 600;
 	}
-	for (int i = Cube_start+30; i < Cube_start + 50; ++i) {
-		objects[i].position.x = startPos(dre);
-		objects[i].position.y = startYPos(dre);
-		objects[i].position.z = startPos(dre);
+	for (int i = Cube_start + 45; i < Cube_start + 50; ++i) {
 
 		objects[i].rotate.x = startRotate(dre);
 		objects[i].rotate.y = startRotate(dre);
 		objects[i].rotate.z = startRotate(dre);
-
-		objects[i].cube_size = 700;
 	}
 
+	// 초기 위치를 설정
 
-	/*for (auto &cl : objects) {
+	for (int i = Cube_start; i < Cube_start + 50; ++i)
+	{
+		objects[i].position.x = startPos(dre);
+		objects[i].position.y = startYPos(dre);
+		objects[i].position.z = startPos(dre);
+
+	}
+	//int a = 0;
+	
+	// 초기 설정된 위치가지고 겹치는지 판단
+	//for (int i = Cube_start; i < Cube_start + 50; ++i)
+	//{
+
+	//	for (int j = i + 1; j < Cube_start + 50; ++j)
+	//	{
+
+
+	//		// 겹치면 딴데로 보냄
+	//		while (1) {
+	//			if (Distance(objects[i].position, objects[j].position) <= ((objects[i].cube_size + objects[j].cube_size) / 2) + 300) {
+	//				objects[i].position.x = startPos(dre);
+	//				objects[i].position.y = startYPos(dre);
+	//				objects[i].position.z = startPos(dre);
+	//				objects[j].cube_stay = true;
+	//			}
+	//			else
+	//				break;
+	//		}
+	//	
+	//		
+
+
+	//	}
+
+	//}
+	//	
+
+	
+	
+	
+
+	for (auto &cl : objects) {
 		cl.connected = false;
-		cl.viewlist.clear();
-	}*/
+		//cl.viewlist.clear();
+	}
 }
 
 void ServerManager::SendPacket(unsigned short int id, char * packet)
@@ -289,7 +365,7 @@ void ServerManager::SendPacket(unsigned short int id, char * packet)
 	over->dataBuffer.buf = over->messageBuffer;
 	memcpy(over->messageBuffer, packet, packet[0]);
 	::ZeroMemory(&(over->overlapped), sizeof(WSAOVERLAPPED));
-	over->is_recv = false;
+	over->type = OVER_EX::Type::NONE;
 	if (WSASend(client_s, &over->dataBuffer, 1, NULL, 0, &(over->overlapped), NULL) == SOCKET_ERROR)
 		if (WSAGetLastError() != WSA_IO_PENDING)
 			serverPrint("Error = Fail WSASend(error_code : %d)\n", WSAGetLastError());
@@ -339,6 +415,7 @@ void ServerManager::SendPositionPacket(unsigned short to, unsigned short obj)
 	packet.type = SC_Type::Position;
 	packet.position = objects[obj].position;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
+	
 }
 
 void ServerManager::SendRemovePlayerPacket(unsigned short int to, unsigned short int id)
@@ -357,7 +434,6 @@ void ServerManager::SendMapInfoPacket(unsigned short to, unsigned short obj)
 	packet.id = obj;
 	packet.size = sizeof(packet);
 	packet.type = SC_Type::MapInfo;
-	packet.cube_size = objects[obj].cube_size;
 	packet.position = XMFLOAT3(objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);
 	packet.rotate = XMFLOAT3(objects[obj].rotate.x, objects[obj].rotate.y, objects[obj].rotate.z);
 
@@ -366,87 +442,50 @@ void ServerManager::SendMapInfoPacket(unsigned short to, unsigned short obj)
 
 void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 {
+	
 	CSPacket_Move * packet = reinterpret_cast<CSPacket_Move *>(buf);
-
-	XMFLOAT3 pos = objects[id].position;
+	XMFLOAT3 xmf3Shift = objects[id].position;
 	switch (packet->type) {
 	case CS_Type::Move:
 	{
-		
-		if ((DIR_FORWARD & packet->dir) && pos.y < WORLD_HEIGHT - 1) ++pos.y;
-		if ((DIR_BACKWARD & packet->dir) && pos.y > 0) --pos.y;
-		if ((DIR_LEFT & packet->dir) && pos.x > 0) --pos.x;
-		if ((DIR_RIGHT & packet->dir) && pos.x < WORLD_WIDTH - 1) ++pos.x;
+		if (packet->dir) {
+			/*if (packet->dir & DIR_FORWARD) pos.z+=10;
+			if (packet->dir & DIR_BACKWARD) pos.z-=10;
+			if (packet->dir & DIR_LEFT) pos.x-=10;
+			if (packet->dir & DIR_RIGHT) pos.x+=10;
+			if (packet->dir & DIR_UP) pos.y+=10;
+			if (packet->dir & DIR_DOWN) pos.y-=10;*/
+			
+			if (packet->dir & DIR_FORWARD) xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, -fDistance);
+			if (packet->dir & DIR_BACKWARD) xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, +fDistance);
+#ifdef _WITH_LEFT_HAND_COORDINATES
+			if (packet->dir & DIR_RIGHT) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Right, +fDistance);
+			if (packet->dir & DIR_LEFT) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Right, -fDistance);
+#else
+			if (packet->dir & DIR_RIGHT) xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, +fDistance);
+			if (packet->dir & DIR_LEFT) xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, -fDistance);
+#endif
+			if (packet->dir & DIR_UP) xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, +fDistance);
+			if (packet->dir & DIR_DOWN) xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, -fDistance);
+
+		}
 	}
 	break;
 	default:
 		serverPrint("Unknown Packet Type Error\n");
 		while (true);
 	}
-	objects[id].position = pos;
+	objects[id].position = xmf3Shift;
 
-	// 시야 처리 부분
-	objects[id].vl_lock.lock();
-	std::unordered_set < unsigned short int> old_vl = objects[id].viewlist;
-	objects[id].vl_lock.unlock();
-	std::unordered_set <unsigned short int> new_vl;
+	
 
-	for (int i = 0; i < MAX_USER; ++i) {
-		if ((true == objects[i].connected) &&
-			(true == isNearObject(id, i)) &&
-			(i != id))
-			new_vl.insert(i);
+
+	
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (objects[i].connected == true)
+			SendPositionPacket(i, id);
 	}
-
-	for (auto cl : new_vl)
-	{
-		if (0 != old_vl.count(cl)) {	// old에 있었다, old, new 동시 존재
-			objects[id].vl_lock.lock();
-			if (0 != objects[cl].viewlist.count(id)) {// 상대방 뷰리스트에 있나
-				objects[id].vl_lock.unlock();
-				SendPositionPacket(cl, id);
-			}
-			else {
-				objects[cl].viewlist.insert(id);
-				objects[id].vl_lock.unlock();
-				SendPutPlayerPacket(cl, id);	// 없었으면 추가
-			}
-		}
-		else {	// 새로 시야에 들어옴.
-			objects[id].vl_lock.lock();
-			objects[id].viewlist.insert(cl);
-			objects[id].vl_lock.unlock();
-			SendPutPlayerPacket(id, cl);
-			objects[id].vl_lock.lock();
-			if (0 != objects[cl].viewlist.count(id)) {	// 상대방이 이미 나를 알고 있는가?
-				objects[id].vl_lock.unlock();
-				SendPositionPacket(cl, id);
-			}
-			else {	// 아니라면 추가해야지.
-				objects[cl].viewlist.insert(id);
-				objects[id].vl_lock.unlock();
-				SendPutPlayerPacket(cl, id);
-			}
-		}
-	}
-	for (auto cl : old_vl) { 	// 시야에서 사라짐
-		if (0 != new_vl.count(cl)) continue;	// 이미 위에서 처리를 했으니 할 게 없다. 컨티뉴
-		objects[id].vl_lock.lock();
-		objects[id].viewlist.erase(cl);
-		objects[id].vl_lock.unlock();
-		SendRemovePlayerPacket(id, cl);
-		objects[id].vl_lock.lock();
-		if (0 != objects[cl].viewlist.count(id)) // 상대방 뷰 리스트에 내가 없는 경우에만!
-		{
-			objects[cl].viewlist.erase(id);	// 있나 없나 보고 erase해주어야 한다. 그냥 하면 안된다.
-			objects[id].vl_lock.unlock();
-			SendRemovePlayerPacket(cl, id);
-		}
-		else
-			objects[id].vl_lock.unlock();
-	}
-	SendPositionPacket(id, id);	// 나한테 보내준다
-
+	
 	// for (int i = 0; i < MAX_USER; ++i) if (true == clients[i].connected) SendPositionPacket(i, id);
 }
 
@@ -485,4 +524,58 @@ bool ServerManager::isNearObject(unsigned short int a, unsigned short int b)
 	// 바운딩 스피어나 구 충돌 검사 공식을 여기에
 	return false;
 	return true;
+}
+// 무시
+float ServerManager::Distance(XMFLOAT3 vector1, XMFLOAT3 vector2)
+{
+	float d;
+	d = sqrtf((vector1.x - vector2.x)*(vector1.x - vector2.x) + (vector1.y - vector2.y)*(vector1.y - vector2.y) + (vector1.z - vector2.z)*(vector1.z - vector2.z));
+
+	return d;
+}
+
+
+// 무시
+void ServerManager::Collision(unsigned int id)
+{
+	printf("d");
+	
+
+	objects[id].colbox.Center = XMFLOAT3(objects[id].position.x, objects[id].position.y - 60, objects[id].position.z - 50);
+	for (int i = Cube_start; i < Cube_start + 5; ++i) {
+
+		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 400, MAX_CUBE_SIZE - 400, MAX_CUBE_SIZE - 400);
+	}
+	for (int i = Cube_start + 5; i < Cube_start + 15; ++i) {
+		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 300, MAX_CUBE_SIZE - 300, MAX_CUBE_SIZE - 300);
+	}
+	for (int i = Cube_start + 15; i < Cube_start + 35; ++i) {
+		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 200, MAX_CUBE_SIZE - 200, MAX_CUBE_SIZE - 200);
+	}
+	for (int i = Cube_start + 35; i < Cube_start + 45; ++i) {
+		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 100, MAX_CUBE_SIZE - 100, MAX_CUBE_SIZE - 100);
+	}
+	for (int i = Cube_start + 45; i < Cube_start + 50; ++i) {
+		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE, MAX_CUBE_SIZE, MAX_CUBE_SIZE);
+	}
+	for (int i = Cube_start; i < Cube_start + 50; ++i)
+	{
+		objects[i].colbox.Center = XMFLOAT3(objects[i].position.x, objects[i].position.y, objects[i].position.z);
+		objects[i].colbox.Orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+		
+		if (objects[i].colbox.Intersects(objects[id].colbox)) {
+			printf("충돌함ㅋ");
+		}
+		SendPositionPacket(i, id);
+	
+	}
+	//AddTimerEvent(id);
+}
+
+void ServerManager::AddTimerEvent(unsigned int id, TimerEvent::Command cmd, double second)
+{
+	std::chrono::duration<double> currentTime = std::chrono::high_resolution_clock::now().time_since_epoch(); // 현재 시간을 double 형태로 가져온다.
+	timerQueue_Lock.lock();
+	timerQueue.push(TimerEvent(id, cmd, currentTime.count() + second));
+	timerQueue_Lock.unlock();
 }

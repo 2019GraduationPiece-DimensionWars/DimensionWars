@@ -37,17 +37,24 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 
 	// GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain);
 	GamblerPlayer *pPlayer = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain);
-	// ElfArcherPlayer *pPlayer = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain);
+	//ElfArcherPlayer *pPlayer = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain);
 	m_pPlayer = pPlayer;
 
+
+	// GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain);
+	//GamblerPlayer *otherPlayer = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain);
+	// ElfArcherPlayer *pPlayer = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain);
+	/*for (int i = 0; i < MAX_USER; ++i) {
+		m_ppOtherPlayers[i] = otherPlayer;
+	}*/
 	m_nCubeObjects = 50;
 	m_ppCubeObjects = new DiffuseCubeObject*[m_nCubeObjects];
 	for (unsigned int i = 0; i < m_nCubeObjects; ++i) {
-		if (i < 5) m_pFramework->cubeSize[i] = 300.0f;
-		else if (i < 10) m_pFramework->cubeSize[i] = 400.0f;
-		else if (i < 20) m_pFramework->cubeSize[i] = 500.0f;
-		else if (i < 30) m_pFramework->cubeSize[i] = 600.0f;
-		else if (i < 50) m_pFramework->cubeSize[i] = 700.0f;
+		if (i < 5) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 400;
+		else if (i < 10) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 300;
+		else if (i < 20) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 200;
+		else if (i < 30) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 100;
+		else if (i < 50) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE;
 		m_ppCubeObjects[i] = new DiffuseCubeObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pFramework->cubeSize[i]);
 	}
 
@@ -107,7 +114,11 @@ bool BattleScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 void BattleScene::AnimateObjects(float fTimeElapsed)
 {
 	SendMoveDirection();
+	
 	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed);
+	/*for (int i = 0; i < m_nCubeObjects; ++i) {
+		m_ppCubeObjects[i]->SetPosition(m_pPlayer->GetPosition().x, m_pPlayer->GetPosition().y - 60, m_pPlayer->GetPosition().z - 50);
+	}*/
 }
 
 void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)
@@ -121,6 +132,10 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
 
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
+	
+	/*for (int i = 0; i < MAX_USER; ++i) {
+		if (m_ppOtherPlayers) m_ppOtherPlayers[i]->Render(pd3dCommandList, pCamera);
+	}*/
 
 	for (unsigned int i = 0; i < m_nCubeObjects; ++i)
 		if (m_ppCubeObjects && m_ppCubeObjects[i])
@@ -137,6 +152,7 @@ void BattleScene::BuildCube()
 			// printf("UP Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", i, m_pFramework->cubeSize[i], m_pFramework->cubePos[i].x, m_pFramework->cubePos[i].y, m_pFramework->cubePos[i].z, m_pFramework->cubeRot[i].x, m_pFramework->cubeRot[i].y, m_pFramework->cubeRot[i].z);
 #endif
 			m_ppCubeObjects[i]->SetPosition(m_pFramework->cubePos[i].x, m_pFramework->cubePos[i].y, m_pFramework->cubePos[i].z);
+			//m_ppCubeObjects[i]->SetPosition(m_pPlayer->GetPosition().x, m_pPlayer->GetPosition().y, m_pPlayer->GetPosition().z);
 			m_ppCubeObjects[i]->Rotate(m_pFramework->cubeRot[i].x, m_pFramework->cubeRot[i].y, m_pFramework->cubeRot[i].z);
 		}
 		isBuilded = true;

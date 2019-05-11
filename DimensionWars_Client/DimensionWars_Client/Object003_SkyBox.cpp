@@ -9,7 +9,7 @@
 
 SkyBox::SkyBox(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature) : BaseObject(1)
 {
-	SkyBoxMesh *pSkyBoxMesh = new SkyBoxMesh(pd3dDevice, pd3dCommandList, 20.0f, 20.0f, 20.0f);
+	SkyBoxMesh *pSkyBoxMesh = new SkyBoxMesh(pd3dDevice, pd3dCommandList, 6000.0f, 3000.0f, 6000.0f);
 	SetMesh(pSkyBoxMesh);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);

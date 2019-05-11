@@ -10,7 +10,7 @@ constexpr unsigned short BUFSIZE = 1024;		// 버퍼의 크기
 
 constexpr unsigned short MAX_USER = 500;	// 한 방과 한 전투에 플레이어는 6명. 이 게임은 투사체가 많지 플레이어가 많은 것이 아니다.
 constexpr unsigned short Cube_start = 450;
-constexpr unsigned short MAX_PLAYER = MAX_USER;	// 코딩 할 때 불편하지 않도록 같은 이름을 쓰기 위함
+constexpr unsigned short MAX_PLAYER = 6;	// 코딩 할 때 불편하지 않도록 같은 이름을 쓰기 위함
 
 constexpr unsigned int MAX_OBJECTS = 1000;		// 총 서버가 관리할 플레이어, 투사체 등의 정보를 포함한 게임 월드의 모든 오브젝트 숫자
 // 플레이어 6명, 큐브 50개, 투사체 X개 
@@ -21,6 +21,8 @@ constexpr float WORLD_HEIGHT = 25000.0f;		// 월드의 세로
 constexpr float WORLD_VERTICAL = 25000.0f;	// 월드의 높이
 
 constexpr float VIEW_RANGE = 2500.0f;	// 플레이어의 시야
+
+constexpr float MAX_CUBE_SIZE = 700.0f;	// 큐브 사이즈
 
 
 // 플레이어의 키 입력 정보를 분석하기 위한 일종의 define 고정값. 6비트만 사용
@@ -87,7 +89,6 @@ struct SCPacket_RemovePlayer : SCPacket_Base {
 struct SCPacket_MapInfo : SCPacket_Base {
 	DirectX::XMFLOAT3 position; // 위치정보
 	DirectX::XMFLOAT3 rotate; // 회전정보
-	float cube_size; // 큐브의 크기(한 변의 길이
 
 
 	// 맵의 기본 정보
@@ -100,6 +101,10 @@ struct CSPacket_Base {
 
 struct CSPacket_Move : CSPacket_Base {
 	unsigned char dir;	// Moving_Direction
+	DirectX::XMFLOAT3 m_Right;
+	DirectX::XMFLOAT3 m_Up;
+	DirectX::XMFLOAT3 m_Look;
+
 };
 
 struct CSPacket_Attack : CSPacket_Base {

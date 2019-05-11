@@ -108,6 +108,7 @@ public:
 
 	void SendMoveDirection();
 	BasePlayer					*m_pPlayer = nullptr;
+	BasePlayer *m_ppOtherPlayers[MAX_PLAYER] = { nullptr, };
 
 protected:
 	ID3D12RootSignature			*m_pGraphicsRootSignature = nullptr;

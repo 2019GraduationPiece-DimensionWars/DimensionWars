@@ -15,7 +15,7 @@ private:
 
 	bool isBuilded = false;
 
-	BasePlayer **m_ppOtherPlayers = nullptr;
+	//BasePlayer **m_ppOtherPlayers = nullptr;
 public:
 	BattleScene();
 	BattleScene(SceneTag tag, RuntimeFrameWork* pFramework)

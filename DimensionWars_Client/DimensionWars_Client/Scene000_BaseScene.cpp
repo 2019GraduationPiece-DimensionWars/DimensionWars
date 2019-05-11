@@ -530,47 +530,42 @@ void BaseScene::ProcessPacket(char * ptr)
 			myid = id;
 		}
 		if (id == myid) {
-			//m_pPlayer->SetPosition((XMFLOAT3(0,0,0)));
+			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 			//m_pPlayer->SetVisible(true);
 #ifdef USE_CONSOLE_WINDOW
-			printf("Your [%d] : (%f, %f, %f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 #endif
 		}
-		/*else if (id < MAX_USER) {
-		if (!m_ppOtherPlayers[id])
-		m_ppOtherPlayers[id] = new PlayerObject(OtherPlayerImage);
-		m_ppOtherPlayers[id]->SetPosition(my_packet->x, my_packet->y);
-		m_ppOtherPlayers[id]->SetVisible(true);
-		#ifdef USE_CONSOLE_WINDOW
-		printf("Put Player [%d] : (%d, %d)\n", my_packet->id, my_packet->x, my_packet->y);
-		#endif
-		}*/
+		else if (id != MAX_USER) {
+			//if (!m_ppOtherPlayers[id]) {
+				printf("그려주세요");
+				//m_ppOtherPlayers[id] = new BasePlayer;
+			//}
+			//m_ppOtherPlayers[id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
+#ifdef USE_CONSOLE_WINDOW
+			//printf("Put Player [%d]  (%.1f, %.1f %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
+#endif
+		}
 
 		break;
 	}
 	case SC_Type::Position:
 	{
-		//printf("%d", myid);
 		SCPacket_Position *my_packet = reinterpret_cast<SCPacket_Position *>(ptr);
 		unsigned short other_id = my_packet->id;
 		if (other_id == myid) {
-			//	printf("move");
+			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 		}
-		/*else if (other_id < MAX_USER) {
-		if (!m_ppOtherPlayers[other_id])
-		m_ppOtherPlayers[other_id] = new PlayerObject(OtherPlayerImage);
-		m_ppOtherPlayers[other_id]->SetPosition(my_packet->x, my_packet->y);
-		}
-		else {
-		if (!m_ppNonePlayerObject[other_id - NPC_ID_START]) {
-		m_ppNonePlayerObject[other_id - NPC_ID_START] = new BaseObject(OtherNPCImage);
-		}
-		m_ppNonePlayerObject[other_id - NPC_ID_START]->SetPosition(my_packet->x, my_packet->y);
-		}*/
+		else if (other_id != MAX_USER) {
+			printf("그려주세요");
+			m_ppOtherPlayers[other_id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 #ifdef USE_CONSOLE_WINDOW
-		printf("Position\n");
+			//printf("other [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 #endif
+		}
+		
+
 		break;
 	}
 	case SC_Type::RemovePlayer:
@@ -606,7 +601,6 @@ void BaseScene::ProcessPacket(char * ptr)
 		SCPacket_MapInfo *my_packet = reinterpret_cast<SCPacket_MapInfo *>(ptr);
 
 		unsigned short id = my_packet->id - Cube_start;
-		m_pFramework->cubeSize[id] = my_packet->cube_size;
 		m_pFramework->cubePos[id] = XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z);
 		m_pFramework->cubeRot[id] = XMFLOAT3(my_packet->rotate.x, my_packet->rotate.y, my_packet->rotate.z);
 
@@ -626,10 +620,14 @@ void BaseScene::SendMoveDirection()
 {
 
 	if (m_pPlayer && m_pPlayer->GetDirectionBit()) {
+		
 		CSPacket_Move *myMovePacket = reinterpret_cast<CSPacket_Move *>(m_pFramework->GetSendBuf());
 		myMovePacket->size = sizeof(CSPacket_Move);
 		// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
 		myMovePacket->dir = m_pPlayer->GetDirectionBit();	// 이동에 딜레이를 주기 위함, 일종의 타일 위 이동속도와 유사
+		myMovePacket->m_Look = m_pPlayer->GetLook();
+		myMovePacket->m_Right = m_pPlayer->GetRight();
+		myMovePacket->m_Up = m_pPlayer->GetUp();
 		myMovePacket->type = CS_Type::Move;
 		m_pFramework->SendPacket(reinterpret_cast<char *>(myMovePacket));
 	}

@@ -92,5 +92,5 @@ public:
 	unsigned int GetMeshType(int nIndex = 0);
 
 	char GetDirectionBit() const { return directionBit; }
-
+	void SetDirectionBit(char dwBit) { directionBit = dwBit; }
 };

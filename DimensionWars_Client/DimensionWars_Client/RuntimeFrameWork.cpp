@@ -559,7 +559,6 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 			else
 				ChangeScene(BaseScene::SceneTag::Title);
 			break;
-			break;
 		case VK_RETURN:
 			break;
 		case VK_F1:

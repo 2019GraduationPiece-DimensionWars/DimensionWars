@@ -92,7 +92,7 @@ BaseCamera * GrimReaperPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeEla
 		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 		break;
 	case THIRD_PERSON_CAMERA:
-		SetFriction(250.0f);
+		SetFriction(1000.0f);
 		SetMaxVelocityXZ(300.0f);
 		SetMaxVelocityY(400.0f);
 		m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
@@ -250,9 +250,9 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 			else
 				Rotate(cyDelta, cxDelta, 0.0f);
 		}
-		if (dwDirection) Move(dwDirection, 6000.0f * fTimeElapsed, true);
+		//if (dwDirection) Move(dwDirection, 300.0f * fTimeElapsed, true);
 	}
-
+	this->SetDirectionBit(dwDirection);
 	Update(fTimeElapsed);
 }
 

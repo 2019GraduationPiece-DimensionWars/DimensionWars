@@ -99,6 +99,8 @@ void GamblerPlayer::OnPrepareRender()
 
 	m_xmf4x4ToParent = Matrix4x4::Multiply(XMMatrixScaling(m_xmf3Scale.x, m_xmf3Scale.y, m_xmf3Scale.z), m_xmf4x4ToParent);
 	m_xmf4x4ToParent = Matrix4x4::Multiply(XMMatrixRotationX(-90.0f), m_xmf4x4ToParent);
+	//m_xmf4x4ToParent = Matrix4x4::Multiply(XMMatrixRotationZ(90.0f), m_xmf4x4ToParent);
+
 }
 
 BaseCamera * GamblerPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
@@ -119,7 +121,7 @@ BaseCamera * GamblerPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapse
 		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 		break;
 	case THIRD_PERSON_CAMERA:
-		SetFriction(250.0f);
+		SetFriction(1000.0f);
 		SetMaxVelocityXZ(300.0f);
 		SetMaxVelocityY(400.0f);
 		m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
@@ -273,9 +275,9 @@ void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 			// else
 				Rotate(cyDelta, cxDelta, 0.0f);
 		}
-		if (dwDirection) Move(dwDirection, 10000000.0f * fTimeElapsed, true);
+		//if (dwDirection) Move(dwDirection, 300.0f * fTimeElapsed, true);
 	}
-
+	this->SetDirectionBit(dwDirection);
 	Update(fTimeElapsed);
 }
 
