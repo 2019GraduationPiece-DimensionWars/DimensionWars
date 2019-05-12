@@ -19,7 +19,7 @@ GrimReaperPlayer::GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);	
 	m_pSkinnedAnimationController->AddAnimationSet(0.0f, 40.0f * keyFrameUnit, "Idle");
 	m_pSkinnedAnimationController->AddAnimationSet(42.0f * keyFrameUnit, 62.0f * keyFrameUnit, "OnHit", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(64.0f * keyFrameUnit, 104.0f * keyFrameUnit, "Guard");
+	m_pSkinnedAnimationController->AddAnimationSet(64.0f * keyFrameUnit, 104.0f * keyFrameUnit, "Guard", ANIMATION_TYPE_ONCE);
 	m_pSkinnedAnimationController->AddAnimationSet(106.0f * keyFrameUnit, 146.0f * keyFrameUnit, "Burf", ANIMATION_TYPE_ONCE);
 	m_pSkinnedAnimationController->AddAnimationSet(148.0f * keyFrameUnit, 208.0f * keyFrameUnit, "Hide Invasion", ANIMATION_TYPE_ONCE);
 	// m_pSkinnedAnimationController->AddAnimationSet(210.0 * keyFrameUnit, 330.0 * keyFrameUnit, "Full Attack", ANIMATION_TYPE_ONCE);
@@ -27,12 +27,12 @@ GrimReaperPlayer::GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 	m_pSkinnedAnimationController->AddAnimationSet(235.0f * keyFrameUnit, 271.0f * keyFrameUnit, "Second Attack", ANIMATION_TYPE_ONCE);
 	m_pSkinnedAnimationController->AddAnimationSet(271.0f * keyFrameUnit, 330.0f * keyFrameUnit, "Third Attack", ANIMATION_TYPE_ONCE);
 	m_pSkinnedAnimationController->AddAnimationSet(332.0f * keyFrameUnit, 382.0f * keyFrameUnit, "Slash Wave", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(384.0f * keyFrameUnit, 454.0f * keyFrameUnit, "Beheading");
+	m_pSkinnedAnimationController->AddAnimationSet(384.0f * keyFrameUnit, 454.0f * keyFrameUnit, "Beheading", ANIMATION_TYPE_ONCE);
 	m_pSkinnedAnimationController->AddAnimationSet(456.0f * keyFrameUnit, 476.0f * keyFrameUnit, "Move Forward");
 	m_pSkinnedAnimationController->AddAnimationSet(478.0f * keyFrameUnit, 498.0f * keyFrameUnit, "Move Right");
 	m_pSkinnedAnimationController->AddAnimationSet(500.0f * keyFrameUnit, 520.0f * keyFrameUnit, "Move Left");
 	m_pSkinnedAnimationController->AddAnimationSet(522.0f * keyFrameUnit, 542.0f * keyFrameUnit, "Move Backward");
-	m_pSkinnedAnimationController->AddAnimationSet(544.0f * keyFrameUnit, 574.0f * keyFrameUnit, "Down");
+	m_pSkinnedAnimationController->AddAnimationSet(544.0f * keyFrameUnit, 574.0f * keyFrameUnit, "Down", ANIMATION_TYPE_ONCE);
 	m_pSkinnedAnimationController->SetAnimationSet(Idle);
 	// m_pSkinnedAnimationController->SetTrackSpeed(0, 2.0f);
 	/*
@@ -167,7 +167,28 @@ void GrimReaperPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 {
 	DWORD dwDirection = 0;
-	if (isCancleEnabled()) {
+	if (SecondAttackTrigger) {
+		if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(First_Attack)->m_bEndTrigger)// 1타 모션이 끝나기 전까지는 2타 시행 안함
+			m_pSkinnedAnimationController->SetAnimationSet(state = Second_Attack);
+		if (state == Second_Attack) // 1타 모션이 끝나서 2타 모션이 들어왔는지 확인해야 2타 트리거 종료
+			SecondAttackTrigger = false;	
+	}
+	else if (ThirdAttackTrigger) {
+		if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(Second_Attack)->m_bEndTrigger)// 2타 모션이 끝나기 전까지는 3타 시행 안함
+			m_pSkinnedAnimationController->SetAnimationSet(state = Third_Attack);
+		if (state == Third_Attack) // 2타 모션이 끝나서 3타 모션이 들어왔는지 확인해야 2타 트리거 종료
+			ThirdAttackTrigger = false;
+	}
+	else if (isCancleEnabled()) {
+		if (pKeysBuffer[VK_SPACE] & 0xF0) {
+			dwDirection |= DIR_UP;
+			m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+		}
+		if (pKeysBuffer['f'] & 0xF0 || pKeysBuffer['F'] & 0xF0) {
+			dwDirection |= DIR_DOWN;
+			m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+		}
+	
 		if (pKeysBuffer['w'] & 0xF0 || pKeysBuffer['W'] & 0xF0) {
 			dwDirection |= DIR_FORWARD;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
@@ -183,13 +204,7 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 		if (pKeysBuffer['d'] & 0xF0 || pKeysBuffer['D'] & 0xF0) {
 			dwDirection |= DIR_RIGHT;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right);
-		}
-		if (pKeysBuffer[VK_SPACE] & 0xF0) {
-			dwDirection |= DIR_UP;
-		}
-		if (pKeysBuffer['f'] & 0xF0 || pKeysBuffer['F'] & 0xF0) {
-			dwDirection |= DIR_DOWN;
-		}
+		}	
 
 		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_LEFT))
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
@@ -212,9 +227,7 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 		}
 		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_BACKWARD)) {
-			if ((dwDirection & DIR_LEFT) && (dwDirection & DIR_RIGHT))
-				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
-			else if (dwDirection & DIR_LEFT)
+			if (dwDirection & DIR_LEFT)
 				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left);
 			else if (dwDirection & DIR_RIGHT)
 				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right);
@@ -224,13 +237,10 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 		if (!dwDirection)
 			m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 	}
-
+	
 
 	//if (pKeysBuffer[VK_LBUTTON])
 	//	m_pSkinnedAnimationController->SetAnimationSet(state = First_Attack);
-
-
-	
 
 	float cxDelta = 0.0f, cyDelta = 0.0f;
 	POINT ptCursorPos;
@@ -259,19 +269,33 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 bool GrimReaperPlayer::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-
 	switch (nMessageID)
 	{
 	case WM_LBUTTONDOWN:
-		if ((lParam & 0x40000000) != 0x40000000) {
-			m_pSkinnedAnimationController->SetAnimationSet(state = First_Attack);
+		switch (state) {
+		case First_Attack:
+			SecondAttackTrigger = true;
+			break;
+		case Second_Attack:
+			ThirdAttackTrigger = true;
+			break;
+		default:
+			if (isCancleEnabled())
+				m_pSkinnedAnimationController->SetAnimationSet(state = First_Attack);
+			break;
 		}
+		::SetCapture(hWnd);
+		::GetCursorPos(&m_ptOldCursorPos);
 		break;
 	case WM_RBUTTONDOWN:
+		if (isCancleEnabled() && state != Guard)
+			m_pSkinnedAnimationController->SetAnimationSet(state = Guard);
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
 		break;
 	case WM_LBUTTONUP:
+		::ReleaseCapture();
+		break;
 	case WM_RBUTTONUP:
 		::ReleaseCapture();
 		break;
@@ -291,7 +315,35 @@ bool GrimReaperPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 		// 키보드를 누르고 있을 경우 최초 한번만 실행.
 		if ((lParam & 0x40000000) != 0x40000000) {
 			switch (wParam) {
-			case VK_ESCAPE:
+			case '1':			
+				switch (state) {
+				case First_Attack:
+					SecondAttackTrigger = true;
+					break;
+				case Second_Attack:
+					ThirdAttackTrigger = true;
+					break;
+				default:
+					if (isCancleEnabled())
+						m_pSkinnedAnimationController->SetAnimationSet(state = First_Attack);
+					break;
+				}				
+				break;
+			case '2':
+				if (isCancleEnabled())
+					m_pSkinnedAnimationController->SetAnimationSet(state = Slash_Wave);
+				break;
+			case '3':
+				if (isCancleEnabled())
+					m_pSkinnedAnimationController->SetAnimationSet(state = Hide_Invasion);
+				break;
+			case 'q': case 'Q':
+				if (isCancleEnabled())
+					m_pSkinnedAnimationController->SetAnimationSet(state = Burf);
+				break;
+			case 'e': case 'E':
+				if (isCancleEnabled())
+					m_pSkinnedAnimationController->SetAnimationSet(state = Beheading);
 				break;
 			}
 		}
@@ -302,9 +354,10 @@ bool GrimReaperPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 	return false;
 }
 
-bool GrimReaperPlayer::isCancleEnabled() const
+bool GrimReaperPlayer::isCancleEnabled()
 {
-	if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger) {
+	if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger && 
+		m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_nType != ANIMATION_TYPE_LOOP) {
 		m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger = false;
 		return true;
 	}

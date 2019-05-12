@@ -532,7 +532,7 @@ void RuntimeFrameWork::MoveToNextFrame()
 
 void RuntimeFrameWork::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	// if (m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+	if (m_pCurrScene) m_pCurrScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 	switch (nMessageID)
 	{
 	case WM_LBUTTONDOWN:
@@ -553,7 +553,7 @@ void RuntimeFrameWork::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPAR
 
 void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	//if (m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+	if (m_pCurrScene) m_pCurrScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 	switch (nMessageID)
 	{
 	case WM_KEYUP:

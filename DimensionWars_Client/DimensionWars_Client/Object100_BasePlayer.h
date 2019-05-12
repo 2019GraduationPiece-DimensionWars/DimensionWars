@@ -90,7 +90,7 @@ public:
 	virtual bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	virtual bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
-	virtual bool isCancleEnabled() const = 0;
+	virtual bool isCancleEnabled() = 0;
 
 	void SetFramework(RuntimeFrameWork* p) { m_pFramework = p; }
 };

@@ -5,6 +5,8 @@ class AnimationController;
 class GamblerPlayer :
 	public BasePlayer
 {
+private:
+	bool isShot1 = false;
 public:
 	enum State {
 		Full = 0,
@@ -12,7 +14,7 @@ public:
 		OnHit = 2,
 		Guard = 3,
 		Burf = 4,
-		Shffle = 5,
+		Shuffle = 5,
 		Idle_Attack = 6,
 		Multi_Shot = 7,
 		Wild_Card = 8,
@@ -62,5 +64,8 @@ public:
 
 	virtual void ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed) override;
 
-	virtual bool isCancleEnabled() const;
+	virtual bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) override;
+
+	virtual bool isCancleEnabled() override;
 };

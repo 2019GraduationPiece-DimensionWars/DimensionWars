@@ -39,7 +39,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	m_pFramework->GetResource()->AllModelLoad(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
 
 	int cmd = 0;
-	printf("임시 캐릭터 입력 : 사신 - 0, 도박사 - 1\n");
+	printf("< 임시 캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
 	scanf_s("%d", &cmd);
 
 	switch (cmd) {
@@ -105,6 +105,7 @@ void BattleScene::ReleaseUploadBuffers()
 bool BattleScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	if (m_pPlayer) m_pPlayer->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+
 	switch (nMessageID)
 	{
 	case WM_LBUTTONDOWN:
@@ -125,6 +126,8 @@ bool BattleScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 
 bool BattleScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
+	if (m_pPlayer) m_pPlayer->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+
 	return false;
 }
 

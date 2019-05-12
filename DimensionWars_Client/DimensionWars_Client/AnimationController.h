@@ -73,9 +73,13 @@ public:
 	float							m_fEndTime = 0.0f;
 	float							m_fLength = 0.0f;
 
+	float							m_fOldPosition = 0.0f;
 	float 							m_fPosition = 0.0f;
 	int 							m_nType = ANIMATION_TYPE_LOOP; //Once, Loop, PingPong
+
+	bool							m_bStartTrigger = true; // 이 애니메이션이 시작되었을 때.
 	bool							m_bEndTrigger = false;	// Once, PingPong일 때 이 애니메이션이 끝났는지를 검사하기 위함
+	bool							m_bPingPongTrigger = false;
 
 	int 							m_nCallbackKeys = 0;
 	CALLBACKKEY 					*m_pCallbackKeys = nullptr;

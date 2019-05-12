@@ -108,41 +108,70 @@ void AnimationSet::SetPosition(float fTrackPosition)
 {
 	m_fPosition = m_fStartTime;
 	float fNowPosition = (m_fLength == 0.0f)? 0.0f:(::fmod(fTrackPosition, m_fLength));	// ::fmod(fTrackPosition, m_fLength)는 현재 진행된 애니메이션의 시간.  == fTrackPosition % m_fLength
+	if (0.0f >= fNowPosition) m_fOldPosition = fNowPosition;	
+	
 	switch (m_nType)
 	{
 	case ANIMATION_TYPE_LOOP:
-	{
 		m_fPosition += fNowPosition;
 		break;
-	}
 	case ANIMATION_TYPE_ONCE: 
 	{
-		if (!m_bEndTrigger) m_fPosition += fNowPosition;
-		m_bEndTrigger = (m_fEndTime - keyFrameUnit < m_fPosition) ? true : false;
-		if (m_bEndTrigger) {
-			// printf("%s : TrackPos : %.2f / Length : %.2f / m_fPosition : %.2f / (%.2f ~ %.2f) / %.2f\n", m_pstrAnimationSetName, fTrackPosition, m_fLength, m_fPosition, m_fStartTime, m_fEndTime, fNowPosition);
-			m_fPosition = m_fEndTime;
-		}
-		break;
-	}
-	case ANIMATION_TYPE_PINGPONG:
-	{
-		if (m_bEndTrigger) {
-			m_fPosition = m_fEndTime - fNowPosition;
-			if (m_fPosition <= m_fStartTime)
-				m_bEndTrigger = false;
-		}
-		else {
-			m_fPosition = m_fStartTime + fNowPosition;
-			if (m_fPosition >= m_fEndTime)
+		if (!m_bEndTrigger) {
+			m_fPosition += fNowPosition;
+			if (m_fPosition + abs(m_fOldPosition - fNowPosition) >= m_fEndTime)
 				m_bEndTrigger = true;
 		}
+		else {
+			m_bStartTrigger = true;
+			m_fPosition = m_fEndTime;
+		}
+	}
 		break;
-	}
-	}
-		
-	if (m_pAnimationCallbackHandler)
+	case ANIMATION_TYPE_PINGPONG:
 	{
+		if (!m_bEndTrigger) {
+			if (!m_bPingPongTrigger) {
+				m_fPosition += fNowPosition;
+				if (m_fPosition + abs(m_fOldPosition - fNowPosition) > m_fEndTime)
+					m_bPingPongTrigger = true;
+			}
+			else {
+				m_fPosition = m_fEndTime;
+				m_fPosition -= fNowPosition;
+				if (m_fPosition - abs(m_fOldPosition - fNowPosition) < m_fStartTime) {
+					//m_bPingPongTrigger = false;
+					m_bEndTrigger = true;
+				}
+			}
+		}
+		else {
+			m_bStartTrigger = true;
+			m_fPosition = m_fStartTime;
+		}
+	}
+		break;
+	case ANIMATION_TYPE_REVERSE_ONCE:
+	{
+		if (!m_bEndTrigger) {
+			m_fPosition = m_fEndTime;
+			m_fPosition -= fNowPosition;
+			if (m_fPosition - abs(m_fOldPosition - fNowPosition) < m_fStartTime)
+				m_bEndTrigger = true;
+		}
+		else {
+			m_bStartTrigger = true;
+			m_fPosition = m_fEndTime;
+		}
+	}
+		break;
+	
+	}
+	//printf("%s : TrackPos : %.1f / NowPos : %.1f / m_fPosition : %.1f / (%.1f ~ %.1f) / Length: %.1f\n", m_pstrAnimationSetName, fTrackPosition, fNowPosition, m_fPosition, m_fStartTime, m_fEndTime, m_fLength);
+
+	m_fOldPosition = fNowPosition;
+
+	if (m_pAnimationCallbackHandler) {
 		void *pCallbackData = GetCallbackData();
 		if (pCallbackData) m_pAnimationCallbackHandler->HandleCallback(pCallbackData);
 	}
@@ -334,10 +363,12 @@ void AnimationController::SetAnimationCallbackHandler(int nAnimationSet, Animati
 
 void AnimationController::SetAnimationSet(int nAnimationSet)
 {
-	if (m_pAnimationSets && (nAnimationSet < m_pAnimationSets->GetNumberOfAnimationSets()))
-	{
+	if (m_pAnimationSets && (nAnimationSet < m_pAnimationSets->GetNumberOfAnimationSets())) {
 	//	m_nAnimationSet = nAnimationSet;
 		m_pAnimationTracks[m_nAnimationTrack].SetAnimationSet(nAnimationSet);
+		AnimationSet *pAnimationSet = m_pAnimationSets->GetAnimationSet(m_pAnimationTracks[m_nAnimationTrack].GetAnimationSet());
+		pAnimationSet->m_bStartTrigger = true;
+		pAnimationSet->m_bEndTrigger = false;
 	}
 }
 
@@ -346,11 +377,16 @@ void AnimationController::AdvanceTime(float fElapsedTime, SkinnedFrameObject * p
 	m_fTime += fElapsedTime;
 	
 	if (m_pAnimationTracks) {
-		for (int i = 0; i < m_nAnimationTracks; ++i) m_pAnimationTracks[i].SetPosition(m_pAnimationTracks[i].GetPosition() + (fElapsedTime * m_pAnimationTracks[i].GetSpeed()));
-
+		for (int i = 0; i < m_nAnimationTracks; ++i) 
+			m_pAnimationTracks[i].SetPosition(m_pAnimationTracks[i].GetPosition() + (fElapsedTime * m_pAnimationTracks[i].GetSpeed()));	
+		
 		for (int i = 0; i < m_nAnimationTracks; ++i){
 			if (m_pAnimationTracks[i].isEnable()) {
 				AnimationSet *pAnimationSet = m_pAnimationSets->GetAnimationSet(m_pAnimationTracks[i].GetAnimationSet());
+				if (pAnimationSet->m_bStartTrigger && pAnimationSet->m_nType != ANIMATION_TYPE_LOOP) {
+					m_pAnimationTracks[i].SetPosition(0.0f);
+					pAnimationSet->m_bStartTrigger = false;
+				}
 				pAnimationSet->Animate(m_pAnimationTracks[i].GetPosition(), m_pAnimationTracks[i].GetWeight());
 			}
 		}

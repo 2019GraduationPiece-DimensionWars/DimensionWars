@@ -48,5 +48,5 @@ public:
 
 	virtual void ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed) override;
 
-	virtual bool isCancleEnabled() const;
+	virtual bool isCancleEnabled() override;
 };

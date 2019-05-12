@@ -254,9 +254,10 @@ void ElfArcherPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 	Update(fTimeElapsed);
 }
 
-bool ElfArcherPlayer::isCancleEnabled() const
+bool ElfArcherPlayer::isCancleEnabled()
 {
-	if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger) {
+	if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger &&
+		m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_nType != ANIMATION_TYPE_LOOP) {
 		m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger = false;
 		return true;
 	}

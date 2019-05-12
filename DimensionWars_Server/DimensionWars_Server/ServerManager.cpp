@@ -99,7 +99,7 @@ void ServerManager::AcceptThread()
 			// continue;
 		}
 
-		char new_id = GetNewID();
+		unsigned short new_id = GetNewID();
 
 		// 클라이언트 구조체 초기화
 		// memset(&clients[new_id], 0x00, sizeof(struct SOCKETINFO)); // viewlist같은 컨테이너객체는 0으로 초기화해서는 안된다.
@@ -179,7 +179,7 @@ void ServerManager::WorkerThread()
 #endif
 
 		if (false == is_error) serverPrint("GetQueueCompletionStatus ERROR", WSAGetLastError());
-		if (0 == io_byte) DisConnect(key);
+		if (0 == io_byte) DisConnect(static_cast<unsigned short>(key));
 
 		switch (lpover_ex->type) {
 		case OVER_EX::Type::NONE:
@@ -197,7 +197,7 @@ void ServerManager::WorkerThread()
 				int required = packetSize - objects[key].prev_size;
 				if (rest_size >= required) {
 					memcpy(objects[key].packet_buf + objects[key].prev_size, ptr, required);
-					ProcessPacket(key, objects[key].packet_buf);
+					ProcessPacket(static_cast<unsigned short>(key), objects[key].packet_buf);
 					rest_size -= required;
 					ptr += required;
 					packetSize = 0; // 패킷 처리가 끝남
@@ -208,7 +208,7 @@ void ServerManager::WorkerThread()
 					rest_size = 0;
 				}
 			}
-			RecvPacket(key);
+			RecvPacket(static_cast<unsigned short>(key));
 		}
 		break;
 		case OVER_EX::Type::EVENT:

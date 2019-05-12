@@ -5,6 +5,9 @@ class AnimationController;
 class GrimReaperPlayer :
 	public BasePlayer
 {
+private:
+	bool SecondAttackTrigger = false;
+	bool ThirdAttackTrigger = false;
 public:
 	enum State {
 		Full = 0,
@@ -43,6 +46,6 @@ public:
 	virtual bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) override;
 	virtual bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) override;
 
-	virtual bool isCancleEnabled() const;
+	virtual bool isCancleEnabled() override;
 };
 

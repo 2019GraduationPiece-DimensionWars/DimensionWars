@@ -617,13 +617,11 @@ void BaseScene::ProcessPacket(char * ptr)
 
 void BaseScene::SendMoveDirection()
 {
-
-	if (m_pPlayer && m_pPlayer->GetDirectionBit()) {
-		
+	if (m_pPlayer && m_pPlayer->GetDirectionBit()) {	
 		CSPacket_Move *myMovePacket = reinterpret_cast<CSPacket_Move *>(m_pFramework->GetSendBuf());
 		myMovePacket->size = sizeof(CSPacket_Move);
 		// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
-		myMovePacket->dir = m_pPlayer->GetDirectionBit();	// 이동에 딜레이를 주기 위함, 일종의 타일 위 이동속도와 유사
+		myMovePacket->dir = m_pPlayer->GetDirectionBit();
 		myMovePacket->m_Look = m_pPlayer->GetLook();
 		myMovePacket->m_Right = m_pPlayer->GetRight();
 		myMovePacket->m_Up = m_pPlayer->GetUp();
