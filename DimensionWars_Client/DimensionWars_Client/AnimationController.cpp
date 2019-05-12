@@ -106,20 +106,23 @@ AnimationSet::~AnimationSet()
 
 void AnimationSet::SetPosition(float fTrackPosition)
 {
-	m_fPosition = fTrackPosition;
+	m_fPosition = m_fStartTime;
 	float fNowPosition = (m_fLength == 0.0f)? 0.0f:(::fmod(fTrackPosition, m_fLength));	// ::fmod(fTrackPosition, m_fLength)는 현재 진행된 애니메이션의 시간.  == fTrackPosition % m_fLength
 	switch (m_nType)
 	{
 	case ANIMATION_TYPE_LOOP:
 	{
-		m_fPosition = m_fStartTime + fNowPosition;
+		m_fPosition += fNowPosition;
 		break;
 	}
 	case ANIMATION_TYPE_ONCE: 
 	{
-		if (!m_bEndTrigger) m_fPosition = m_fStartTime + fNowPosition;
-		m_bEndTrigger = (m_fPosition >= m_fEndTime) ? true : false;
-		printf("%s : TrackPos : %.2f / Length : %.2f / m_fPosition : %.2f / (%.2f ~ %.2f) / %.2f\n", m_pstrAnimationSetName, fTrackPosition, m_fLength, m_fPosition, m_fStartTime, m_fEndTime, fNowPosition);
+		if (!m_bEndTrigger) m_fPosition += fNowPosition;
+		m_bEndTrigger = (m_fEndTime - keyFrameUnit < m_fPosition) ? true : false;
+		if (m_bEndTrigger) {
+			// printf("%s : TrackPos : %.2f / Length : %.2f / m_fPosition : %.2f / (%.2f ~ %.2f) / %.2f\n", m_pstrAnimationSetName, fTrackPosition, m_fLength, m_fPosition, m_fStartTime, m_fEndTime, fNowPosition);
+			m_fPosition = m_fEndTime;
+		}
 		break;
 	}
 	case ANIMATION_TYPE_PINGPONG:

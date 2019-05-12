@@ -216,6 +216,9 @@
     <ClInclude Include="Mesh007_HeightMapGridMesh.h">
       <Filter>Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>FrameWork</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -361,6 +364,9 @@
     </ClCompile>
     <ClCompile Include="Mesh007_HeightMapGridMesh.cpp">
       <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>FrameWork</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

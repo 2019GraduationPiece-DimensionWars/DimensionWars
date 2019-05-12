@@ -37,6 +37,8 @@ public:
 
 	ID3D12Resource					*m_pd3dcbGameObject = nullptr;
 	CB_GAMEOBJECT_INFO				*m_pcbMappedGameObject = nullptr;
+
+	bool							connected = false;
 protected:
 	char directionBit = 0;
 

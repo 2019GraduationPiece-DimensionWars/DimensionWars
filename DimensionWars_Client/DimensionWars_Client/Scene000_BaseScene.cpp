@@ -504,7 +504,6 @@ D3D12_GPU_DESCRIPTOR_HANDLE BaseScene::CreateShaderResourceViews(ID3D12Device * 
 
 void BaseScene::ProcessPacket(char * ptr)
 {
-	// printf("µé¾î¿È");
 	static bool first_time = true;
 	switch (ptr[1])
 	{

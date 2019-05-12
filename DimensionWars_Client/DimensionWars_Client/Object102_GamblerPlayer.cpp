@@ -2,17 +2,19 @@
 #include "Object102_GamblerPlayer.h"
 #include "Camera002_ThirdPersonCamera.h"
 #include "AnimationController.h"
+#include "RuntimeFrameWork.h"
+#include "ResourceManager.h"
 #include "Object008_HeightmapTerrain.h"
 
 
-GamblerPlayer::GamblerPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext)
+GamblerPlayer::GamblerPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, RuntimeFrameWork * pFramework)
 {
+	m_pFramework = pFramework;
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	LoadedModelInfo *GamblerModel = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Gambler.bin", nullptr);
-	SetChild(GamblerModel->m_pModelRootObject, true);
+	SetChild(m_pFramework->GetResource()->GetGamblerModel()->m_pModelRootObject, true);
 
-	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, GamblerModel);
+	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, m_pFramework->GetResource()->GetGamblerModel());
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->AddAnimationSet(0.0f, 40.0f * keyFrameUnit, "Idle");
 	m_pSkinnedAnimationController->AddAnimationSet(42.0f * keyFrameUnit, 62.0f * keyFrameUnit, "OnHit", ANIMATION_TYPE_ONCE);
@@ -76,8 +78,6 @@ GamblerPlayer::GamblerPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList
 	*/
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
-
-	if (GamblerModel) delete GamblerModel;
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 

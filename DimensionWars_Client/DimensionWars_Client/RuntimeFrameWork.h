@@ -17,6 +17,7 @@ inline constexpr auto GetEnumValueByType(Enum enumerator) noexcept	// enum class
 
 class BaseCamera;
 class BasePlayer;
+class ResourceManager;
 
 class RuntimeFrameWork final // 프레임워크 클래스는 무언가의 부모 클래스로 만들 생각이 없으므로 final을 붙인다.
 {
@@ -54,6 +55,7 @@ private:
 	HANDLE						m_hFenceEvent;
 
 	_TCHAR						m_pszFrameRate[70];
+	ResourceManager*			resourceMgr = nullptr;
 
 public:
 	RuntimeFrameWork();
@@ -103,6 +105,7 @@ public:
 	void SendPacket(char * clientToServerPacket);
 
 	char* GetSendBuf() { return send_buffer; }
+	ResourceManager* GetResource() const { return resourceMgr; }
 
 	float cubeSize[50];
 	XMFLOAT3 cubePos[50];

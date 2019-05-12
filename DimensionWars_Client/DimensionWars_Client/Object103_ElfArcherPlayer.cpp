@@ -2,17 +2,19 @@
 #include "Object103_ElfArcherPlayer.h"
 #include "Camera002_ThirdPersonCamera.h"
 #include "AnimationController.h"
+#include "RuntimeFrameWork.h"
+#include "ResourceManager.h"
 #include "Object008_HeightmapTerrain.h"
 
 
-ElfArcherPlayer::ElfArcherPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext)
+ElfArcherPlayer::ElfArcherPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, RuntimeFrameWork * pFramework)
 {
+	m_pFramework = pFramework;
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	LoadedModelInfo *ElfArcherModel = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/ElfArcher.bin", nullptr);
-	SetChild(ElfArcherModel->m_pModelRootObject, true);
-
-	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, ElfArcherModel);
+	SetChild(m_pFramework->GetResource()->GetElfArcherModel()->m_pModelRootObject, true);
+	
+	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, m_pFramework->GetResource()->GetElfArcherModel());
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->AddAnimationSet(0.0f, 40.0f * keyFrameUnit, "Idle");
 	m_pSkinnedAnimationController->AddAnimationSet(42.0f * keyFrameUnit, 72.0f * keyFrameUnit, "OnHit", ANIMATION_TYPE_ONCE);
@@ -53,8 +55,6 @@ ElfArcherPlayer::ElfArcherPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommand
 	*/
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
-
-	if (ElfArcherModel) delete ElfArcherModel;
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 

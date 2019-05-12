@@ -3,6 +3,9 @@
 class SkyBox;
 class DiffuseCubeObject;
 class HeightMapTerrain;
+class GrimReaperPlayer;
+class GamblerPlayer;
+class ElfArcherPlayer;
 
 class BattleScene :
 	public BaseScene
@@ -16,6 +19,10 @@ private:
 	bool isBuilded = false;
 
 	//BasePlayer **m_ppOtherPlayers = nullptr;
+
+	GrimReaperPlayer * ReaperObject[MAX_PLAYER];
+	GamblerPlayer * GamblerObject[MAX_PLAYER];
+	ElfArcherPlayer * ElfObject[MAX_PLAYER];
 public:
 	BattleScene();
 	BattleScene(SceneTag tag, RuntimeFrameWork* pFramework)
@@ -37,6 +44,6 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera = nullptr);
 
 	void BuildCube();
-//	virtual void ProcessPacket(char *ptr) override;
+	virtual void ProcessPacket(char *ptr) override;
 };
 

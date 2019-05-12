@@ -5,7 +5,9 @@
 #include "Scene003_RoomScene.h"
 #include "Scene004_BattleScene.h"
 #include "Camera000_BaseCamera.h"
-#include "Object101_GrimReaperPlayer.h"
+#include "Object100_BasePlayer.h"
+
+#include "ResourceManager.h"
 
 template<typename T>
 T GetUserDataPtr(HWND hWnd)
@@ -53,6 +55,7 @@ RuntimeFrameWork::RuntimeFrameWork()
 
 RuntimeFrameWork::~RuntimeFrameWork()
 {
+
 }
 
 bool RuntimeFrameWork::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
@@ -60,6 +63,7 @@ bool RuntimeFrameWork::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	m_hInstance = hInstance;
 	m_hWnd = hMainWnd;
 
+	resourceMgr = new ResourceManager();
 	
 
 	// 클래스와 윈도우 프로시저 연결
@@ -119,6 +123,8 @@ void RuntimeFrameWork::OnDestroy()
 	if (m_pFactory) 
 		m_pFactory->Release();
 
+	if (resourceMgr) 
+		delete resourceMgr;
 #if defined(_DEBUG)
 	IDXGIDebug1	*pdxgiDebug = nullptr;
 	DXGIGetDebugInterface1(0, __uuidof(IDXGIDebug1), (void **)&pdxgiDebug);
@@ -360,10 +366,10 @@ void RuntimeFrameWork::BuildObjects()
 {	
 	m_pCommandList->Reset(m_pCommandAllocator, NULL);
 
+	
 	m_pCurrScene->BuildObjects(m_pDevice, m_pCommandList);	// 루트 시그니처 생성
-
-	arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
-
+	
+	// arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
 
 	m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
 	m_pCamera = m_pPlayer->GetCamera();

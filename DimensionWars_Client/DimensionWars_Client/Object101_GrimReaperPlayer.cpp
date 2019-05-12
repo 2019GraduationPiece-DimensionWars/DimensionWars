@@ -3,17 +3,19 @@
 #include "Object101_GrimReaperPlayer.h"
 #include "Camera002_ThirdPersonCamera.h"
 #include "AnimationController.h"
+#include "RuntimeFrameWork.h"
+#include "ResourceManager.h"
 #include "Object008_HeightmapTerrain.h"
 
 
-GrimReaperPlayer::GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext)
+GrimReaperPlayer::GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, RuntimeFrameWork * pFramework)
 {
+	m_pFramework = pFramework;
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	LoadedModelInfo *GrimReaperModel = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/GrimReaper.bin", nullptr);
-	SetChild(GrimReaperModel->m_pModelRootObject, true);
+	SetChild(m_pFramework->GetResource()->GetGrimReaperModel()->m_pModelRootObject, true);
 
-	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, GrimReaperModel);
+	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, m_pFramework->GetResource()->GetGrimReaperModel());
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);	
 	m_pSkinnedAnimationController->AddAnimationSet(0.0f, 40.0f * keyFrameUnit, "Idle");
 	m_pSkinnedAnimationController->AddAnimationSet(42.0f * keyFrameUnit, 62.0f * keyFrameUnit, "OnHit", ANIMATION_TYPE_ONCE);
@@ -49,8 +51,6 @@ GrimReaperPlayer::GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 	*/
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
-
-	if (GrimReaperModel) delete GrimReaperModel;
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
@@ -221,15 +221,16 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 			else
 				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 		}
+		if (!dwDirection)
+			m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 	}
 
 
-	if (pKeysBuffer[VK_LBUTTON])
-		m_pSkinnedAnimationController->SetAnimationSet(state = First_Attack);
+	//if (pKeysBuffer[VK_LBUTTON])
+	//	m_pSkinnedAnimationController->SetAnimationSet(state = First_Attack);
 
 
-	if (!dwDirection)
-		m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+	
 
 	float cxDelta = 0.0f, cyDelta = 0.0f;
 	POINT ptCursorPos;
@@ -252,8 +253,53 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 		}
 		//if (dwDirection) Move(dwDirection, 300.0f * fTimeElapsed, true);
 	}
-	this->SetDirectionBit(dwDirection);
+	SetDirectionBit(dwDirection);
 	Update(fTimeElapsed);
+}
+
+bool GrimReaperPlayer::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
+{
+
+	switch (nMessageID)
+	{
+	case WM_LBUTTONDOWN:
+		if ((lParam & 0x40000000) != 0x40000000) {
+			m_pSkinnedAnimationController->SetAnimationSet(state = First_Attack);
+		}
+		break;
+	case WM_RBUTTONDOWN:
+		::SetCapture(hWnd);
+		::GetCursorPos(&m_ptOldCursorPos);
+		break;
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+		::ReleaseCapture();
+		break;
+	case WM_MOUSEMOVE:
+		break;
+	default:
+		break;
+	}
+	return false;
+}
+
+bool GrimReaperPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
+{
+	switch (nMessageID)
+	{
+	case WM_KEYDOWN:
+		// 키보드를 누르고 있을 경우 최초 한번만 실행.
+		if ((lParam & 0x40000000) != 0x40000000) {
+			switch (wParam) {
+			case VK_ESCAPE:
+				break;
+			}
+		}
+		break;
+	case WM_KEYUP:
+		break;
+	}
+	return false;
 }
 
 bool GrimReaperPlayer::isCancleEnabled() const

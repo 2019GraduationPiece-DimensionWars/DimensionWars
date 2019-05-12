@@ -1,6 +1,6 @@
 #pragma once
 #include "Object002_SkinnedFrameObject.h"
-
+class RuntimeFrameWork;
 
 class BasePlayer :
 	public SkinnedFrameObject
@@ -30,6 +30,8 @@ protected:
 
 	POINT						m_ptOldCursorPos = { 0, 0 };	// 마우스 제어용 기존 마우스좌표 저장
 	bool						m_bAnimationLockTrigger = false;	// 이 변수가 true인 경우 SetAnimation을 하지 않는다. 모션 캔슬 방지용
+
+	RuntimeFrameWork*			m_pFramework = nullptr;
 public:
 	BasePlayer();
 	virtual ~BasePlayer();
@@ -89,5 +91,7 @@ public:
 	virtual bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
 	virtual bool isCancleEnabled() const = 0;
+
+	void SetFramework(RuntimeFrameWork* p) { m_pFramework = p; }
 };
 
