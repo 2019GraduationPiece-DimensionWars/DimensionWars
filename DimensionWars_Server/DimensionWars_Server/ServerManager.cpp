@@ -112,7 +112,7 @@ void ServerManager::AcceptThread()
 		std::uniform_real_distribution<> startPos(0.0, 0.0);
 		std::uniform_int_distribution<> cinfo(0, 1);
 
-		objects[new_id].position = { static_cast<float>(startPos(dre)), static_cast<float>(startPos(dre)), static_cast<float>(startPos(dre)) };
+		objects[new_id].position = { static_cast<float>(startPos(dre)), 1000, static_cast<float>(startPos(dre)) };
 		objects[new_id].character_info = cinfo(dre);
 		objects[new_id].viewlist.clear();
 		objects[new_id].prev_size = 0;
@@ -274,8 +274,8 @@ void ServerManager::ObjectInitialize()
 	std::random_device rd;
 	std::default_random_engine dre(rd());
 	std::uniform_real_distribution<> startPos(-2500.0, 2500.0);
-	std::uniform_real_distribution<> startYPos(0, 5500.0);
-	std::uniform_real_distribution<> startRotate(0, 0.0);
+	std::uniform_real_distribution<> startYPos(0, 2500.0);
+	std::uniform_real_distribution<> startRotate(0, 90.0);
 
 	for (int i = Cube_start; i < Cube_start + 50; ++i) {
 
@@ -284,30 +284,60 @@ void ServerManager::ObjectInitialize()
 		objects[i].rotate.z = startRotate(dre);
 	}
 
+	/*for (int i = Cube_start; i < Cube_start + 50; ++i)
+	{
+		objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
+	}
+
+	for (int i = Cube_start; i < Cube_start + 50; ++i)
+	{
+		for (int j = i + 1; j < Cube_start + 50; ++j)
+		{
+			if (Distance(objects[i].position, objects[j].position)<400)
+			{
+				objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
+				if(Distance(objects[i].position, objects[j].position)<500)
+				{
+					objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
+					if (Distance(objects[i].position, objects[j].position)<600)
+					{
+						objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
+
+						if (Distance(objects[i].position, objects[j].position)<700)
+						{
+							objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
+
+						}
+					}
+				}
+			}
+		}
+	}*/
+
 	// 蟾晦 嬪纂蒂 撲薑
-	int center_cube_distance = 1400;
+	int center_cube_distance = 1500;
 
 
 	///////1類///////
-	objects[Cube_start].position = XMFLOAT3(0, 100000, 0);
+	objects[Cube_start].position = XMFLOAT3(0, -100000, 0);
 
 	//400
-	objects[Cube_start + 5].position = XMFLOAT3(-950 + center_cube_distance, 1000, -950);
-	objects[Cube_start + 6].position = XMFLOAT3(950 + center_cube_distance, 1000, 950);
+	objects[Cube_start + 5].position = XMFLOAT3(-950 + center_cube_distance, 2000, -950);
+	objects[Cube_start + 6].position = XMFLOAT3(950 + center_cube_distance, 2000, 950);
 	//500
-	objects[Cube_start + 15].position = XMFLOAT3(-1100 + center_cube_distance, 1000, 0);
-	objects[Cube_start + 16].position = XMFLOAT3(0 + center_cube_distance, 1000, -1100);
-	objects[Cube_start + 17].position = XMFLOAT3(1100 + center_cube_distance, 1000, 0);
-	objects[Cube_start + 18].position = XMFLOAT3(0 + center_cube_distance, 1000, 1100);
+	objects[Cube_start + 15].position = XMFLOAT3(-1100 + center_cube_distance, 2000, 0);
+	objects[Cube_start + 16].position = XMFLOAT3(0 + center_cube_distance, 2000, -1100);
+	objects[Cube_start + 17].position = XMFLOAT3(1100 + center_cube_distance, 2000, 0);
+	objects[Cube_start + 18].position = XMFLOAT3(0 + center_cube_distance, 2000, 1100);
 	//600
-	objects[Cube_start + 35].position = XMFLOAT3(-1050 + center_cube_distance, 1000, 1050);
-	objects[Cube_start + 36].position = XMFLOAT3(1050 + center_cube_distance, 1000, -1050);
+	objects[Cube_start + 35].position = XMFLOAT3(-1050 + center_cube_distance, 2000, 1050);
+	objects[Cube_start + 36].position = XMFLOAT3(1050 + center_cube_distance, 2000, -1050);
 
 
-	objects[Cube_start + 45].position = XMFLOAT3(center_cube_distance, 1000, 0);
+	objects[Cube_start + 45].position = XMFLOAT3(center_cube_distance, 2000, 0);
 
 	///////2類///////
-	objects[Cube_start + 1].position = XMFLOAT3(0, 100000, 0);
+	objects[Cube_start + 1].position = XMFLOAT3(0, -100000, 0);
 	//400
 
 	objects[Cube_start + 7].position = XMFLOAT3(-950, 2000, -950 - center_cube_distance);
@@ -327,7 +357,7 @@ void ServerManager::ObjectInitialize()
 
 
 	///////3類///////
-	objects[Cube_start + 2].position = XMFLOAT3(0, 100000, 0);
+	objects[Cube_start + 2].position = XMFLOAT3(0, -100000, 0);
 	//400
 	objects[Cube_start + 9].position = XMFLOAT3(-950, 3000, -950);
 	objects[Cube_start + 10].position = XMFLOAT3(950, 3000, 950);
@@ -345,7 +375,7 @@ void ServerManager::ObjectInitialize()
 
 
 	///////4類///////
-	objects[Cube_start + 3].position = XMFLOAT3(0, 100000, 0);
+	objects[Cube_start + 3].position = XMFLOAT3(0, -100000, 0);
 
 
 	objects[Cube_start + 11].position = XMFLOAT3(-950 - center_cube_distance, 4000, -950);
@@ -365,25 +395,36 @@ void ServerManager::ObjectInitialize()
 
 
 	///////5類///////
-	objects[Cube_start + 4].position = XMFLOAT3(0, 100000, 0);
+	objects[Cube_start + 4].position = XMFLOAT3(0, -100000, 0);
 
 
-	objects[Cube_start + 13].position = XMFLOAT3(-950, 5000, -950 + center_cube_distance);
-	objects[Cube_start + 14].position = XMFLOAT3(950, 5000, 950 + center_cube_distance);
+	objects[Cube_start + 13].position = XMFLOAT3(-950+center_cube_distance, 4000, -950 + center_cube_distance);
+	objects[Cube_start + 14].position = XMFLOAT3(950 + center_cube_distance, 4000, 950 + center_cube_distance);
 	//500
-	objects[Cube_start + 31].position = XMFLOAT3(-1100, 5000, 0 + center_cube_distance);
-	objects[Cube_start + 32].position = XMFLOAT3(0, 5000, -1100 + center_cube_distance);
-	objects[Cube_start + 33].position = XMFLOAT3(1100, 5000, 0 + center_cube_distance);
-	objects[Cube_start + 34].position = XMFLOAT3(0, 5000, 1100 + center_cube_distance);
+	objects[Cube_start + 31].position = XMFLOAT3(-1100 + center_cube_distance, 4000, 0 + center_cube_distance);
+	objects[Cube_start + 32].position = XMFLOAT3(0 + center_cube_distance, 4000, -1100 + center_cube_distance);
+	objects[Cube_start + 33].position = XMFLOAT3(1100 + center_cube_distance, 4000, 0 + center_cube_distance);
+	objects[Cube_start + 34].position = XMFLOAT3(0 + center_cube_distance, 4000, 1100 + center_cube_distance);
 	//600
-	objects[Cube_start + 43].position = XMFLOAT3(-1050, 5000, 1050 + center_cube_distance);
-	objects[Cube_start + 44].position = XMFLOAT3(1050, 5000, -1050 + center_cube_distance);
+	objects[Cube_start + 43].position = XMFLOAT3(-1050 + center_cube_distance, 4000, 1050 + center_cube_distance);
+	objects[Cube_start + 44].position = XMFLOAT3(1050 + center_cube_distance, 4000, -1050 + center_cube_distance);
 
 
-	objects[Cube_start + 49].position = XMFLOAT3(0, 5000, center_cube_distance);
+	objects[Cube_start + 49].position = XMFLOAT3(0 + center_cube_distance, 4000, center_cube_distance);
 
 
-	
+	for (int i = Cube_start; i < Cube_start + 50; ++i)
+	{
+		for (int j = i + 1; j < Cube_start + 50; ++j)
+		{
+
+			if (Distance(objects[i].position, objects[j].position) < 600)
+			{
+				objects[i].position = XMFLOAT3(0,-100000,0);
+
+			}
+		}
+	}
 	
 	
 
