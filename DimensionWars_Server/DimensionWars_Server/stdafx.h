@@ -386,5 +386,8 @@ struct SOCKETINFO
 	//충돌 정보
 	BoundingOrientedBox colbox;
 
+	// 플레이어 정보
+	unsigned short character_info;
+
 };
 

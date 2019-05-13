@@ -10,6 +10,7 @@
 #include "Object007_DiffuseCubeObject.h"
 #include "Object008_HeightmapTerrain.h"
 #include "ResourceManager.h"
+#include "AnimationController.h"	// 로드모델 때문
 
 BattleScene::BattleScene()
 {
@@ -19,6 +20,18 @@ BattleScene::BattleScene()
 
 BattleScene::~BattleScene()
 {
+}
+
+void BattleScene::SendChracterType(int a)
+{
+	if (a == 0 || a == 1 || a == 2) {
+		CSPacket_CharacterType *myMovePacket = reinterpret_cast<CSPacket_CharacterType *>(m_pFramework->GetSendBuf());
+		myMovePacket->size = sizeof(CSPacket_CharacterType);
+		// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
+		myMovePacket->character_type = a;
+		myMovePacket->type = CS_Type::Character_Info;
+		m_pFramework->SendPacket(reinterpret_cast<char *>(myMovePacket));
+	}
 }
 
 void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList)
@@ -38,21 +51,30 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 
 	m_pFramework->GetResource()->AllModelLoad(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
 
-	int cmd = 0;
-	printf("< 임시 캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
+	cmd = 0;
+	printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
 	scanf_s("%d", &cmd);
-
 	switch (cmd) {
 	case 0: 
 	{
 		GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 		m_pPlayer = pPlayer;
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			GamblerObject[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+			m_ppOtherPlayers[i] = GamblerObject[i];
+			m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
+		}
 	}
 		break;
 	case 1:
 	{
 		GamblerPlayer *pPlayer = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 		m_pPlayer = pPlayer;
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+			m_ppOtherPlayers[i] = ReaperObject[i];
+			m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
+		}
 	}
 		break;
 	default:
@@ -62,14 +84,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	}
 		break;
 	}
-
-	for (int i = 0; i < MAX_PLAYER; ++i) {
-		ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-		GamblerObject[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-		ElfObject[i] = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-		m_ppOtherPlayers[i] = GamblerObject[i];
-		m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
-	}
+	
 	m_nCubeObjects = 50;
 	m_ppCubeObjects = new DiffuseCubeObject*[m_nCubeObjects];
 	for (unsigned int i = 0; i < m_nCubeObjects; ++i) {
@@ -139,8 +154,10 @@ bool BattleScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 void BattleScene::AnimateObjects(float fTimeElapsed)
 {
+	
 	SendMoveDirection();
 	
+
 	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed);
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
@@ -218,20 +235,33 @@ void BattleScene::ProcessPacket(char * ptr)
 			myid = id;
 		}
 		if (id == myid) {
+			m_pPlayer->SetVisible(true);
 			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 			//m_pPlayer->SetVisible(true);
 #ifdef USE_CONSOLE_WINDOW
-			printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 #endif
 		}
 		else if (id < MAX_PLAYER) {
+			//character_type = my_packet->character_type;
+			//printf("%d", character_type);
+			/*if (character_type == 0) {
+				m_ppOtherPlayers[id] = ReaperObject[0];
+			}
+			if (character_type == 1) {
+				m_ppOtherPlayers[id] = GamblerObject[0];
+			}*/
+			/*if (character_type == 2) {
+				m_ppOtherPlayers[id] = ElfObject[0];
+			}*/
+			
 			if (m_ppOtherPlayers[id]) {
 				m_ppOtherPlayers[id]->connected = true;
 				m_ppOtherPlayers[id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 			}
-#ifdef USE_CONSOLE_WINDOW
-			printf("Put Player [%d]  (%.1f, %.1f %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
-#endif
+//#ifdef USE_CONSOLE_WINDOW
+//			printf("Put Player [%d]  (%.1f, %.1f %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
+//#endif
 		}
 
 		break;
@@ -240,15 +270,21 @@ void BattleScene::ProcessPacket(char * ptr)
 	{
 		SCPacket_Position *my_packet = reinterpret_cast<SCPacket_Position *>(ptr);
 		unsigned short other_id = my_packet->id;
+		unsigned int anime = my_packet->animation_state;
+		//printf("%d", anime);
 		if (other_id == myid) {
+			m_pPlayer->SetVisible(true);
 			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
+			
 		}
 		else if (other_id < MAX_PLAYER) {
+			
+			m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(anime);
 			m_ppOtherPlayers[other_id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
-#ifdef USE_CONSOLE_WINDOW
-			printf("other [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
-#endif
+//#ifdef USE_CONSOLE_WINDOW
+//			printf("other [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
+//#endif
 		}
 		break;
 	}
@@ -257,26 +293,20 @@ void BattleScene::ProcessPacket(char * ptr)
 #ifdef USE_CONSOLE_WINDOW
 		printf("Remove\n");
 #endif
-		SCPacket_RemovePlayer *my_packet = reinterpret_cast<SCPacket_RemovePlayer *>(ptr);
-		unsigned int other_id = my_packet->id;
-		//if (other_id == myid) m_pPlayer->SetVisible(false);
-		/*else if (other_id < MAX_USER) {
-		if (m_ppOtherPlayers[other_id]) {
-		m_ppOtherPlayers[other_id]->SetVisible(false);
-		delete m_ppOtherPlayers[other_id];
-		m_ppOtherPlayers[other_id] = nullptr;
-		#ifdef USE_CONSOLE_WINDOW
-		printf("Player [%d] Remove from Screen\n", my_packet->id);
-		#endif
-		}
-		}
-		else {
-		if (m_ppNonePlayerObject[other_id - NPC_ID_START]) {
-		m_ppNonePlayerObject[other_id - NPC_ID_START]->SetVisible(false);
-		delete m_ppNonePlayerObject[other_id - NPC_ID_START];
-		m_ppNonePlayerObject[other_id - NPC_ID_START] = nullptr;
-		}
-		}*/
+//		SCPacket_RemovePlayer *my_packet = reinterpret_cast<SCPacket_RemovePlayer *>(ptr);
+//		unsigned int other_id = my_packet->id;
+//		if (other_id == myid) m_pPlayer->SetVisible(false);
+//		if (other_id < MAX_USER) {
+//			if (m_ppOtherPlayers[other_id]) {
+//				//m_ppOtherPlayers[other_id]->SetVisible(false);
+//				delete m_ppOtherPlayers[other_id];
+//				m_ppOtherPlayers[other_id] = nullptr;
+//#ifdef USE_CONSOLE_WINDOW
+//				printf("Player [%d] Remove from Screen\n", my_packet->id);
+//#endif
+//			}
+//		}
+		
 		break;
 	}
 	case SC_Type::MapInfo:
@@ -297,5 +327,6 @@ void BattleScene::ProcessPacket(char * ptr)
 #ifdef USE_CONSOLE_WINDOW
 		printf("Unknown PACKET type [%d]\n", ptr[1]);
 #endif
+		break;
 	}
 }

@@ -110,8 +110,10 @@ void ServerManager::AcceptThread()
 		std::random_device rd;
 		std::default_random_engine dre(rd());
 		std::uniform_real_distribution<> startPos(0.0, 0.0);
+		std::uniform_int_distribution<> cinfo(0, 1);
 
 		objects[new_id].position = { static_cast<float>(startPos(dre)), static_cast<float>(startPos(dre)), static_cast<float>(startPos(dre)) };
+		objects[new_id].character_info = cinfo(dre);
 		objects[new_id].viewlist.clear();
 		objects[new_id].prev_size = 0;
 		ZeroMemory(&objects[new_id].over.overlapped, sizeof(WSAOVERLAPPED));	// 초기화 안하면 제대로 오버랩I/O가 동작 안함
@@ -273,33 +275,9 @@ void ServerManager::ObjectInitialize()
 	std::default_random_engine dre(rd());
 	std::uniform_real_distribution<> startPos(-2500.0, 2500.0);
 	std::uniform_real_distribution<> startYPos(0, 5500.0);
-	std::uniform_real_distribution<> startRotate(0, 90.0);
+	std::uniform_real_distribution<> startRotate(0, 0.0);
 
-	for (int i = Cube_start; i < Cube_start + 5; ++i) {
-
-		objects[i].rotate.x = startRotate(dre);
-		objects[i].rotate.y = startRotate(dre);
-		objects[i].rotate.z = startRotate(dre);
-	}
-	for (int i = Cube_start + 5; i < Cube_start + 15; ++i) {
-
-		objects[i].rotate.x = startRotate(dre);
-		objects[i].rotate.y = startRotate(dre);
-		objects[i].rotate.z = startRotate(dre);
-	}
-	for (int i = Cube_start + 15; i < Cube_start + 35; ++i) {
-
-		objects[i].rotate.x = startRotate(dre);
-		objects[i].rotate.y = startRotate(dre);
-		objects[i].rotate.z = startRotate(dre);
-	}
-	for (int i = Cube_start + 35; i < Cube_start + 45; ++i) {
-
-		objects[i].rotate.x = startRotate(dre);
-		objects[i].rotate.y = startRotate(dre);
-		objects[i].rotate.z = startRotate(dre);
-	}
-	for (int i = Cube_start + 45; i < Cube_start + 50; ++i) {
+	for (int i = Cube_start; i < Cube_start + 50; ++i) {
 
 		objects[i].rotate.x = startRotate(dre);
 		objects[i].rotate.y = startRotate(dre);
@@ -307,43 +285,103 @@ void ServerManager::ObjectInitialize()
 	}
 
 	// 초기 위치를 설정
-
-	for (int i = Cube_start; i < Cube_start + 50; ++i)
-	{
-		objects[i].position.x = startPos(dre);
-		objects[i].position.y = startYPos(dre);
-		objects[i].position.z = startPos(dre);
-
-	}
-	//int a = 0;
-	
-	// 초기 설정된 위치가지고 겹치는지 판단
-	//for (int i = Cube_start; i < Cube_start + 50; ++i)
-	//{
-
-	//	for (int j = i + 1; j < Cube_start + 50; ++j)
-	//	{
+	int center_cube_distance = 1400;
 
 
-	//		// 겹치면 딴데로 보냄
-	//		while (1) {
-	//			if (Distance(objects[i].position, objects[j].position) <= ((objects[i].cube_size + objects[j].cube_size) / 2) + 300) {
-	//				objects[i].position.x = startPos(dre);
-	//				objects[i].position.y = startYPos(dre);
-	//				objects[i].position.z = startPos(dre);
-	//				objects[j].cube_stay = true;
-	//			}
-	//			else
-	//				break;
-	//		}
-	//	
-	//		
+	///////1층///////
+	objects[Cube_start].position = XMFLOAT3(0, 100000, 0);
+
+	//400
+	objects[Cube_start + 5].position = XMFLOAT3(-950 + center_cube_distance, 1000, -950);
+	objects[Cube_start + 6].position = XMFLOAT3(950 + center_cube_distance, 1000, 950);
+	//500
+	objects[Cube_start + 15].position = XMFLOAT3(-1100 + center_cube_distance, 1000, 0);
+	objects[Cube_start + 16].position = XMFLOAT3(0 + center_cube_distance, 1000, -1100);
+	objects[Cube_start + 17].position = XMFLOAT3(1100 + center_cube_distance, 1000, 0);
+	objects[Cube_start + 18].position = XMFLOAT3(0 + center_cube_distance, 1000, 1100);
+	//600
+	objects[Cube_start + 35].position = XMFLOAT3(-1050 + center_cube_distance, 1000, 1050);
+	objects[Cube_start + 36].position = XMFLOAT3(1050 + center_cube_distance, 1000, -1050);
 
 
-	//	}
+	objects[Cube_start + 45].position = XMFLOAT3(center_cube_distance, 1000, 0);
 
-	//}
-	//	
+	///////2층///////
+	objects[Cube_start + 1].position = XMFLOAT3(0, 100000, 0);
+	//400
+
+	objects[Cube_start + 7].position = XMFLOAT3(-950, 2000, -950 - center_cube_distance);
+	objects[Cube_start + 8].position = XMFLOAT3(950, 2000, 950 - center_cube_distance);
+	//500
+	objects[Cube_start + 19].position = XMFLOAT3(-1100, 2000, 0 - center_cube_distance);
+	objects[Cube_start + 20].position = XMFLOAT3(0, 2000, -1100 - center_cube_distance);
+	objects[Cube_start + 21].position = XMFLOAT3(1100, 2000, 0 - center_cube_distance);
+	objects[Cube_start + 22].position = XMFLOAT3(0, 2000, 1100 - center_cube_distance);
+	//600
+	objects[Cube_start + 37].position = XMFLOAT3(-1050, 2000, 1050 - center_cube_distance);
+	objects[Cube_start + 38].position = XMFLOAT3(1050, 2000, -1050 - center_cube_distance);
+
+
+	//700
+	objects[Cube_start + 46].position = XMFLOAT3(0, 2000, -center_cube_distance);
+
+
+	///////3층///////
+	objects[Cube_start + 2].position = XMFLOAT3(0, 100000, 0);
+	//400
+	objects[Cube_start + 9].position = XMFLOAT3(-950, 3000, -950);
+	objects[Cube_start + 10].position = XMFLOAT3(950, 3000, 950);
+	//500
+	objects[Cube_start + 23].position = XMFLOAT3(-1100, 3000, 0);
+	objects[Cube_start + 24].position = XMFLOAT3(0, 3000, -1100);
+	objects[Cube_start + 25].position = XMFLOAT3(1100, 3000, 0);
+	objects[Cube_start + 26].position = XMFLOAT3(0, 3000, 1100);
+	//600
+	objects[Cube_start + 39].position = XMFLOAT3(-1050, 3000, 1050);
+	objects[Cube_start + 40].position = XMFLOAT3(1050, 3000, -1050);
+	//center_cube_distance
+	objects[Cube_start + 47].position = XMFLOAT3(0, 3000, 0);
+
+
+
+	///////4층///////
+	objects[Cube_start + 3].position = XMFLOAT3(0, 100000, 0);
+
+
+	objects[Cube_start + 11].position = XMFLOAT3(-950 - center_cube_distance, 4000, -950);
+	objects[Cube_start + 12].position = XMFLOAT3(950 - center_cube_distance, 4000, 950);
+	//500
+	objects[Cube_start + 27].position = XMFLOAT3(-1100 - center_cube_distance, 4000, 0);
+	objects[Cube_start + 28].position = XMFLOAT3(0 - center_cube_distance, 4000, -1100);
+	objects[Cube_start + 29].position = XMFLOAT3(1100 - center_cube_distance, 4000, 0);
+	objects[Cube_start + 30].position = XMFLOAT3(0 - center_cube_distance, 4000, 1100);
+	//600
+	objects[Cube_start + 41].position = XMFLOAT3(-1050 - center_cube_distance, 4000, 1050);
+	objects[Cube_start + 42].position = XMFLOAT3(1050 - center_cube_distance, 4000, -1050);
+
+
+
+	objects[Cube_start + 48].position = XMFLOAT3(-center_cube_distance, 4000, 0);
+
+
+	///////5층///////
+	objects[Cube_start + 4].position = XMFLOAT3(0, 100000, 0);
+
+
+	objects[Cube_start + 13].position = XMFLOAT3(-950, 5000, -950 + center_cube_distance);
+	objects[Cube_start + 14].position = XMFLOAT3(950, 5000, 950 + center_cube_distance);
+	//500
+	objects[Cube_start + 31].position = XMFLOAT3(-1100, 5000, 0 + center_cube_distance);
+	objects[Cube_start + 32].position = XMFLOAT3(0, 5000, -1100 + center_cube_distance);
+	objects[Cube_start + 33].position = XMFLOAT3(1100, 5000, 0 + center_cube_distance);
+	objects[Cube_start + 34].position = XMFLOAT3(0, 5000, 1100 + center_cube_distance);
+	//600
+	objects[Cube_start + 43].position = XMFLOAT3(-1050, 5000, 1050 + center_cube_distance);
+	objects[Cube_start + 44].position = XMFLOAT3(1050, 5000, -1050 + center_cube_distance);
+
+
+	objects[Cube_start + 49].position = XMFLOAT3(0, 5000, center_cube_distance);
+
 
 	
 	
@@ -403,6 +441,7 @@ void ServerManager::SendPutPlayerPacket(unsigned short int to, unsigned short in
 	packet.size = sizeof(packet);
 	packet.type = SC_Type::PutPlayer;
 	packet.position = objects[obj].position;
+	packet.character_type = objects[obj].character_info;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
@@ -414,6 +453,7 @@ void ServerManager::SendPositionPacket(unsigned short to, unsigned short obj)
 	packet.size = sizeof(packet);
 	packet.type = SC_Type::Position;
 	packet.position = objects[obj].position;
+	packet.animation_state = ani_state;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 	
 }
@@ -442,12 +482,15 @@ void ServerManager::SendMapInfoPacket(unsigned short to, unsigned short obj)
 
 void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 {
+
 	
 	CSPacket_Move * packet = reinterpret_cast<CSPacket_Move *>(buf);
 	XMFLOAT3 xmf3Shift = objects[id].position;
+
 	switch (packet->type) {
 	case CS_Type::Move:
 	{
+		ani_state = packet->animation_state;
 		if (packet->dir) {
 			/*if (packet->dir & DIR_FORWARD) pos.z+=10;
 			if (packet->dir & DIR_BACKWARD) pos.z-=10;
@@ -469,13 +512,30 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 			if (packet->dir & DIR_DOWN) xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, -fDistance);
 
 		}
+		
+			
 	}
 	break;
 	default:
 		serverPrint("Unknown Packet Type Error\n");
 		while (true);
 	}
+
 	objects[id].position = xmf3Shift;
+
+	if (objects[id].position.x > 3000.0f)
+		objects[id].position.x = 3000.0f;
+	if (objects[id].position.x < -3000.0f)
+		objects[id].position.x = -3000.0f;
+	if (objects[id].position.z > 3000.0f)
+		objects[id].position.z = 3000.0f;
+	if (objects[id].position.z < -3000.0f)
+		objects[id].position.z = -3000.0f;
+	if (objects[id].position.y > 6000.0f)
+		objects[id].position.y = 6000.0f;
+	if (objects[id].position.y < 0.0f)
+		objects[id].position.y = 0.0f;
+
 
 	
 

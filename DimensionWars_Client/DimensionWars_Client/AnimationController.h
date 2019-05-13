@@ -224,7 +224,7 @@ public:
 	void SetAnimationCallbackHandler(int nAnimationSet, AnimationCallbackHandler *pCallbackHandler);
 
 	void SetAnimationSet(int nAnimationSet);
-
+	//int GetAnimetionSet(){ return m_nAnimationTrack; }
 	void AddAnimationSet(float fStartTime, float fEndTime, char *pstrName, int nType = ANIMATION_TYPE_LOOP) { if (m_pAnimationSets) m_pAnimationSets->AddAnimationSet(fStartTime, fEndTime, pstrName, nType); }
 
 	void AdvanceTime(float fElapsedTime, SkinnedFrameObject *pRootGameObject);

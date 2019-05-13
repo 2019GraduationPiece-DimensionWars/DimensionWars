@@ -49,6 +49,10 @@ RuntimeFrameWork::RuntimeFrameWork()
 	m_pCurrScene = nullptr;
 	m_pCamera = nullptr;
 	m_pPlayer = nullptr;
+#ifdef USE_CONSOLE_WINDOW
+	printf(" Server IP를 입력하세요. >> ");
+	scanf_s("%s", server_ip, unsigned int(sizeof(server_ip)));
+#endif
 
 	_tcscpy_s(m_pszFrameRate, _T("Dimension Wars - 차원대전 - "));
 }
@@ -80,11 +84,11 @@ bool RuntimeFrameWork::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	BuildAllScene();
 	ChangeScene(BaseScene::SceneTag::Title);
 	ChangeScene(BaseScene::SceneTag::Game);
-	BuildObjects();
+	
 
 	// 네트워크 초기화
 	NetworkInitialize();
-
+	BuildObjects();
 	return (m_hWnd != NULL);
 }
 
@@ -372,6 +376,7 @@ void RuntimeFrameWork::BuildObjects()
 	// arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
 
 	m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
+	
 	m_pCamera = m_pPlayer->GetCamera();
 
 	m_pCommandList->Close();
@@ -500,7 +505,7 @@ void RuntimeFrameWork::FrameAdvance()
 	m_Timer.GetFrameRate(m_pszFrameRate + 24, 50);
 	size_t nLength = _tcslen(m_pszFrameRate);
 	XMFLOAT3 xmf3Position = m_pPlayer->GetPosition();
-	_stprintf_s(m_pszFrameRate + nLength, 70 - nLength, _T("(%.1f, %.1f, %.1f)"), xmf3Position.x, xmf3Position.y, xmf3Position.z);
+//	_stprintf_s(m_pszFrameRate + nLength, 70 - nLength, _T("(%.1f, %.1f, %.1f)"), xmf3Position.x, xmf3Position.y, xmf3Position.z);
 	::SetWindowText(m_hWnd, m_pszFrameRate);
 
 }

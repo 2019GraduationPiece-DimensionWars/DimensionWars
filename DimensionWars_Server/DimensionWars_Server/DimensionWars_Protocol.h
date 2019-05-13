@@ -161,6 +161,7 @@ namespace CS
 		Attack = 2,
 		Guard = 3,
 		Burf = 4,
+		Character_Info,
 	};
 }
 using CS_Type = CS::ClientToServerSocketType;	// 약자 형태로 사용할 것이다.
@@ -178,11 +179,13 @@ using SCPacket_LoginOK = SCPacket_Base; // Login OK 패킷은 기본 패킷과 구성 요소
 struct SCPacket_Position : SCPacket_Base {
 	// 이 id를 가진 객체를 해당 좌표로
 	DirectX::XMFLOAT3 position;
-	
+	unsigned int animation_state;
 };
 
 struct SCPacket_PutPlayer : SCPacket_Position {
 	// 플레이어가 어떤 캐릭터인가 등의 정보를 추가
+	unsigned short character_type;
+	
 };
 
 struct SCPacket_RemovePlayer : SCPacket_Base {
@@ -207,11 +210,18 @@ struct CSPacket_Move : CSPacket_Base {
 	DirectX::XMFLOAT3 m_Right;
 	DirectX::XMFLOAT3 m_Up;
 	DirectX::XMFLOAT3 m_Look;
+	unsigned int animation_state;
+	
 
 };
 
 struct CSPacket_Attack : CSPacket_Base {
 	unsigned char attack_type;	// 어떤 평타인지, 스킬인지. 이 값의 경우 각 플레이어 캐릭터에 정의된 enum state 값을 집어넣는다.
+};
+
+
+struct CSPacket_CharacterType : CSPacket_Base {
+	unsigned short character_type;	// 캐릭 정류
 };
 
 #pragma pack(pop)

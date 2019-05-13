@@ -23,6 +23,9 @@ private:
 	GrimReaperPlayer * ReaperObject[MAX_PLAYER];
 	GamblerPlayer * GamblerObject[MAX_PLAYER];
 	ElfArcherPlayer * ElfObject[MAX_PLAYER];
+	GrimReaperPlayer *preaperPlayer;
+	ElfArcherPlayer *pelfPlayer;
+	GamblerPlayer *pgamblerPlayer;
 public:
 	BattleScene();
 	BattleScene(SceneTag tag, RuntimeFrameWork* pFramework)
@@ -45,5 +48,10 @@ public:
 
 	void BuildCube();
 	virtual void ProcessPacket(char *ptr) override;
+	unsigned short character_type;
+
+	void SendChracterType(int a);
+	int cmd;
+	
 };
 

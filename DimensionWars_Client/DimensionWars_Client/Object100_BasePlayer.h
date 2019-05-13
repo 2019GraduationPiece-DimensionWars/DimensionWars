@@ -32,6 +32,7 @@ protected:
 	bool						m_bAnimationLockTrigger = false;	// 이 변수가 true인 경우 SetAnimation을 하지 않는다. 모션 캔슬 방지용
 
 	RuntimeFrameWork*			m_pFramework = nullptr;
+	bool visible = false;
 public:
 	BasePlayer();
 	virtual ~BasePlayer();
@@ -93,5 +94,7 @@ public:
 	virtual bool isCancleEnabled() = 0;
 
 	void SetFramework(RuntimeFrameWork* p) { m_pFramework = p; }
+	int anime_state;
+	void SetVisible(bool vis) { visible = vis; }
 };
 

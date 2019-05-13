@@ -37,6 +37,8 @@ private:
 	XMFLOAT3					m_xmf3Right = XMFLOAT3(1.0f, 0.0f, 0.0f);
 	XMFLOAT3					m_xmf3Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 	XMFLOAT3					m_xmf3Look = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	unsigned int ani_state;
+
 
 private:
 	bool NetworkInitialize();
@@ -62,8 +64,8 @@ private:
 	bool isNearObject(unsigned short int a, unsigned short int b);
 	float Distance(XMFLOAT3 vector1, XMFLOAT3 vector2);
 
-	void Move(const XMFLOAT3 & xmf3Shift, bool bUpdateVelocity);
-	void Update(float fTimeElapsed);
+	/*void Move(const XMFLOAT3 & xmf3Shift, bool bUpdateVelocity);
+	void Update(float fTimeElapsed);*/
 
 
 	void Collision(unsigned int id);
