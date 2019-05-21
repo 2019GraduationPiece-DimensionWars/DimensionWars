@@ -627,8 +627,20 @@ void BaseScene::SendMoveDirection()
 		myMovePacket->m_Right = m_pPlayer->GetRight();
 		myMovePacket->m_Up = m_pPlayer->GetUp();
 		myMovePacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
-		//printf("%d", myMovePacket->animation_state);
 		myMovePacket->type = CS_Type::Move;
 		m_pFramework->SendPacket(reinterpret_cast<char *>(myMovePacket));
+		//printf("%d\n", myMovePacket->animation_state);
+	}
+}
+
+void BaseScene::SendAttackInfo()
+{
+	if (m_pPlayer&&m_pPlayer->attack_state == true) {
+		CSPacket_Attack *myAttackPacket = reinterpret_cast<CSPacket_Attack*>(m_pFramework->GetSendBuf());
+		myAttackPacket->size = sizeof(CSPacket_Attack);
+		myAttackPacket->type = CS_Type::Attack;
+		myAttackPacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
+		m_pFramework->SendPacket(reinterpret_cast<char *>(myAttackPacket));
+		//printf("%d\n", myAttackPacket->animation_state);
 	}
 }

@@ -156,7 +156,7 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 {
 	
 	SendMoveDirection();
-	
+	SendAttackInfo();
 
 	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed);
 
@@ -272,6 +272,7 @@ void BattleScene::ProcessPacket(char * ptr)
 		unsigned short other_id = my_packet->id;
 		unsigned int anime = my_packet->animation_state;
 		//printf("%d", anime);
+	//	printf("포지션! 서버한테 받기 성공\n");
 		if (other_id == myid) {
 			m_pPlayer->SetVisible(true);
 			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
@@ -279,7 +280,6 @@ void BattleScene::ProcessPacket(char * ptr)
 			
 		}
 		else if (other_id < MAX_PLAYER) {
-			
 			m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(anime);
 			m_ppOtherPlayers[other_id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 //#ifdef USE_CONSOLE_WINDOW
@@ -309,6 +309,17 @@ void BattleScene::ProcessPacket(char * ptr)
 		
 		break;
 	}
+	case SC_Type::Attack:
+	{
+		SCPacket_Attack *my_packet = reinterpret_cast<SCPacket_Attack*>(ptr);
+		unsigned short other_id = my_packet->id;
+		unsigned int anime = my_packet->animation_state;
+		if (other_id < MAX_PLAYER) {
+			m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(anime);
+		}
+		//printf("어택! 서버한테 받기 성공\n");
+		break;
+	}
 	case SC_Type::MapInfo:
 	{
 		//처리
@@ -329,4 +340,5 @@ void BattleScene::ProcessPacket(char * ptr)
 #endif
 		break;
 	}
+	
 }

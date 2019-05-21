@@ -59,6 +59,8 @@ private:
 	void SendRemovePlayerPacket(unsigned short int to, unsigned short int id);
 	void ProcessPacket(unsigned short int id, char *buf);
 	void SendMapInfoPacket(unsigned short to, unsigned short obj);
+	void SendAttackPaket(unsigned short to, unsigned short obj);
+
 	void DisConnect(unsigned short int id);
 	const unsigned short int GetNewID();
 	bool isNearObject(unsigned short int a, unsigned short int b);

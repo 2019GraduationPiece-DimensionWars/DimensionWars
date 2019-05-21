@@ -272,6 +272,7 @@ bool GrimReaperPlayer::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPAR
 	switch (nMessageID)
 	{
 	case WM_LBUTTONDOWN:
+		attack_state = true;
 		switch (state) {
 		case First_Attack:
 			SecondAttackTrigger = true;
@@ -280,23 +281,28 @@ bool GrimReaperPlayer::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPAR
 			ThirdAttackTrigger = true;
 			break;
 		default:
-			if (isCancleEnabled())
+			if (isCancleEnabled()) {
 				m_pSkinnedAnimationController->SetAnimationSet(state = First_Attack);
+			}
 			break;
 		}
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
 		break;
 	case WM_RBUTTONDOWN:
-		if (isCancleEnabled() && state != Guard)
+		attack_state = true;
+		if (isCancleEnabled() && state != Guard) {
 			m_pSkinnedAnimationController->SetAnimationSet(state = Guard);
+		}
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
 		break;
 	case WM_LBUTTONUP:
+		attack_state = false;
 		::ReleaseCapture();
 		break;
 	case WM_RBUTTONUP:
+		attack_state = false;
 		::ReleaseCapture();
 		break;
 	case WM_MOUSEMOVE:
@@ -315,7 +321,8 @@ bool GrimReaperPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 		// 키보드를 누르고 있을 경우 최초 한번만 실행.
 		if ((lParam & 0x40000000) != 0x40000000) {
 			switch (wParam) {
-			case '1':			
+			case '1':
+				attack_state = true;
 				switch (state) {
 				case First_Attack:
 					SecondAttackTrigger = true;
@@ -330,25 +337,34 @@ bool GrimReaperPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 				}				
 				break;
 			case '2':
-				if (isCancleEnabled())
+				if (isCancleEnabled()) {
+					attack_state = true;
 					m_pSkinnedAnimationController->SetAnimationSet(state = Slash_Wave);
+				}
 				break;
 			case '3':
-				if (isCancleEnabled())
+				if (isCancleEnabled()) {
+					attack_state = true;
 					m_pSkinnedAnimationController->SetAnimationSet(state = Hide_Invasion);
+				}
 				break;
 			case 'q': case 'Q':
-				if (isCancleEnabled())
+				if (isCancleEnabled()) {
+					attack_state = true;
 					m_pSkinnedAnimationController->SetAnimationSet(state = Burf);
+				}
 				break;
 			case 'e': case 'E':
-				if (isCancleEnabled())
+				if (isCancleEnabled()) {
+					attack_state = true;
 					m_pSkinnedAnimationController->SetAnimationSet(state = Beheading);
+				}
 				break;
 			}
 		}
 		break;
 	case WM_KEYUP:
+		attack_state = false;
 		break;
 	}
 	return false;

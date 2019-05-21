@@ -191,6 +191,7 @@ void GamblerPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 {
 	DWORD dwDirection = 0;
+	
 	if (isCancleEnabled()) {
 		// 점프, 추락 처리
 		if (pKeysBuffer[VK_SPACE] & 0xF0) {
@@ -360,22 +361,26 @@ bool GamblerPlayer::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM 
 {
 	switch (nMessageID)
 	{
-	case WM_LBUTTONDOWN:	
+	case WM_LBUTTONDOWN:
+		attack_state = true;
 		isShot1 = true;
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
 		break;
 	case WM_RBUTTONDOWN:
+		attack_state = true;
 		if (isCancleEnabled() && state != Guard)
 			m_pSkinnedAnimationController->SetAnimationSet(state = Guard);
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
 		break;
 	case WM_LBUTTONUP:
+		attack_state = false;
 		isShot1 = false;
 		::ReleaseCapture();
 		break;
 	case WM_RBUTTONUP:
+		attack_state = false;
 		isShot1 = false;
 		::ReleaseCapture();
 		break;
@@ -396,28 +401,38 @@ bool GamblerPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPAR
 		if ((lParam & 0x40000000) != 0x40000000) {
 			switch (wParam) {
 			case '1':
+				attack_state = true;
 				isShot1 = true;
 				break;
 			case '2':
-				if (isCancleEnabled())
+				if (isCancleEnabled()) {
+					attack_state = true;
 					m_pSkinnedAnimationController->SetAnimationSet(state = Multi_Shot);
+				}
 				break;
 			case '3':
-				if (isCancleEnabled())
+				if (isCancleEnabled()) {
+					attack_state = true;
 					m_pSkinnedAnimationController->SetAnimationSet(state = Shuffle);
+				}
 				break;
 			case 'q': case 'Q':
-				if (isCancleEnabled())
+				if (isCancleEnabled()) {
+					attack_state = true;
 					m_pSkinnedAnimationController->SetAnimationSet(state = Burf);
+				}
 				break;
 			case 'e': case 'E':
-				if (isCancleEnabled())
+				if (isCancleEnabled()) {
+					attack_state = true;
 					m_pSkinnedAnimationController->SetAnimationSet(state = Wild_Card);
+				}
 				break;
 			}
 		}
 		break;
 	case WM_KEYUP:
+		attack_state = false;
 		switch (wParam) {
 		case '1':
 			isShot1 = false;

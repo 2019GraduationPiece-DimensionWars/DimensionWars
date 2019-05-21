@@ -148,6 +148,7 @@ namespace SC
 		OnHit = 5, // 해당 클라이언트가 충돌당했으므로 경직 애니메이션을 재생해라.
 		Down = 6, // 해당 클라이언트가 다운 공격에 피격되었으므로 피격 애니메이션을 재생해라.
 		MapInfo =7,
+		Attack=8,
 		Count
 
 	};
@@ -196,8 +197,11 @@ struct SCPacket_MapInfo : SCPacket_Base {
 	DirectX::XMFLOAT3 position; // 위치정보
 	DirectX::XMFLOAT3 rotate; // 회전정보
 
-
 	// 맵의 기본 정보
+};
+
+struct SCPacket_Attack : SCPacket_Base {
+	unsigned int animation_state;
 };
 
 struct CSPacket_Base {
@@ -217,6 +221,7 @@ struct CSPacket_Move : CSPacket_Base {
 
 struct CSPacket_Attack : CSPacket_Base {
 	unsigned char attack_type;	// 어떤 평타인지, 스킬인지. 이 값의 경우 각 플레이어 캐릭터에 정의된 enum state 값을 집어넣는다.
+	unsigned int animation_state;
 };
 
 

@@ -96,5 +96,7 @@ public:
 	void SetFramework(RuntimeFrameWork* p) { m_pFramework = p; }
 	int anime_state;
 	void SetVisible(bool vis) { visible = vis; }
+
+	bool attack_state = false;
 };
 

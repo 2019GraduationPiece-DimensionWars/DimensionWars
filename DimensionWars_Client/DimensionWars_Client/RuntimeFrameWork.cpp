@@ -187,6 +187,8 @@ void RuntimeFrameWork::CreateDirect3DDevice()
 
 	m_hFenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 
+	::gnCbvSrvDescriptorIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
 	if (pd3dAdapter) 
 		pd3dAdapter->Release();
 }
@@ -505,7 +507,7 @@ void RuntimeFrameWork::FrameAdvance()
 	m_Timer.GetFrameRate(m_pszFrameRate + 24, 50);
 	size_t nLength = _tcslen(m_pszFrameRate);
 	XMFLOAT3 xmf3Position = m_pPlayer->GetPosition();
-//	_stprintf_s(m_pszFrameRate + nLength, 70 - nLength, _T("(%.1f, %.1f, %.1f)"), xmf3Position.x, xmf3Position.y, xmf3Position.z);
+	_stprintf_s(m_pszFrameRate + nLength, 70 - nLength, _T("(%.1f, %.1f, %.1f)"), xmf3Position.x, xmf3Position.y, xmf3Position.z);
 	::SetWindowText(m_hWnd, m_pszFrameRate);
 
 }

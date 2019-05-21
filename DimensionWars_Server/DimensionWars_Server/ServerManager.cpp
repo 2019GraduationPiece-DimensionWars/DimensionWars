@@ -499,6 +499,16 @@ void ServerManager::SendPositionPacket(unsigned short to, unsigned short obj)
 	
 }
 
+void ServerManager::SendAttackPaket(unsigned short to, unsigned short obj)
+{
+	SCPacket_Attack packet;
+	packet.id = obj;
+	packet.size = sizeof(packet);
+	packet.type = SC_Type::Attack;
+	packet.animation_state = ani_state;
+	SendPacket(to, reinterpret_cast<char *>(&packet));
+}
+
 void ServerManager::SendRemovePlayerPacket(unsigned short int to, unsigned short int id)
 {
 	SCPacket_RemovePlayer packet;
@@ -524,7 +534,6 @@ void ServerManager::SendMapInfoPacket(unsigned short to, unsigned short obj)
 void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 {
 
-	
 	CSPacket_Move * packet = reinterpret_cast<CSPacket_Move *>(buf);
 	XMFLOAT3 xmf3Shift = objects[id].position;
 
@@ -532,6 +541,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	case CS_Type::Move:
 	{
 		ani_state = packet->animation_state;
+		//printf("%d\n", ani_state);
 		if (packet->dir) {
 			/*if (packet->dir & DIR_FORWARD) pos.z+=10;
 			if (packet->dir & DIR_BACKWARD) pos.z-=10;
@@ -554,9 +564,20 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 
 		}
 		
-			
+		break;
 	}
-	break;
+	case CS_Type::Attack:
+	{
+		CSPacket_Attack * packet = reinterpret_cast<CSPacket_Attack *>(buf);
+		ani_state = packet->animation_state;
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (objects[i].connected == true) {
+				SendAttackPaket(i, id);
+			}
+		}
+		break;
+	}
+	
 	default:
 		serverPrint("Unknown Packet Type Error\n");
 		while (true);
@@ -579,12 +600,11 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 
 
 	
-
-
-	
 	for (int i = 0; i < MAX_PLAYER; ++i) {
-		if (objects[i].connected == true)
+		if (objects[i].connected == true) {
 			SendPositionPacket(i, id);
+			
+		}
 	}
 	
 	// for (int i = 0; i < MAX_USER; ++i) if (true == clients[i].connected) SendPositionPacket(i, id);
