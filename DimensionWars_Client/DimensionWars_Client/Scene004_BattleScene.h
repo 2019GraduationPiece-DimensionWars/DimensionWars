@@ -52,6 +52,6 @@ public:
 
 	void SendChracterType(int a);
 	int cmd;
-	
+	unsigned int anime; // 애니메이션 정보
 };
 

@@ -60,12 +60,10 @@ void BasePlayer::Move(const XMFLOAT3 & xmf3Shift, bool bUpdateVelocity)
 	if (bUpdateVelocity)
 	{
 		m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, xmf3Shift);
-		//printf("ddd");
 	}
 	else
 	{
 		m_xmf3Position = Vector3::Add(m_xmf3Position, xmf3Shift);
-		//printf("안움직임");
 		m_pCamera->Move(xmf3Shift);
 	}
 }

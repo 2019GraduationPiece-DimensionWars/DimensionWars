@@ -161,9 +161,10 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed);
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
-		if (m_ppOtherPlayers[i]->connected)
+		if (m_ppOtherPlayers[i]->connected) {
 			m_ppOtherPlayers[i]->Animate(fTimeElapsed);
-	
+			
+		}
 	/*for (int i = 0; i < m_nCubeObjects; ++i) {
 		m_ppCubeObjects[i]->SetPosition(m_pPlayer->GetPosition().x, m_pPlayer->GetPosition().y - 60, m_pPlayer->GetPosition().z - 50);
 	}*/
@@ -237,40 +238,22 @@ void BattleScene::ProcessPacket(char * ptr)
 		if (id == myid) {
 			m_pPlayer->SetVisible(true);
 			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
-			//m_pPlayer->SetVisible(true);
-#ifdef USE_CONSOLE_WINDOW
-			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
-#endif
 		}
 		else if (id < MAX_PLAYER) {
-			//character_type = my_packet->character_type;
-			//printf("%d", character_type);
-			/*if (character_type == 0) {
-				m_ppOtherPlayers[id] = ReaperObject[0];
-			}
-			if (character_type == 1) {
-				m_ppOtherPlayers[id] = GamblerObject[0];
-			}*/
-			/*if (character_type == 2) {
-				m_ppOtherPlayers[id] = ElfObject[0];
-			}*/
-			
 			if (m_ppOtherPlayers[id]) {
 				m_ppOtherPlayers[id]->connected = true;
 				m_ppOtherPlayers[id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 			}
-//#ifdef USE_CONSOLE_WINDOW
-//			printf("Put Player [%d]  (%.1f, %.1f %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
-//#endif
-		}
 
+		}
+		
 		break;
 	}
 	case SC_Type::Position:
 	{
 		SCPacket_Position *my_packet = reinterpret_cast<SCPacket_Position *>(ptr);
 		unsigned short other_id = my_packet->id;
-		unsigned int anime = my_packet->animation_state;
+		anime = my_packet->animation_state;
 		//printf("%d", anime);
 	//	printf("포지션! 서버한테 받기 성공\n");
 		if (other_id == myid) {
@@ -283,8 +266,6 @@ void BattleScene::ProcessPacket(char * ptr)
 			m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(anime);
 			m_ppOtherPlayers[other_id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 //#ifdef USE_CONSOLE_WINDOW
-//			printf("other [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
-//#endif
 		}
 		break;
 	}
@@ -313,7 +294,7 @@ void BattleScene::ProcessPacket(char * ptr)
 	{
 		SCPacket_Attack *my_packet = reinterpret_cast<SCPacket_Attack*>(ptr);
 		unsigned short other_id = my_packet->id;
-		unsigned int anime = my_packet->animation_state;
+		anime = my_packet->animation_state;
 		if (other_id < MAX_PLAYER) {
 			m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(anime);
 		}
@@ -340,5 +321,7 @@ void BattleScene::ProcessPacket(char * ptr)
 #endif
 		break;
 	}
+
+
 	
 }

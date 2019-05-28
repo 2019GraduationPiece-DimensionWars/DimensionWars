@@ -388,6 +388,28 @@ struct SOCKETINFO
 
 	// 플레이어 정보
 	unsigned short character_info;
+	XMFLOAT3 m_Right;
+	XMFLOAT3 m_Up;
+	XMFLOAT3 m_Look;
 
 };
 
+class BaseProjectTile : SOCKETINFO 
+{
+	//위치 바운딩박스 속도 
+};
+
+class Arrow : BaseProjectTile 
+{
+
+};
+
+class Card : BaseProjectTile
+{
+
+};
+
+class Slash : BaseProjectTile
+{
+
+};

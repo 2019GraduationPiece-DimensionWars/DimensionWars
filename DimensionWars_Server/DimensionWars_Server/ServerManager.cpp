@@ -33,8 +33,8 @@ void ServerManager::Run()
 	std::thread timerThread{ RegisterTimerThread, (LPVOID)this };
 
 	timerThread.join();
-
 	accept_thread.join();
+
 	for (auto & thread : workerThreads) thread.join();
 }
 
@@ -128,16 +128,17 @@ void ServerManager::AcceptThread()
 		
 		SendLoginOKPacket(new_id);
 		SendPutPlayerPacket(new_id, new_id); // 나 자신에게 미리 알려준다.
-		for (int i = 0; i < MAX_USER; ++i) {
+		
+		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (false == objects[i].connected) continue;
 			if (i == new_id) continue; // 나 자신에게 나를 알려줄 필요는 없다.
 			else {
 			//	objects[i].viewlist.insert(new_id);
-				//AddTimerEvent(new_id);
+				
 				SendPutPlayerPacket(i, new_id);
 			}
 		}
-		for (int i = 0; i < MAX_USER; ++i) {
+		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (false == objects[i].connected) continue;
 			if (i == new_id) continue;
 			else {
@@ -149,13 +150,22 @@ void ServerManager::AcceptThread()
 		
 		for (int i = Cube_start; i < Cube_start + 50; ++i)
 		{
-			//AddTimerEvent(i);
+			
 			SendMapInfoPacket(new_id, i);
+			
 		}
-
 		
+		for (int i = 0; i < MAX_PLAYER; ++i)
+		{
+			if (objects[i].connected == true)
+			{
+				AddTimerEvent(i);
+			}
+		}
 		RecvPacket(new_id);
+		
 	}
+
 }
 
 DWORD WINAPI ServerManager::RegisterWorkerThread(LPVOID self)
@@ -180,8 +190,8 @@ void ServerManager::WorkerThread()
 		bool is_error = GetQueuedCompletionStatus(hIOCP, &io_byte, &key, reinterpret_cast<LPWSAOVERLAPPED *>(&lpover_ex), INFINITE);
 #endif
 
-		if (false == is_error) serverPrint("GetQueueCompletionStatus ERROR", WSAGetLastError());
-		if (0 == io_byte) DisConnect(static_cast<unsigned short>(key));
+		if (!is_error) serverPrint("GetQueueCompletionStatus ERROR : %d\n", WSAGetLastError());
+		if (!io_byte && key < MAX_USER) DisConnect(key);
 
 		switch (lpover_ex->type) {
 		case OVER_EX::Type::NONE:
@@ -199,7 +209,7 @@ void ServerManager::WorkerThread()
 				int required = packetSize - objects[key].prev_size;
 				if (rest_size >= required) {
 					memcpy(objects[key].packet_buf + objects[key].prev_size, ptr, required);
-					ProcessPacket(static_cast<unsigned short>(key), objects[key].packet_buf);
+					ProcessPacket(key, objects[key].packet_buf);
 					rest_size -= required;
 					ptr += required;
 					packetSize = 0; // 패킷 처리가 끝남
@@ -210,14 +220,15 @@ void ServerManager::WorkerThread()
 					rest_size = 0;
 				}
 			}
-			RecvPacket(static_cast<unsigned short>(key));
+			RecvPacket(key);
 		}
 		break;
 		case OVER_EX::Type::EVENT:
 		{
 			TimerEvent* pEvent = reinterpret_cast<TimerEvent*>(lpover_ex->messageBuffer);
-			if (pEvent->command == TimerEvent::Command::Collision)
-				Collision(key);
+			if (pEvent->command == TimerEvent::Command::Collision) {
+				Update(key);
+			}
 			delete lpover_ex;
 		}
 		break;
@@ -260,7 +271,7 @@ void ServerManager::TimerThread()
 				lpover_ex->dataBuffer.len = sizeof(TimerEvent);
 				lpover_ex->type = OVER_EX::Type::EVENT;
 
-				PostQueuedCompletionStatus(hIOCP, 0, peek.objectID, reinterpret_cast<WSAOVERLAPPED*>(lpover_ex));
+				PostQueuedCompletionStatus(hIOCP, 1, peek.objectID, reinterpret_cast<WSAOVERLAPPED*>(lpover_ex));
 			}
 			else
 				timerQueue_Lock.unlock();
@@ -275,7 +286,7 @@ void ServerManager::ObjectInitialize()
 	std::default_random_engine dre(rd());
 	std::uniform_real_distribution<> startPos(-2500.0, 2500.0);
 	std::uniform_real_distribution<> startYPos(0, 2500.0);
-	std::uniform_real_distribution<> startRotate(0, 90.0);
+	std::uniform_real_distribution<> startRotate(0, 0.0);
 
 	for (int i = Cube_start; i < Cube_start + 50; ++i) {
 
@@ -536,31 +547,40 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 
 	CSPacket_Move * packet = reinterpret_cast<CSPacket_Move *>(buf);
 	XMFLOAT3 xmf3Shift = objects[id].position;
-
 	switch (packet->type) {
 	case CS_Type::Move:
 	{
 		ani_state = packet->animation_state;
-		//printf("%d\n", ani_state);
+		objects[id].m_Look = packet->m_Look;
+		objects[id].m_Right = packet->m_Right;
+		objects[id].m_Up = packet->m_Up;
 		if (packet->dir) {
-			/*if (packet->dir & DIR_FORWARD) pos.z+=10;
-			if (packet->dir & DIR_BACKWARD) pos.z-=10;
-			if (packet->dir & DIR_LEFT) pos.x-=10;
-			if (packet->dir & DIR_RIGHT) pos.x+=10;
-			if (packet->dir & DIR_UP) pos.y+=10;
-			if (packet->dir & DIR_DOWN) pos.y-=10;*/
-			
-			if (packet->dir & DIR_FORWARD) xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, -fDistance);
-			if (packet->dir & DIR_BACKWARD) xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, +fDistance);
-#ifdef _WITH_LEFT_HAND_COORDINATES
-			if (packet->dir & DIR_RIGHT) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Right, +fDistance);
-			if (packet->dir & DIR_LEFT) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Right, -fDistance);
-#else
-			if (packet->dir & DIR_RIGHT) xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, +fDistance);
-			if (packet->dir & DIR_LEFT) xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, -fDistance);
-#endif
-			if (packet->dir & DIR_UP) xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, +fDistance);
-			if (packet->dir & DIR_DOWN) xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, -fDistance);
+			if (packet->dir & DIR_FORWARD) 
+			{
+				xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, -fDistance);
+			}
+			if (packet->dir & DIR_BACKWARD)
+			{
+				xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, +fDistance);
+			}
+			if (packet->dir & DIR_RIGHT) 
+			{
+				xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, +fDistance);
+			}
+			if (packet->dir & DIR_LEFT)
+			{
+				xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, -fDistance);
+			}
+
+			if (packet->dir & DIR_UP)
+			{
+				xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, +fDistance*2);
+			}
+			if (packet->dir & DIR_DOWN)
+			{
+				xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, -fDistance);
+				
+			}
 
 		}
 		
@@ -568,6 +588,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	}
 	case CS_Type::Attack:
 	{
+		
 		CSPacket_Attack * packet = reinterpret_cast<CSPacket_Attack *>(buf);
 		ani_state = packet->animation_state;
 		for (int i = 0; i < MAX_PLAYER; ++i) {
@@ -583,6 +604,52 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		while (true);
 	}
 
+	if (Collision(id))
+	{
+
+		if (packet->dir & DIR_FORWARD&&check_b == false&& check_r ==false&& check_l ==false&& check_u ==false&& check_d == false) {
+			check_f = true;
+			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, +fDistance);
+			
+		}
+		if (packet->dir & DIR_BACKWARD&&check_f==false && check_r == false && check_l == false && check_u == false && check_d == false)
+		{
+			check_b = true;
+			xmf3Shift = Vector3::Add(xmf3Shift, Vector3::ScalarProduct(packet->m_Up, -1.0f), +fDistance);
+			
+		}
+		if (packet->dir & DIR_RIGHT&&check_f == false && check_b == false && check_l == false && check_u == false && check_d == false) {
+			check_r = true;
+			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, -fDistance);
+
+		}
+		if (packet->dir & DIR_LEFT&&check_f == false && check_b == false && check_r == false && check_u == false && check_d == false) {
+			check_l = true;
+			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, +fDistance);
+			
+		}
+		if (packet->dir & DIR_UP&&check_f == false && check_b == false && check_r == false && check_l == false && check_d == false) {
+			check_u = true;
+			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, -fDistance);
+			
+		}
+		if (packet->dir & DIR_DOWN&&check_f == false && check_b == false && check_r == false && check_l == false && check_u == false) {
+			check_d = true;
+			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, +fDistance);
+
+		}
+	}
+	else
+	{
+		check_f = false;
+		check_b = false;
+		check_r = false;
+		check_l = false;
+		check_u = false;
+		check_d = false;
+	}
+
+	
 	objects[id].position = xmf3Shift;
 
 	if (objects[id].position.x > 3000.0f)
@@ -598,7 +665,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	if (objects[id].position.y < 0.0f)
 		objects[id].position.y = 0.0f;
 
-
+	
 	
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (objects[i].connected == true) {
@@ -606,13 +673,15 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 			
 		}
 	}
+
+	
 	
 	// for (int i = 0; i < MAX_USER; ++i) if (true == clients[i].connected) SendPositionPacket(i, id);
 }
 
 void ServerManager::DisConnect(unsigned short int id)
 {
-	for (int i = 0; i < MAX_USER; ++i) {
+	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (false == objects[i].connected) continue;
 		objects[i].vl_lock.lock();
 		if (0 != objects[i].viewlist.count(id)) { // 뷰리스트에 내가 있으면
@@ -656,28 +725,24 @@ float ServerManager::Distance(XMFLOAT3 vector1, XMFLOAT3 vector2)
 }
 
 
-// 무시
-void ServerManager::Collision(unsigned int id)
+bool ServerManager::Collision(unsigned int id)
 {
-	printf("d");
-	
-
-	objects[id].colbox.Center = XMFLOAT3(objects[id].position.x, objects[id].position.y - 60, objects[id].position.z - 50);
+	objects[id].colbox.Center = XMFLOAT3(objects[id].position.x, objects[id].position.y , objects[id].position.z);
+	objects[id].colbox.Extents = XMFLOAT3(40, 150, 40);
 	for (int i = Cube_start; i < Cube_start + 5; ++i) {
-
-		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 400, MAX_CUBE_SIZE - 400, MAX_CUBE_SIZE - 400);
+		objects[i].colbox.Extents = XMFLOAT3(0,0,0);
 	}
 	for (int i = Cube_start + 5; i < Cube_start + 15; ++i) {
-		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 300, MAX_CUBE_SIZE - 300, MAX_CUBE_SIZE - 300);
+		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 500, MAX_CUBE_SIZE - 500, MAX_CUBE_SIZE - 500);
 	}
 	for (int i = Cube_start + 15; i < Cube_start + 35; ++i) {
-		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 200, MAX_CUBE_SIZE - 200, MAX_CUBE_SIZE - 200);
+		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 450, MAX_CUBE_SIZE - 450, MAX_CUBE_SIZE - 450);
 	}
 	for (int i = Cube_start + 35; i < Cube_start + 45; ++i) {
-		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 100, MAX_CUBE_SIZE - 100, MAX_CUBE_SIZE - 100);
+		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 400, MAX_CUBE_SIZE - 400, MAX_CUBE_SIZE - 400);
 	}
 	for (int i = Cube_start + 45; i < Cube_start + 50; ++i) {
-		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE, MAX_CUBE_SIZE, MAX_CUBE_SIZE);
+		objects[i].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE-350, MAX_CUBE_SIZE-350, MAX_CUBE_SIZE-350);
 	}
 	for (int i = Cube_start; i < Cube_start + 50; ++i)
 	{
@@ -685,12 +750,13 @@ void ServerManager::Collision(unsigned int id)
 		objects[i].colbox.Orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 		
 		if (objects[i].colbox.Intersects(objects[id].colbox)) {
-			printf("충돌함ㅋ");
+			//printf("충돌함ㅋ");
+			
+			return true;
 		}
-		SendPositionPacket(i, id);
-	
+		
 	}
-	//AddTimerEvent(id);
+	return false;
 }
 
 void ServerManager::AddTimerEvent(unsigned int id, TimerEvent::Command cmd, double second)
@@ -699,4 +765,22 @@ void ServerManager::AddTimerEvent(unsigned int id, TimerEvent::Command cmd, doub
 	timerQueue_Lock.lock();
 	timerQueue.push(TimerEvent(id, cmd, currentTime.count() + second));
 	timerQueue_Lock.unlock();
+}
+
+void ServerManager::Update(unsigned int id)
+{
+	//printf("성공");
+	if(!Collision(id))
+		objects[id].position.y -= 9.8f; // 중력 
+
+	if (objects[id].position.y <= 0)
+	{
+		objects[id].position.y = 0;
+	}
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (objects[i].connected == true) {
+			SendPositionPacket(i, id);
+		}
+	}
+	AddTimerEvent(id);
 }

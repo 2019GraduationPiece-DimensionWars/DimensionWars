@@ -24,7 +24,7 @@ private:
 	std::vector<std::thread>			workerThreads;
 	std::priority_queue<TimerEvent, std::vector<TimerEvent>, TimerEvent::Priority>	timerQueue;
 	std::mutex					timerQueue_Lock;
-	SOCKETINFO							objects[MAX_USER];	// client, 투사체, 큐브 장애물 등에 다 ID를 등록 후 클라이언트에 뿌려줘야 하므로 Objects라고 명명
+	SOCKETINFO							objects[MAX_OBJECTS];	// client, 투사체, 큐브 장애물 등에 다 ID를 등록 후 클라이언트에 뿌려줘야 하므로 Objects라고 명명
 	float fDistance = 10.0f;
 
 	XMFLOAT3					m_xmf3Velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -69,7 +69,11 @@ private:
 	/*void Move(const XMFLOAT3 & xmf3Shift, bool bUpdateVelocity);
 	void Update(float fTimeElapsed);*/
 
+	//큐브충돌
+	bool Collision(unsigned int id);
+	bool check_f, check_b, check_r, check_l, check_u, check_d;
 
-	void Collision(unsigned int id);
-	void AddTimerEvent(unsigned int id, TimerEvent::Command cmd = TimerEvent::Command::Collision, double seconds = 1.0);
+	void AddTimerEvent(unsigned int id, TimerEvent::Command cmd = TimerEvent::Command::Collision, double seconds = 0.01);
+	void Update(unsigned int id);
+
 };
