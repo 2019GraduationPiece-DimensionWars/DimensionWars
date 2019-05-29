@@ -644,3 +644,8 @@ void BaseScene::SendAttackInfo()
 		//printf("%d\n", myAttackPacket->animation_state);
 	}
 }
+
+void BaseScene::SendCard()
+{
+
+}

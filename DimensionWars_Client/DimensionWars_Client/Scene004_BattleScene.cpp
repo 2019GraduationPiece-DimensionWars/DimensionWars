@@ -212,6 +212,7 @@ void BattleScene::BuildCube()
 void BattleScene::ProcessPacket(char * ptr)
 {
 	static bool first_time = true;
+	
 	switch (ptr[1])
 	{
 	case SC_Type::LoginOK:
@@ -238,6 +239,13 @@ void BattleScene::ProcessPacket(char * ptr)
 		if (id == myid) {
 			m_pPlayer->SetVisible(true);
 			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
+			
+			CSPacket_CharacterType *myTypePacket = reinterpret_cast<CSPacket_CharacterType *>(m_pFramework->GetSendBuf());
+			myTypePacket->size = sizeof(CSPacket_CharacterType);
+			// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
+			myTypePacket->character_type = cmd;
+			myTypePacket->type = CS_Type::Character_Info;
+			m_pFramework->SendPacket(reinterpret_cast<char *>(myTypePacket));
 		}
 		else if (id < MAX_PLAYER) {
 			if (m_ppOtherPlayers[id]) {
@@ -309,10 +317,22 @@ void BattleScene::ProcessPacket(char * ptr)
 		unsigned short id = my_packet->id - Cube_start;
 		m_pFramework->cubePos[id] = XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z);
 		m_pFramework->cubeRot[id] = XMFLOAT3(my_packet->rotate.x, my_packet->rotate.y, my_packet->rotate.z);
-
-#ifdef USE_CONSOLE_WINDOW
-		// printf("MAPINFO Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", id, m_pFramework->cubeSize[id], m_pFramework->cubePos[id].x, m_pFramework->cubePos[id].y, m_pFramework->cubePos[id].z, m_pFramework->cubeRot[id].x, m_pFramework->cubeRot[id].y, m_pFramework->cubeRot[id].z);
-#endif
+		break;
+	}
+	case SC_Type::ProjectTile:
+	{
+		
+		SCPacket_ProjectTile *my_packet = reinterpret_cast<SCPacket_ProjectTile *>(ptr);
+		if (my_packet->projectTile_type == ProjectTile::Card)
+		{
+			printf("card (%.1f, %.1f, %.1f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			unsigned short card_id = my_packet->id;
+		}
+		if (my_packet->projectTile_type == ProjectTile::Slash)
+		{
+			printf("slash (%.1f, %.1f, %.1f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			unsigned short slash_id = my_packet->id;
+		}
 		break;
 	}
 	default:

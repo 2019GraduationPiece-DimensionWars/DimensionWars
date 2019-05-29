@@ -60,6 +60,9 @@ private:
 	void ProcessPacket(unsigned short int id, char *buf);
 	void SendMapInfoPacket(unsigned short to, unsigned short obj);
 	void SendAttackPaket(unsigned short to, unsigned short obj);
+	void SendCardPaket(unsigned short to, unsigned short obj);
+	void SendSlashPaket(unsigned short to, unsigned short obj);
+
 
 	void DisConnect(unsigned short int id);
 	const unsigned short int GetNewID();
@@ -75,5 +78,7 @@ private:
 
 	void AddTimerEvent(unsigned int id, TimerEvent::Command cmd = TimerEvent::Command::Collision, double seconds = 0.01);
 	void Update(unsigned int id);
+
+	int character_type = 99;
 
 };

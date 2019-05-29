@@ -155,6 +155,18 @@ void ServerManager::AcceptThread()
 			
 		}
 		
+		for (int i = Card_start; i < Card_end; ++i)
+		{
+			objects[i].position = objects[new_id].position;
+			SendCardPaket(new_id,i);
+		}
+
+		for (int i = Slash_start; i < Slash_end; ++i)
+		{
+			objects[i].position = objects[new_id].position;
+			SendSlashPaket(new_id, i);
+		}
+
 		for (int i = 0; i < MAX_PLAYER; ++i)
 		{
 			if (objects[i].connected == true)
@@ -542,12 +554,44 @@ void ServerManager::SendMapInfoPacket(unsigned short to, unsigned short obj)
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
+void ServerManager::SendCardPaket(unsigned short to, unsigned short obj)
+{
+	SCPacket_ProjectTile packet;
+	packet.id = obj;
+	packet.size = sizeof(packet);
+	packet.type = SC_Type::ProjectTile;
+	packet.position = XMFLOAT3(objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);;
+	packet.projectTile_type = ProjectTile::Card;
+	
+	SendPacket(to, reinterpret_cast<char *>(&packet));
+}
+
+void ServerManager::SendSlashPaket(unsigned short to, unsigned short obj)
+{
+	SCPacket_ProjectTile packet;
+	packet.id = obj;
+	packet.size = sizeof(packet);
+	packet.type = SC_Type::ProjectTile;
+	packet.position = XMFLOAT3(objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);;
+	packet.projectTile_type = ProjectTile::Slash;
+	
+	SendPacket(to, reinterpret_cast<char *>(&packet));
+}
+
+
 void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 {
 
 	CSPacket_Move * packet = reinterpret_cast<CSPacket_Move *>(buf);
 	XMFLOAT3 xmf3Shift = objects[id].position;
 	switch (packet->type) {
+	case CS_Type::Character_Info:
+	{
+		CSPacket_CharacterType *myTypePacket = reinterpret_cast<CSPacket_CharacterType *>(buf);
+		character_type= myTypePacket->character_type;
+		
+		break;
+	}
 	case CS_Type::Move:
 	{
 		ani_state = packet->animation_state;
@@ -574,7 +618,12 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 
 			if (packet->dir & DIR_UP)
 			{
-				xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, +fDistance*2);
+				xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, +fDistance * 2);
+			/*	printf("d");
+				if(character_type==0)
+					xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, +fDistance*2);
+				else if(character_type==1)
+					xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, +fDistance);*/
 			}
 			if (packet->dir & DIR_DOWN)
 			{
@@ -727,8 +776,17 @@ float ServerManager::Distance(XMFLOAT3 vector1, XMFLOAT3 vector2)
 
 bool ServerManager::Collision(unsigned int id)
 {
-	objects[id].colbox.Center = XMFLOAT3(objects[id].position.x, objects[id].position.y , objects[id].position.z);
-	objects[id].colbox.Extents = XMFLOAT3(40, 150, 40);
+	
+	if (character_type == 1)   // 도박사
+	{
+		objects[id].colbox.Center = XMFLOAT3(objects[id].position.x, objects[id].position.y, objects[id].position.z);
+		objects[id].colbox.Extents = XMFLOAT3(40, 150, 40);
+	}
+	else if (character_type == 0)
+	{
+		objects[id].colbox.Center = XMFLOAT3(objects[id].position.x, objects[id].position.y, objects[id].position.z);
+		objects[id].colbox.Extents = XMFLOAT3(60, 50, 40);
+	}
 	for (int i = Cube_start; i < Cube_start + 5; ++i) {
 		objects[i].colbox.Extents = XMFLOAT3(0,0,0);
 	}
@@ -770,7 +828,7 @@ void ServerManager::AddTimerEvent(unsigned int id, TimerEvent::Command cmd, doub
 void ServerManager::Update(unsigned int id)
 {
 	//printf("성공");
-	if(!Collision(id))
+	if(!Collision(id)&&objects[id].connected==true)
 		objects[id].position.y -= 9.8f; // 중력 
 
 	if (objects[id].position.y <= 0)
@@ -782,5 +840,7 @@ void ServerManager::Update(unsigned int id)
 			SendPositionPacket(i, id);
 		}
 	}
+
+
 	AddTimerEvent(id);
 }

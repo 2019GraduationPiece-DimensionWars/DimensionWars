@@ -11,7 +11,8 @@ constexpr unsigned short BUFSIZE = 1024;		// 버퍼의 크기
 constexpr unsigned short MAX_USER = 500;	// 한 방과 한 전투에 플레이어는 6명. 이 게임은 투사체가 많지 플레이어가 많은 것이 아니다.
 constexpr unsigned short Cube_start = 10;
 constexpr unsigned short MAX_PLAYER = 6;	// 코딩 할 때 불편하지 않도록 같은 이름을 쓰기 위함
-
+constexpr unsigned short Slash_start = 100; // 검기 시작
+constexpr unsigned short Card_start = 200;  // 도박사 평타 시작
 constexpr unsigned int MAX_OBJECTS = 1000;		// 총 서버가 관리할 플레이어, 투사체 등의 정보를 포함한 게임 월드의 모든 오브젝트 숫자
 // 플레이어 6명, 큐브 50개, 투사체 X개 
 
@@ -24,6 +25,8 @@ constexpr float VIEW_RANGE = 2500.0f;	// 플레이어의 시야
 
 constexpr float MAX_CUBE_SIZE = 700.0f;	// 큐브 사이즈
 
+constexpr unsigned short Slash_end = 200;
+constexpr unsigned short Card_end = 300;
 
 namespace GrimReaper
 {
@@ -138,6 +141,12 @@ enum Key_Moving_Direction {
 	DIR_DOWN = 0x20 // 추락
 };
 
+enum ProjectTile {
+	Card = 0,
+	Slash=1,
+	Arrow=2
+};
+
 namespace SC 
 {
 	enum ServerToClientSocketType {
@@ -149,6 +158,7 @@ namespace SC
 		Down = 6, // 해당 클라이언트가 다운 공격에 피격되었으므로 피격 애니메이션을 재생해라.
 		MapInfo =7,
 		Attack=8,
+		ProjectTile = 9,
 		Count
 
 	};
@@ -202,6 +212,13 @@ struct SCPacket_MapInfo : SCPacket_Base {
 
 struct SCPacket_Attack : SCPacket_Base {
 	unsigned int animation_state;
+};
+
+struct SCPacket_ProjectTile : SCPacket_Base {
+	DirectX::XMFLOAT3 position;
+	unsigned short projectTile_type;
+	
+	
 };
 
 struct CSPacket_Base {
