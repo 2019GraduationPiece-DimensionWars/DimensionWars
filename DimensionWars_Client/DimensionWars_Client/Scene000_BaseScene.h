@@ -107,7 +107,9 @@ public:
 	virtual void ProcessPacket(char *ptr);
 
 	void SendMoveDirection();
-	void SendAttackInfo();
+	void SendAnimationInfo();
+
+
 	BasePlayer					*m_pPlayer = nullptr;
 	BasePlayer *m_ppOtherPlayers[MAX_PLAYER] = { nullptr, };
 //	AnimationController 			*m_pSkinnedAnimationController = nullptr;

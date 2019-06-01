@@ -304,3 +304,5 @@ bool BasePlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 {
 	return false;
 }
+
+

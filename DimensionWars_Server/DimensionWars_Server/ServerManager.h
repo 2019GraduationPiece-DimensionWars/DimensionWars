@@ -59,7 +59,7 @@ private:
 	void SendRemovePlayerPacket(unsigned short int to, unsigned short int id);
 	void ProcessPacket(unsigned short int id, char *buf);
 	void SendMapInfoPacket(unsigned short to, unsigned short obj);
-	void SendAttackPaket(unsigned short to, unsigned short obj);
+	void SendAnimationPaket(unsigned short to, unsigned short obj);
 	void SendCardPaket(unsigned short to, unsigned short obj);
 	void SendSlashPaket(unsigned short to, unsigned short obj);
 
@@ -76,9 +76,11 @@ private:
 	bool Collision(unsigned int id);
 	bool check_f, check_b, check_r, check_l, check_u, check_d;
 
-	void AddTimerEvent(unsigned int id, TimerEvent::Command cmd = TimerEvent::Command::Collision, double seconds = 0.01);
+	void AddTimerEvent(unsigned int id, TimerEvent::Command cmd = TimerEvent::Command::Update, double seconds = 0.01f);
 	void Update(unsigned int id);
-
+	
 	int character_type = 99;
+	int card_num = 0;
+	int slash_num = 0;
 
 };

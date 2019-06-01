@@ -150,15 +150,14 @@ void ServerManager::AcceptThread()
 		
 		for (int i = Cube_start; i < Cube_start + 50; ++i)
 		{
-			
-			SendMapInfoPacket(new_id, i);
-			
+			SendMapInfoPacket(new_id, i);	
 		}
 		
 		for (int i = Card_start; i < Card_end; ++i)
 		{
 			objects[i].position = objects[new_id].position;
 			SendCardPaket(new_id,i);
+			
 		}
 
 		for (int i = Slash_start; i < Slash_end; ++i)
@@ -173,6 +172,10 @@ void ServerManager::AcceptThread()
 			{
 				AddTimerEvent(i);
 			}
+		}
+		for (int i = Card_start; i < Slash_end; ++i)
+		{
+			AddTimerEvent(i);
 		}
 		RecvPacket(new_id);
 		
@@ -238,7 +241,7 @@ void ServerManager::WorkerThread()
 		case OVER_EX::Type::EVENT:
 		{
 			TimerEvent* pEvent = reinterpret_cast<TimerEvent*>(lpover_ex->messageBuffer);
-			if (pEvent->command == TimerEvent::Command::Collision) {
+			if (pEvent->command == TimerEvent::Command::Update) {
 				Update(key);
 			}
 			delete lpover_ex;
@@ -522,12 +525,12 @@ void ServerManager::SendPositionPacket(unsigned short to, unsigned short obj)
 	
 }
 
-void ServerManager::SendAttackPaket(unsigned short to, unsigned short obj)
+void ServerManager::SendAnimationPaket(unsigned short to, unsigned short obj)
 {
-	SCPacket_Attack packet;
+	SCPacket_Animation packet;
 	packet.id = obj;
 	packet.size = sizeof(packet);
-	packet.type = SC_Type::Attack;
+	packet.type = SC_Type::Animation;
 	packet.animation_state = ani_state;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
@@ -635,16 +638,40 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		
 		break;
 	}
-	case CS_Type::Attack:
+	case CS_Type::Animation:
 	{
 		
-		CSPacket_Attack * packet = reinterpret_cast<CSPacket_Attack *>(buf);
+		CSPacket_Animation * packet = reinterpret_cast<CSPacket_Animation *>(buf);
 		ani_state = packet->animation_state;
+		
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (objects[i].connected == true) {
-				SendAttackPaket(i, id);
+				SendAnimationPaket(i, id);
 			}
 		}
+		break;
+	}
+	case CS_Type::Attack:
+	{
+		//printf("%d\n", card_num);
+		CSPacket_Attack *packet = reinterpret_cast<CSPacket_Attack*>(buf);
+
+		if (packet->attack_type == Gambler::Idle_Attack)
+		{
+			objects[Card_start + card_num].position = objects[id].position;
+			objects[Card_start + card_num].tile_life = true;
+			
+			card_num++;
+			
+		}
+		else if (packet->attack_type == GrimReaper::Slash_Wave)
+		{
+			objects[Slash_start + card_num].position = objects[id].position;
+			objects[Slash_start + card_num].tile_life = true;
+
+			slash_num++;
+		}
+		
 		break;
 	}
 	
@@ -656,7 +683,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	if (Collision(id))
 	{
 
-		if (packet->dir & DIR_FORWARD&&check_b == false&& check_r ==false&& check_l ==false&& check_u ==false&& check_d == false) {
+		/*if (packet->dir & DIR_FORWARD&&check_b == false&& check_r ==false&& check_l ==false&& check_u ==false&& check_d == false) {
 			check_f = true;
 			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, +fDistance);
 			
@@ -681,7 +708,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 			check_u = true;
 			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, -fDistance);
 			
-		}
+		}*/
 		if (packet->dir & DIR_DOWN&&check_f == false && check_b == false && check_r == false && check_l == false && check_u == false) {
 			check_d = true;
 			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, +fDistance);
@@ -722,7 +749,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 			
 		}
 	}
-
+	
 	
 	
 	// for (int i = 0; i < MAX_USER; ++i) if (true == clients[i].connected) SendPositionPacket(i, id);
@@ -828,6 +855,7 @@ void ServerManager::AddTimerEvent(unsigned int id, TimerEvent::Command cmd, doub
 void ServerManager::Update(unsigned int id)
 {
 	//printf("성공");
+	
 	if(!Collision(id)&&objects[id].connected==true)
 		objects[id].position.y -= 9.8f; // 중력 
 
@@ -840,7 +868,62 @@ void ServerManager::Update(unsigned int id)
 			SendPositionPacket(i, id);
 		}
 	}
+	// 도박사 평타 
+	for (int i = Card_start; i < Card_end; ++i)
+	{
+		//objects[i].colbox.Center = XMFLOAT3(objects[i].position.x, objects[i].position.y, objects[i].position.z) ;
+		//objects[i].colbox.Extents = XMFLOAT3(1, 1, 1);
+		//objects[i].colbox.Orientation = XMFLOAT4(0, 0, 0, 1);
+		if (objects[i].tile_life == true)
+		{
+			objects[i].position = Vector3::Add(objects[i].position, m_xmf3Look, 1.0f);
+			//printf("%1.f, %1.f, %1.f\n", objects[i].position.x, objects[i].position.y,objects[i].position.z);
+			if (Distance(objects[i].position, objects[id].position) >= 200)
+			{
+				objects[i].tile_life = false;
+			}
+			// 플레이어충돌
+			/*for (int j = 0; j < MAX_PLAYER; ++i)
+			{
+				if (objects[i].colbox.Intersects(objects[j].colbox))
+				{
+					objects[i].tile_life = false;
+					printf("player hit !!");
+				}
+			}*/
+			// 큐브 충돌
+			/*for (int k = Cube_start; k < Cube_start + 50; ++i)
+			{
+				objects[k].colbox.Center = XMFLOAT3(objects[k].position.x, objects[k].position.y, objects[k].position.z);
+				objects[k].colbox.Extents = XMFLOAT3(300, 300, 300);
+				objects[k].colbox.Orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
-
+				if (objects[i].colbox.Intersects(objects[k].colbox))
+				{
+					objects[i].tile_life = false;
+					printf("cube collsion !!");
+				}
+			}*/
+			SendPositionPacket(id, i);
+		}	
+	}
+	// 사신 검기 날리기
+	for (int i = Slash_start; i < Slash_end; ++i)
+	{
+		if (objects[i].tile_life == true)
+		{
+			objects[i].position = Vector3::Add(objects[i].position, m_xmf3Look, 1.0f);
+			//printf("%1.f, %1.f, %1.f\n", objects[i].position.x, objects[i].position.y,objects[i].position.z);
+			if (Distance(objects[i].position, objects[id].position) >= 200)
+			{
+				objects[i].tile_life = false;
+			}
+			SendPositionPacket(id, i);
+		}
+	}
+	
+	
+	
 	AddTimerEvent(id);
 }
+

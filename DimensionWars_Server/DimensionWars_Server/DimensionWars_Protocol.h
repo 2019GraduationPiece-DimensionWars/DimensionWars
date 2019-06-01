@@ -159,6 +159,7 @@ namespace SC
 		MapInfo =7,
 		Attack=8,
 		ProjectTile = 9,
+		Animation= 10,
 		Count
 
 	};
@@ -172,6 +173,7 @@ namespace CS
 		Attack = 2,
 		Guard = 3,
 		Burf = 4,
+		Animation =5,
 		Character_Info,
 	};
 }
@@ -210,8 +212,12 @@ struct SCPacket_MapInfo : SCPacket_Base {
 	// 맵의 기본 정보
 };
 
-struct SCPacket_Attack : SCPacket_Base {
+struct SCPacket_Animation : SCPacket_Base {
 	unsigned int animation_state;
+};
+
+struct SCPacket_Attack : SCPacket_Base {
+	unsigned char attack_type;
 };
 
 struct SCPacket_ProjectTile : SCPacket_Base {
@@ -236,9 +242,13 @@ struct CSPacket_Move : CSPacket_Base {
 
 };
 
+struct CSPacket_Animation : CSPacket_Base {
+	unsigned int animation_state;
+};
+
 struct CSPacket_Attack : CSPacket_Base {
 	unsigned char attack_type;	// 어떤 평타인지, 스킬인지. 이 값의 경우 각 플레이어 캐릭터에 정의된 enum state 값을 집어넣는다.
-	unsigned int animation_state;
+	DirectX::XMFLOAT3 position;
 };
 
 

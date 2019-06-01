@@ -97,6 +97,8 @@ public:
 	int anime_state;
 	void SetVisible(bool vis) { visible = vis; }
 
-	bool attack_state = false;
+	bool animation_check = false;
+
+	
 };
 

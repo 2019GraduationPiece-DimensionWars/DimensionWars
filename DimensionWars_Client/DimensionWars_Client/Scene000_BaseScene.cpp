@@ -633,19 +633,17 @@ void BaseScene::SendMoveDirection()
 	}
 }
 
-void BaseScene::SendAttackInfo()
+void BaseScene::SendAnimationInfo()
 {
-	if (m_pPlayer&&m_pPlayer->attack_state == true) {
-		CSPacket_Attack *myAttackPacket = reinterpret_cast<CSPacket_Attack*>(m_pFramework->GetSendBuf());
-		myAttackPacket->size = sizeof(CSPacket_Attack);
-		myAttackPacket->type = CS_Type::Attack;
-		myAttackPacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
-		m_pFramework->SendPacket(reinterpret_cast<char *>(myAttackPacket));
-		//printf("%d\n", myAttackPacket->animation_state);
+	if (m_pPlayer&&m_pPlayer->animation_check == true) {
+		CSPacket_Animation *myAnimationPacket = reinterpret_cast<CSPacket_Animation*>(m_pFramework->GetSendBuf());
+		myAnimationPacket->size = sizeof(CSPacket_Animation);
+		myAnimationPacket->type = CS_Type::Animation;
+		myAnimationPacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
+		m_pFramework->SendPacket(reinterpret_cast<char *>(myAnimationPacket));
+		//printf("서버한테 보냄 : %d\n", myAnimationPacket->animation_state);
 	}
 }
 
-void BaseScene::SendCard()
-{
 
-}
+

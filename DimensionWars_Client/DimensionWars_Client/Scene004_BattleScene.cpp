@@ -156,7 +156,9 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 {
 	
 	SendMoveDirection();
-	SendAttackInfo();
+	SendAnimationInfo();
+	
+	
 
 	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed);
 
@@ -275,6 +277,14 @@ void BattleScene::ProcessPacket(char * ptr)
 			m_ppOtherPlayers[other_id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 //#ifdef USE_CONSOLE_WINDOW
 		}
+		else if (other_id>=Card_start&&other_id<Card_end) {
+			//printf("도박사 평타 : %1.f, %1.f, %1.f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			// 그려주시고 위치 설정
+		}
+		else if (other_id >= Slash_start&&other_id < Slash_end) {
+			//printf("검기 : %1.f, %1.f, %1.f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			// 그려주시고 위치 설정
+		}
 		break;
 	}
 	case SC_Type::RemovePlayer:
@@ -298,13 +308,15 @@ void BattleScene::ProcessPacket(char * ptr)
 		
 		break;
 	}
-	case SC_Type::Attack:
+	case SC_Type::Animation:
 	{
-		SCPacket_Attack *my_packet = reinterpret_cast<SCPacket_Attack*>(ptr);
+		SCPacket_Animation *my_packet = reinterpret_cast<SCPacket_Animation*>(ptr);
 		unsigned short other_id = my_packet->id;
 		anime = my_packet->animation_state;
+
 		if (other_id < MAX_PLAYER) {
 			m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(anime);
+			//printf("서버한테 받음 : %d\n", anime);
 		}
 		//printf("어택! 서버한테 받기 성공\n");
 		break;
@@ -325,13 +337,15 @@ void BattleScene::ProcessPacket(char * ptr)
 		SCPacket_ProjectTile *my_packet = reinterpret_cast<SCPacket_ProjectTile *>(ptr);
 		if (my_packet->projectTile_type == ProjectTile::Card)
 		{
-			printf("card (%.1f, %.1f, %.1f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			//printf("card (%.1f, %.1f, %.1f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			unsigned short card_id = my_packet->id;
+			//my_packet->position = m_pPlayer[myid].GetPosition();
 		}
 		if (my_packet->projectTile_type == ProjectTile::Slash)
 		{
-			printf("slash (%.1f, %.1f, %.1f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			//printf("slash (%.1f, %.1f, %.1f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			unsigned short slash_id = my_packet->id;
+			//my_packet->position = m_pPlayer[myid].GetPosition();
 		}
 		break;
 	}

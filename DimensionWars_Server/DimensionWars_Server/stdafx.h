@@ -323,7 +323,8 @@ public:
 	enum class Command : unsigned char {
 		None = 0,
 		Random_Move = 1,
-		Collision = 2
+		Update = 2,
+		Tile =3
 	};
 
 	unsigned int objectID;
@@ -391,6 +392,9 @@ struct SOCKETINFO
 	XMFLOAT3 m_Right;
 	XMFLOAT3 m_Up;
 	XMFLOAT3 m_Look;
+
+	// 투사체 정보
+	bool tile_life = false;
 
 };
 
