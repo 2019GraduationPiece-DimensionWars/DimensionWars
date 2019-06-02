@@ -94,11 +94,10 @@ public:
 	virtual bool isCancleEnabled() = 0;
 
 	void SetFramework(RuntimeFrameWork* p) { m_pFramework = p; }
-	int anime_state;
+	
 	void SetVisible(bool vis) { visible = vis; }
 
+	int anime_state;
 	bool animation_check = false;
-
-	
 };
 

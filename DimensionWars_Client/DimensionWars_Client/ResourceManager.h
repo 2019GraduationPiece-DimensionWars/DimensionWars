@@ -1,6 +1,7 @@
 #pragma once
 
 class LoadedModelInfo;
+class SkinnedFrameObject;
 
 class ResourceManager
 {
@@ -26,5 +27,9 @@ public:
 	LoadedModelInfo* GetSlashWaveModel() const { return SlashWaveModel; }
 	LoadedModelInfo* GetCardModel() const { return CardModel; }
 	LoadedModelInfo* GetArrowModel() const { return ArrowModel; }
+
+	SkinnedFrameObject* GetSlashWaveObject() const;
+	SkinnedFrameObject* GetCardObject() const;
+	SkinnedFrameObject* GetArrowbject() const;
 };
 

@@ -111,6 +111,9 @@ public:
 	XMFLOAT3 cubePos[50];
 	XMFLOAT3 cubeRot[50];
 
+	XMFLOAT3 cardPos[Card_end - Card_start];
+	XMFLOAT3 slashWavePos[Slash_end - Slash_start];
+
 private:
 	FrameTimer m_Timer;
 	BasePlayer * m_pPlayer = nullptr;

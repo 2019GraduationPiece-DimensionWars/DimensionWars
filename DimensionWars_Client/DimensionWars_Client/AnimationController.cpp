@@ -101,7 +101,7 @@ AnimationSet::~AnimationSet()
 	// if (m_pAnimationLayers) delete[] m_pAnimationLayers;
 
 	// if (m_pCallbackKeys) delete[] m_pCallbackKeys;
-	if (m_pAnimationCallbackHandler) delete m_pAnimationCallbackHandler;
+	// if (m_pAnimationCallbackHandler) delete m_pAnimationCallbackHandler;
 }
 
 void AnimationSet::SetPosition(float fTrackPosition)

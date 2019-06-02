@@ -14,12 +14,9 @@ class SkinnedFrameObject :
 private:
 	int								m_nReferences = 0;
 
-	
-
 public:
 	void AddRef();
 	virtual void Release();
-
 
 public:
 	XMFLOAT4X4						m_xmf4x4ToParent;

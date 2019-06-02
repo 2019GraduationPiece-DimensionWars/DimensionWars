@@ -29,3 +29,18 @@ void ResourceManager::AllModelLoad(ID3D12Device * pd3dDevice, ID3D12GraphicsComm
 	if (!CardModel) CardModel = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Card.bin", nullptr);
 	if (!ArrowModel) ArrowModel = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Arrow.bin", nullptr);
 }
+
+SkinnedFrameObject * ResourceManager::GetSlashWaveObject() const
+{
+	return SlashWaveModel->m_pModelRootObject;
+}
+
+SkinnedFrameObject * ResourceManager::GetCardObject() const
+{
+	return CardModel->m_pModelRootObject;
+}
+
+SkinnedFrameObject * ResourceManager::GetArrowbject() const
+{
+	return ArrowModel->m_pModelRootObject;
+}

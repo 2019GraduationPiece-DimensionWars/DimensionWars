@@ -6,6 +6,9 @@ class HeightMapTerrain;
 class GrimReaperPlayer;
 class GamblerPlayer;
 class ElfArcherPlayer;
+class SkinnedFrameObject;
+class CardObject;
+class SlashWaveObject;
 
 class BattleScene :
 	public BaseScene
@@ -23,9 +26,13 @@ private:
 	GrimReaperPlayer * ReaperObject[MAX_PLAYER];
 	GamblerPlayer * GamblerObject[MAX_PLAYER];
 	ElfArcherPlayer * ElfObject[MAX_PLAYER];
-	GrimReaperPlayer *preaperPlayer;
-	ElfArcherPlayer *pelfPlayer;
-	GamblerPlayer *pgamblerPlayer;
+	GrimReaperPlayer *prepareGrimReaper;
+	ElfArcherPlayer *prepareElfArcher;
+	GamblerPlayer *prepareGambler;
+
+	CardObject** card = nullptr;
+	SlashWaveObject** slashWave = nullptr;
+	SkinnedFrameObject** arrow = nullptr;
 public:
 	BattleScene();
 	BattleScene(SceneTag tag, RuntimeFrameWork* pFramework)

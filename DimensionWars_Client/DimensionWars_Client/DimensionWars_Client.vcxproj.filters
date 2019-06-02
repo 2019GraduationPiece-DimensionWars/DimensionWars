@@ -219,6 +219,15 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>FrameWork</Filter>
     </ClInclude>
+    <ClInclude Include="Object009_ProjectileObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object010_SlashWaveObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object011_CardObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -367,6 +376,15 @@
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="Object009_ProjectileObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object010_SlashWaveObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object011_CardObject.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
