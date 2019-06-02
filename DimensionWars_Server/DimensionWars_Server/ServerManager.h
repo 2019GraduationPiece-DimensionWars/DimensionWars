@@ -1,5 +1,14 @@
 #pragma once
 
+enum  Object_coll
+{
+	not_coll = 0,
+	player_and_cube = 1,
+	player_and_player = 2,
+	player_and_card = 3,
+	player_and_slash = 4,
+	tile_and_cube = 5,
+};
 class ServerManager
 {
 public:
@@ -73,14 +82,17 @@ private:
 	void Update(float fTimeElapsed);*/
 
 	//큐브충돌
-	bool Collision(unsigned int id);
+	int Collision();
 	bool check_f, check_b, check_r, check_l, check_u, check_d;
 
 	void AddTimerEvent(unsigned int id, TimerEvent::Command cmd = TimerEvent::Command::Update, double seconds = 0.01f);
 	void Update(unsigned int id);
+	//void ObjectCollision(unsigned int id_1, unsigned int id_2);
 	
 	int character_type = 99;
 	int card_num = 0;
 	int slash_num = 0;
+
+
 
 };

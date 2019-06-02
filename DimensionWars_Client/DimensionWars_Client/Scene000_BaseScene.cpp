@@ -623,9 +623,10 @@ void BaseScene::SendMoveDirection()
 		myMovePacket->size = sizeof(CSPacket_Move);
 		// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
 		myMovePacket->dir = m_pPlayer->GetDirectionBit();
-		myMovePacket->m_Look = m_pPlayer->GetLook();
-		myMovePacket->m_Right = m_pPlayer->GetRight();
-		myMovePacket->m_Up = m_pPlayer->GetUp();
+		myMovePacket->m_Look = m_pPlayer->GetLookVector();
+		myMovePacket->m_Right = m_pPlayer->GetRightVector();
+		myMovePacket->m_Up = m_pPlayer->GetUpVector();
+	
 		myMovePacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
 		myMovePacket->type = CS_Type::Move;
 		m_pFramework->SendPacket(reinterpret_cast<char *>(myMovePacket));
