@@ -13,6 +13,9 @@
 #include "AnimationController.h"	// 로드모델 때문
 #include "Object010_SlashWaveObject.h"
 #include "Object011_CardObject.h"
+#include "Object006_TextureRectObject.h"
+
+
 
 BattleScene::BattleScene()
 {
@@ -110,6 +113,39 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 
 	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
 
+	if (cmd == 1)	// 도박사이면
+		m_nObjects = 13;
+	else
+		m_nObjects = 5;
+	m_ppObjects = new BaseObject*[m_nObjects];
+	TextureRectObject *radar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/Radar_180x180.dds", 18.0f, 18.0f);
+	m_ppObjects[0] = radar;
+	TextureRectObject *emptyHPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
+	m_ppObjects[1] = emptyHPgauge;
+	TextureRectObject *emptySPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
+	m_ppObjects[2] = emptySPgauge;
+	TextureRectObject *hpBar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/HPBar_360x60.dds", 36.0f, 6.0f);
+	m_ppObjects[3] = hpBar;
+	TextureRectObject *spBar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/SPBar_360x60.dds", 36.0f, 6.0f);
+	m_ppObjects[4] = spBar;
+	if (cmd == 1) {
+		TextureRectObject *remain0 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard0.dds", 48.0f, 18.0f);
+		m_ppObjects[5] = remain0;
+		TextureRectObject *remain1 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard1.dds", 48.0f, 18.0f);
+		m_ppObjects[6] = remain1;
+		TextureRectObject *remain2 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard2.dds", 48.0f, 18.0f);
+		m_ppObjects[7] = remain2;
+		TextureRectObject *remain3 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard3.dds", 48.0f, 18.0f);
+		m_ppObjects[8] = remain3;
+		TextureRectObject *remain4 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard4.dds", 48.0f, 18.0f);
+		m_ppObjects[9] = remain4;
+		TextureRectObject *remain5 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard5.dds", 48.0f, 18.0f);
+		m_ppObjects[10] = remain5;
+		TextureRectObject *remain6 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard6.dds", 48.0f, 18.0f);
+		m_ppObjects[11] = remain6;
+		TextureRectObject *remain7 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard7.dds", 48.0f, 18.0f);
+		m_ppObjects[12] = remain7;
+	}
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -127,6 +163,12 @@ void BattleScene::ReleaseUploadBuffers()
 	if (m_pSkyBox) m_pSkyBox->ReleaseUploadBuffers();
 
 	if (m_pTerrain) m_pTerrain->ReleaseUploadBuffers();
+
+	if (m_ppObjects) {
+		for (unsigned int i = 0; i < m_nObjects ; ++i)
+			if (m_ppObjects[i])
+				m_ppObjects[i]->ReleaseUploadBuffers();
+	}
 }
 
 bool BattleScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -172,10 +214,42 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed);
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
-		if (m_ppOtherPlayers[i]->connected) {
+		if (m_ppOtherPlayers[i]->connected)
 			m_ppOtherPlayers[i]->Animate(fTimeElapsed);
-			
-		}
+
+
+	auto reflection = Vector3::Subtract(XMFLOAT3(0.0f, 0.0f, 0.0f), m_pPlayer->GetCamera()->GetLookVector());
+	if (m_ppObjects)
+		for (unsigned int i = 0; i < m_nObjects; ++i)
+			if (m_ppObjects[i]) {
+				//	m_ppObjects[i]->SetLookAt(m_pPlayer->GetCamera()->GetPosition(), XMFLOAT3(0.0f, 1.0f, 0.0f));
+			}
+
+	// 레이더
+	m_ppObjects[0]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 75.0f, m_pPlayer->GetCamera()->GetPosition().y + 35.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+
+	// 빈 HP바
+	m_ppObjects[1]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 30.0f, m_pPlayer->GetCamera()->GetPosition().z + 50.0f);
+	
+	// 빈 SP 바
+	m_ppObjects[2]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 20.0f, m_pPlayer->GetCamera()->GetPosition().z + 49.0f);
+	
+	// HP 바
+	m_ppObjects[3]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 30.0f, m_pPlayer->GetCamera()->GetPosition().z + 50.0f);
+	
+	// SP 바
+	m_ppObjects[4]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 20.0f, m_pPlayer->GetCamera()->GetPosition().z + 49.0f);
+	
+	if (m_nObjects > 5) {
+		m_ppObjects[5]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_ppObjects[6]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_ppObjects[7]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_ppObjects[8]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_ppObjects[9]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_ppObjects[10]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_ppObjects[11]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_ppObjects[12]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+	}
 	/*for (int i = 0; i < m_nCubeObjects; ++i) {
 		m_ppCubeObjects[i]->SetPosition(m_pPlayer->GetPosition().x, m_pPlayer->GetPosition().y - 60, m_pPlayer->GetPosition().z - 50);
 	}*/
@@ -215,6 +289,10 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 	}
 
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
+
+
+	if (m_ppObjects) for (unsigned int i = 0; i < m_nObjects; ++i) if (m_ppObjects[i]) m_ppObjects[i]->Render(pd3dCommandList, pCamera);
+	
 }
 
 void BattleScene::BuildCube()
