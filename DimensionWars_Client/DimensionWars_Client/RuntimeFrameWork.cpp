@@ -187,8 +187,8 @@ void RuntimeFrameWork::CreateDirect3DDevice()
 
 	m_hFenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 
-	//::gnCbvSrvDescriptorIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV); // ¾Æ¾Æ¾Æ¾Ç
-
+	::gnCbvSrvDescriptorIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV); // ¾Æ¾Æ¾Æ¾Ç
+	
 	if (pd3dAdapter) 
 		pd3dAdapter->Release();
 }

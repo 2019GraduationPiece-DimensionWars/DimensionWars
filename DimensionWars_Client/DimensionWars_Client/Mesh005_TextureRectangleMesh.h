@@ -22,3 +22,11 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, int subset = 0);
 };
 
+
+class CCubeMeshTextured : public BaseMesh
+{
+public:
+	CCubeMeshTextured(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, float fWidth = 2.0f, float fHeight = 2.0f, float fDepth = 2.0f);
+	virtual ~CCubeMeshTextured();
+	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, int subset = 0);
+};

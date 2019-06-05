@@ -32,7 +32,7 @@ BaseScene::~BaseScene()
 ID3D12RootSignature * BaseScene::CreateGraphicsRootSignature(ID3D12Device * pd3dDevice)
 {
 	ID3D12RootSignature *pd3dGraphicsRootSignature = nullptr;
-	
+
 	D3D12_DESCRIPTOR_RANGE pd3dDescriptorRanges[11];
 
 	pd3dDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
@@ -303,18 +303,18 @@ void BaseScene::ReleaseObjects()
 
 	/*if (m_ppShaders)
 	{
-		for (int i = 0; i < m_nShaders; i++)
-		{
-			m_ppShaders[i]->ReleaseShaderVariables();
-			m_ppShaders[i]->ReleaseObjects();
-			m_ppShaders[i]->Release();
-		}
-		delete[] m_ppShaders;
+	for (int i = 0; i < m_nShaders; i++)
+	{
+	m_ppShaders[i]->ReleaseShaderVariables();
+	m_ppShaders[i]->ReleaseObjects();
+	m_ppShaders[i]->Release();
+	}
+	delete[] m_ppShaders;
 	}
 
 	if (m_pTerrain) delete m_pTerrain;
 	if (m_pSkyBox) delete m_pSkyBox;
-*/
+	*/
 	if (m_ppObjects)
 	{
 		for (unsigned int i = 0; i < m_nObjects; i++) if (m_ppObjects[i]) m_ppObjects[i]->Release();
@@ -400,17 +400,17 @@ bool BaseScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 void BaseScene::AnimateObjects(float fTimeElapsed)
 {
-	
+
 	m_fElapsedTime = fTimeElapsed;
 
 	//for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->AnimateObjects(fTimeElapsed);
-	
+
 	//if (m_pLights)
 	{
-	//	m_pLights[1].m_xmf3Position = m_pPlayer->GetPosition();
-	//	m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
+		//	m_pLights[1].m_xmf3Position = m_pPlayer->GetPosition();
+		//	m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
 	}
-	
+
 }
 
 void BaseScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)
@@ -426,21 +426,21 @@ void BaseScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera *
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Lights
 
-	// if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
-	//if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
-	/*
-	for (int i = 0; i < m_nGameObjects; i++)
-	{
-		if (m_ppGameObjects[i])
-		{
-			m_ppGameObjects[i]->Animate(m_fElapsedTime);
-			if (!m_ppGameObjects[i]->m_pSkinnedAnimationController) m_ppGameObjects[i]->UpdateTransform(NULL);
-			m_ppGameObjects[i]->Render(pd3dCommandList, pCamera);
-		}
-	}
+																						 // if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
+																						 //if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
+																						 /*
+																						 for (int i = 0; i < m_nGameObjects; i++)
+																						 {
+																						 if (m_ppGameObjects[i])
+																						 {
+																						 m_ppGameObjects[i]->Animate(m_fElapsedTime);
+																						 if (!m_ppGameObjects[i]->m_pSkinnedAnimationController) m_ppGameObjects[i]->UpdateTransform(NULL);
+																						 m_ppGameObjects[i]->Render(pd3dCommandList, pCamera);
+																						 }
+																						 }
 
-	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->Render(pd3dCommandList, pCamera);
-	*/
+																						 for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->Render(pd3dCommandList, pCamera);
+																						 */
 }
 
 void BaseScene::ReleaseUploadBuffers()
@@ -537,8 +537,8 @@ void BaseScene::ProcessPacket(char * ptr)
 		}
 		else if (id != MAX_USER) {
 			//if (!m_ppOtherPlayers[id]) {
-				printf("그려주세요");
-				//m_ppOtherPlayers[id] = new BasePlayer;
+			printf("그려주세요");
+			//m_ppOtherPlayers[id] = new BasePlayer;
 			//}
 			//m_ppOtherPlayers[id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 #ifdef USE_CONSOLE_WINDOW
@@ -563,7 +563,7 @@ void BaseScene::ProcessPacket(char * ptr)
 			//printf("other [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 #endif
 		}
-		
+
 
 		break;
 	}
@@ -603,22 +603,22 @@ void BaseScene::ProcessPacket(char * ptr)
 		m_pFramework->cubePos[id] = XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z);
 		m_pFramework->cubeRot[id] = XMFLOAT3(my_packet->rotate.x, my_packet->rotate.y, my_packet->rotate.z);
 
-//#ifdef USE_CONSOLE_WINDOW
-//		// printf("MAPINFO Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", id, m_pFramework->cubeSize[id], m_pFramework->cubePos[id].x, m_pFramework->cubePos[id].y, m_pFramework->cubePos[id].z, m_pFramework->cubeRot[id].x, m_pFramework->cubeRot[id].y, m_pFramework->cubeRot[id].z);
-//#endif
+		//#ifdef USE_CONSOLE_WINDOW
+		//		// printf("MAPINFO Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", id, m_pFramework->cubeSize[id], m_pFramework->cubePos[id].x, m_pFramework->cubePos[id].y, m_pFramework->cubePos[id].z, m_pFramework->cubeRot[id].x, m_pFramework->cubeRot[id].y, m_pFramework->cubeRot[id].z);
+		//#endif
 		break;
 	}
 	default:
-//#ifdef USE_CONSOLE_WINDOW
-//		//printf("Unknown PACKET type [%d]\n", ptr[1]);
-//#endif
+		//#ifdef USE_CONSOLE_WINDOW
+		//		//printf("Unknown PACKET type [%d]\n", ptr[1]);
+		//#endif
 		break;
 	}
 }
 
 void BaseScene::SendMoveDirection()
 {
-	if (m_pPlayer && m_pPlayer->GetDirectionBit()) {	
+	if (m_pPlayer && m_pPlayer->GetDirectionBit()) {
 		CSPacket_Move *myMovePacket = reinterpret_cast<CSPacket_Move *>(m_pFramework->GetSendBuf());
 		myMovePacket->size = sizeof(CSPacket_Move);
 		// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
@@ -626,8 +626,8 @@ void BaseScene::SendMoveDirection()
 		myMovePacket->m_Look = m_pPlayer->GetLookVector();
 		myMovePacket->m_Right = m_pPlayer->GetRightVector();
 		myMovePacket->m_Up = m_pPlayer->GetUpVector();
-	
-		myMovePacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
+
+		//myMovePacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
 		myMovePacket->type = CS_Type::Move;
 		m_pFramework->SendPacket(reinterpret_cast<char *>(myMovePacket));
 		//printf("%d\n", myMovePacket->animation_state);

@@ -108,6 +108,12 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		card[i] = new CardObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 	}
 
+	m_ppPotalObjects = new DiffuseCubeObject*[Potal_end - Potal_start];
+	for (unsigned int i = 0; i < Potal_end - Potal_start; ++i) {
+		m_ppPotalObjects[i] = new DiffuseCubeObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, 30);
+	}
+
+
 	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
@@ -214,6 +220,11 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 			card[i]->Render(pd3dCommandList, pCamera);
 	}
 
+	for (unsigned int i = 0; i < Potal_end - Potal_start; ++i) {
+		if (m_ppPotalObjects && m_ppPotalObjects[i])
+			m_ppPotalObjects[i]->Render(pd3dCommandList, pCamera);
+	}
+
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
 }
 
@@ -236,6 +247,10 @@ void BattleScene::BuildCube()
 		for (unsigned int i = 0; i < Card_end - Card_start; ++i)
 			if (card && card[i])
 				card[i]->SetPosition(m_pFramework->cardPos[i]);
+
+		for (unsigned int i = 0; i < Potal_end - Potal_start; ++i)
+			if (m_ppPotalObjects&& m_ppPotalObjects[i])
+				m_ppPotalObjects[i]->SetPosition(m_pFramework->potalPos[i]);
 		
 
 		isBuilded = true;
@@ -272,7 +287,8 @@ void BattleScene::ProcessPacket(char * ptr)
 		if (id == myid) {
 			m_pPlayer->SetVisible(true);
 			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
-			
+			m_pPlayer->hp = my_packet->hp;
+
 			CSPacket_CharacterType *myTypePacket = reinterpret_cast<CSPacket_CharacterType *>(m_pFramework->GetSendBuf());
 			myTypePacket->size = sizeof(CSPacket_CharacterType);
 			// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
@@ -284,6 +300,7 @@ void BattleScene::ProcessPacket(char * ptr)
 			if (m_ppOtherPlayers[id]) {
 				m_ppOtherPlayers[id]->connected = true;
 				m_ppOtherPlayers[id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
+				m_ppOtherPlayers[id]->hp = my_packet->hp;
 			}
 
 		}
@@ -303,7 +320,7 @@ void BattleScene::ProcessPacket(char * ptr)
 			m_pPlayer->SetPosition(my_packet->position);
 		}
 		else if (other_id < MAX_PLAYER) {
-			m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(anime);
+			//m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(anime);
 			m_ppOtherPlayers[other_id]->SetPosition(my_packet->position);
 //#ifdef USE_CONSOLE_WINDOW
 		}
@@ -369,6 +386,13 @@ void BattleScene::ProcessPacket(char * ptr)
 		m_pFramework->cubeRot[id] = XMFLOAT3(my_packet->rotate.x, my_packet->rotate.y, my_packet->rotate.z);
 		break;
 	}
+	case SC_Type::Potal:
+	{
+		SCPacket_PotalInfo *my_packet = reinterpret_cast<SCPacket_PotalInfo *>(ptr);
+		unsigned short id = my_packet->id - Potal_start;
+		m_pFramework->potalPos[id] = XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z);
+		break;
+	}
 	case SC_Type::ProjectTile:
 	{		
 		SCPacket_ProjectTile *my_packet = reinterpret_cast<SCPacket_ProjectTile *>(ptr);
@@ -377,14 +401,30 @@ void BattleScene::ProcessPacket(char * ptr)
 			//printf("card (%.1f, %.1f, %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			unsigned short card_id = my_packet->id - Card_start;
 			m_pFramework->cardPos[card_id] = my_packet->position;
-			//my_packet->position = m_pPlayer[myid].GetPosition();
+			my_packet->position = m_pPlayer[myid].GetPosition();
 		}
 		if (my_packet->projectTile_type == ProjectTile::Slash)
 		{
 			//printf("slash (%.1f, %.1f, %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			unsigned short slash_id = my_packet->id - Slash_start;
 			m_pFramework->slashWavePos[slash_id] = my_packet->position;
-			//my_packet->position = m_pPlayer[myid].GetPosition();
+			my_packet->position = m_pPlayer[myid].GetPosition();
+		}
+		break;
+	}
+
+	case SC_Type::OnHit:
+	{
+		SCPacket_Hit *my_packet = reinterpret_cast<SCPacket_Hit *>(ptr);
+		unsigned short other_id = my_packet->id;
+		if (other_id == myid) {
+			m_pPlayer->hp = my_packet->hp;
+			
+			
+		}
+		else if (other_id < MAX_PLAYER) {
+			m_ppOtherPlayers[other_id]->hp = my_packet->hp;
+			
 		}
 		break;
 	}

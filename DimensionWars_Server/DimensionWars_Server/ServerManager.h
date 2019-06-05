@@ -71,6 +71,8 @@ private:
 	void SendAnimationPaket(unsigned short to, unsigned short obj);
 	void SendCardPaket(unsigned short to, unsigned short obj);
 	void SendSlashPaket(unsigned short to, unsigned short obj);
+	void SendHitPaket(unsigned short to, unsigned short obj);
+	void SendPotalInfoPacket(unsigned short to, unsigned short obj);
 
 
 	void DisConnect(unsigned short int id);
@@ -82,17 +84,17 @@ private:
 	void Update(float fTimeElapsed);*/
 
 	//큐브충돌
-	int Collision();
+	bool Collision();
 	bool check_f, check_b, check_r, check_l, check_u, check_d;
 
 	void AddTimerEvent(unsigned int id, TimerEvent::Command cmd = TimerEvent::Command::Update, double seconds = 0.01f);
 	void Update(unsigned int id);
-	//void ObjectCollision(unsigned int id_1, unsigned int id_2);
-	
+
 	int character_type = 99;
 	int card_num = 0;
 	int slash_num = 0;
 
+	bool jump_check = false;
 
-
+	int center_cube_distance = 1500;
 };

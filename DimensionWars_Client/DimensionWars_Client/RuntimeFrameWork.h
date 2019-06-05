@@ -110,6 +110,7 @@ public:
 	float cubeSize[50];
 	XMFLOAT3 cubePos[50];
 	XMFLOAT3 cubeRot[50];
+	XMFLOAT3 potalPos[50];
 
 	XMFLOAT3 cardPos[Card_end - Card_start];
 	XMFLOAT3 slashWavePos[Slash_end - Slash_start];

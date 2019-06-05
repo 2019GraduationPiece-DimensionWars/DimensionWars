@@ -99,5 +99,6 @@ public:
 
 	int anime_state;
 	bool animation_check = false;
+	float hp;
 };
 

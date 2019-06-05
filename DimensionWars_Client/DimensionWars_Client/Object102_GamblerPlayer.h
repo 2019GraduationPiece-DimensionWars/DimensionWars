@@ -70,4 +70,5 @@ public:
 	virtual bool isCancleEnabled() override;
 
 	virtual void SendCard();
+	virtual void SendjumpDirection();
 };

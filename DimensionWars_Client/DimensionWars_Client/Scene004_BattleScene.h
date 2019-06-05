@@ -16,6 +16,7 @@ class BattleScene :
 private:
 	SkyBox * m_pSkyBox = nullptr;
 	DiffuseCubeObject ** m_ppCubeObjects = nullptr;
+	DiffuseCubeObject ** m_ppPotalObjects = nullptr;
 	unsigned int m_nCubeObjects = 0;
 	HeightMapTerrain * m_pTerrain = nullptr;
 

@@ -191,20 +191,20 @@ void GamblerPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 {
 	DWORD dwDirection = 0;
-	
+
 	if (isCancleEnabled()) {
 		// 점프, 추락 처리
-		if (pKeysBuffer[VK_SPACE] & 0xF0) {
-			dwDirection |= DIR_UP;
-			//m_pSkinnedAnimationController->SetAnimationSet(state = Jump);
-			m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
-		}
-		if (pKeysBuffer['f'] & 0xF0 || pKeysBuffer['F'] & 0xF0) {
-			dwDirection |= DIR_DOWN;
-			//m_pSkinnedAnimationController->SetAnimationSet(state = Fall);
-			m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
-		}
-
+		//if (pKeysBuffer[VK_SPACE] & 0xF0) {
+		//	dwDirection |= DIR_UP;
+		//	m_pSkinnedAnimationController->SetAnimationSet(state = Jump);
+		//	// m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+		//}
+		//if (pKeysBuffer['f'] & 0xF0 || pKeysBuffer['F'] & 0xF0) {
+		//	dwDirection |= DIR_DOWN;
+		//	//m_pSkinnedAnimationController->SetAnimationSet(state = Fall);
+		//	m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
+		//}
+		animation_check = true;
 		if (pKeysBuffer['w'] & 0xF0 || pKeysBuffer['W'] & 0xF0) {
 			dwDirection |= DIR_FORWARD;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
@@ -251,10 +251,10 @@ void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 		}
 		if (!dwDirection)
-			m_pSkinnedAnimationController->SetAnimationSet(state = Idle);		
+			m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 
 
-	
+
 	}
 	if (isShot1) {
 		dwDirection = 0;
@@ -349,7 +349,7 @@ void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 		{
 			//if (pKeysBuffer[VK_RBUTTON] & 0xF0) Rotate(cyDelta, 0.0f, -cxDelta);
 			// else
-				Rotate(cyDelta, cxDelta, 0.0f);
+			Rotate(cyDelta, cxDelta, 0.0f);
 		}
 		//if (dwDirection) Move(dwDirection, 300.0f * fTimeElapsed, true);
 	}
@@ -365,7 +365,6 @@ bool GamblerPlayer::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM 
 		animation_check = true;
 		SendCard();
 		isShot1 = true;
-		
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
 		break;
@@ -378,7 +377,6 @@ bool GamblerPlayer::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM 
 		break;
 	case WM_LBUTTONUP:
 		animation_check = false;
-		
 		isShot1 = false;
 		::ReleaseCapture();
 		break;
@@ -431,6 +429,13 @@ bool GamblerPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPAR
 					m_pSkinnedAnimationController->SetAnimationSet(state = Wild_Card);
 				}
 				break;
+			case VK_SPACE:
+				if (isCancleEnabled()) {
+					animation_check = true;
+					m_pSkinnedAnimationController->SetAnimationSet(state = Jump);
+					SendjumpDirection();
+				}
+				break;
 			}
 		}
 		break;
@@ -440,7 +445,7 @@ bool GamblerPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPAR
 		case '1':
 			isShot1 = false;
 			break;
-		}	
+		}
 		break;
 	}
 	return false;
@@ -472,13 +477,32 @@ bool GamblerPlayer::isCancleEnabled()
 
 void GamblerPlayer::SendCard()
 {
-	
-		CSPacket_Attack *myPacket = reinterpret_cast<CSPacket_Attack*>(m_pFramework->GetSendBuf());
-		myPacket->size = sizeof(CSPacket_Attack);
-		myPacket->type = CS_Type::Attack;
-		myPacket->attack_type = Gambler::Idle_Attack;
-		//myPacket->position = 
-		m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
-		//printf("%d\n", myAnimationPacket->animation_state);
-	
+
+	CSPacket_Attack *myPacket = reinterpret_cast<CSPacket_Attack*>(m_pFramework->GetSendBuf());
+	myPacket->size = sizeof(CSPacket_Attack);
+	myPacket->type = CS_Type::Attack;
+	myPacket->attack_type = Gambler::Idle_Attack;
+	myPacket->position = GetPosition();
+	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
+	//printf("%d\n", myAnimationPacket->animation_state);
+
+}
+
+void GamblerPlayer::SendjumpDirection()
+{
+	DWORD dwDirection = 0;
+	dwDirection |= DIR_UP;
+
+	CSPacket_Move *myMovePacket = reinterpret_cast<CSPacket_Move *>(m_pFramework->GetSendBuf());
+	myMovePacket->size = sizeof(CSPacket_Move);
+	// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
+	myMovePacket->dir = dwDirection;
+	myMovePacket->m_Look = GetLookVector();
+	myMovePacket->m_Right = GetRightVector();
+	myMovePacket->m_Up = GetUpVector();
+
+	myMovePacket->animation_state = m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
+	myMovePacket->type = CS_Type::Move;
+	m_pFramework->SendPacket(reinterpret_cast<char *>(myMovePacket));
+
 }

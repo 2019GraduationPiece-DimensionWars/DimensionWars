@@ -16,7 +16,7 @@ GrimReaperPlayer::GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 	SetChild(m_pFramework->GetResource()->GetGrimReaperModel()->m_pModelRootObject, true);
 
 	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, m_pFramework->GetResource()->GetGrimReaperModel());
-	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);	
+	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->AddAnimationSet(0.0f, 40.0f * keyFrameUnit, "Idle");
 	m_pSkinnedAnimationController->AddAnimationSet(42.0f * keyFrameUnit, 62.0f * keyFrameUnit, "OnHit", ANIMATION_TYPE_ONCE);
 	m_pSkinnedAnimationController->AddAnimationSet(64.0f * keyFrameUnit, 104.0f * keyFrameUnit, "Guard", ANIMATION_TYPE_ONCE);
@@ -57,7 +57,7 @@ GrimReaperPlayer::GrimReaperPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 	SetGravity(XMFLOAT3(0.0f, 0.0f, 0.0f));
 
 	SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
-	
+
 	SetScale(XMFLOAT3(1.0f, 1.0f, 1.0f));
 }
 
@@ -98,7 +98,7 @@ BaseCamera * GrimReaperPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeEla
 		m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.25f);
 		m_pCamera->SetOffset(XMFLOAT3(0.0f, 50.0f, -350.0f));
-		m_pCamera->SetPosition(Vector3::Add(m_xmf3Position, m_pCamera->GetOffset()));		
+		m_pCamera->SetPosition(Vector3::Add(m_xmf3Position, m_pCamera->GetOffset()));
 		m_pCamera->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 60.0f);
 		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
@@ -107,11 +107,11 @@ BaseCamera * GrimReaperPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeEla
 		break;
 	}
 	Update(fTimeElapsed);
-	
+
 	return(m_pCamera);
 }
 
-void GrimReaperPlayer::Update(float fTimeElapsed) 
+void GrimReaperPlayer::Update(float fTimeElapsed)
 {
 	BasePlayer::Update(fTimeElapsed);
 }
@@ -171,7 +171,7 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 		if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(First_Attack)->m_bEndTrigger)// 1타 모션이 끝나기 전까지는 2타 시행 안함
 			m_pSkinnedAnimationController->SetAnimationSet(state = Second_Attack);
 		if (state == Second_Attack) // 1타 모션이 끝나서 2타 모션이 들어왔는지 확인해야 2타 트리거 종료
-			SecondAttackTrigger = false;	
+			SecondAttackTrigger = false;
 	}
 	else if (ThirdAttackTrigger) {
 		if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(Second_Attack)->m_bEndTrigger)// 2타 모션이 끝나기 전까지는 3타 시행 안함
@@ -180,6 +180,7 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 			ThirdAttackTrigger = false;
 	}
 	else if (isCancleEnabled()) {
+		animation_check = true;
 		if (pKeysBuffer[VK_SPACE] & 0xF0) {
 			dwDirection |= DIR_UP;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
@@ -188,8 +189,9 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 			dwDirection |= DIR_DOWN;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 		}
-	
+
 		if (pKeysBuffer['w'] & 0xF0 || pKeysBuffer['W'] & 0xF0) {
+
 			dwDirection |= DIR_FORWARD;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
 		}
@@ -204,7 +206,7 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 		if (pKeysBuffer['d'] & 0xF0 || pKeysBuffer['D'] & 0xF0) {
 			dwDirection |= DIR_RIGHT;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right);
-		}	
+		}
 
 		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_LEFT))
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
@@ -237,7 +239,7 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 		if (!dwDirection)
 			m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 	}
-	
+
 
 	//if (pKeysBuffer[VK_LBUTTON])
 	//	m_pSkinnedAnimationController->SetAnimationSet(state = First_Attack);
@@ -255,7 +257,7 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 	}
 
 	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f)) {
-		if (cxDelta || cyDelta){
+		if (cxDelta || cyDelta) {
 			if (pKeysBuffer[VK_RBUTTON] & 0xF0)
 				Rotate(cyDelta, 0.0f, -cxDelta);
 			else
@@ -334,7 +336,7 @@ bool GrimReaperPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 					if (isCancleEnabled())
 						m_pSkinnedAnimationController->SetAnimationSet(state = First_Attack);
 					break;
-				}				
+				}
 				break;
 			case '2':
 				if (isCancleEnabled()) {
@@ -366,7 +368,7 @@ bool GrimReaperPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 		break;
 	case WM_KEYUP:
 		animation_check = false;
-		
+
 		break;
 	}
 	return false;
@@ -374,7 +376,7 @@ bool GrimReaperPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 
 bool GrimReaperPlayer::isCancleEnabled()
 {
-	if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger && 
+	if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger &&
 		m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_nType != ANIMATION_TYPE_LOOP) {
 		m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger = false;
 		return true;
@@ -399,8 +401,9 @@ void GrimReaperPlayer::SendSlash()
 	myPacket->size = sizeof(CSPacket_Attack);
 	myPacket->type = CS_Type::Attack;
 	myPacket->attack_type = GrimReaper::Slash_Wave;
+	myPacket->position = GetPosition();
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
-
+	
 
 }
 
