@@ -247,6 +247,7 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 	float cxDelta = 0.0f, cyDelta = 0.0f;
 	POINT ptCursorPos;
 	//if (GetCapture() == m_pFramework->GetHandle())
+	if (m_pFramework->GetActivated())
 	{
 		SetCursor(NULL);
 		GetCursorPos(&ptCursorPos);
@@ -363,7 +364,11 @@ bool GrimReaperPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 					m_pSkinnedAnimationController->SetAnimationSet(state = Beheading);
 				}
 				break;
+			case '0':
+				ResetDir();
+				break;
 			}
+
 		}
 		break;
 	case WM_KEYUP:
@@ -396,14 +401,16 @@ bool GrimReaperPlayer::isCancleEnabled()
 
 void GrimReaperPlayer::SendSlash()
 {
-
 	CSPacket_Attack *myPacket = reinterpret_cast<CSPacket_Attack*>(m_pFramework->GetSendBuf());
 	myPacket->size = sizeof(CSPacket_Attack);
 	myPacket->type = CS_Type::Attack;
 	myPacket->attack_type = GrimReaper::Slash_Wave;
 	myPacket->position = GetPosition();
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
+<<<<<<< HEAD
 	
 
+=======
+>>>>>>> f74d3b03076655f88e8c33148c5f8a79e776000f
 }
 

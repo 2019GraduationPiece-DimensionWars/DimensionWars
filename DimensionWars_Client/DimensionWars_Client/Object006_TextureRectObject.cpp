@@ -6,9 +6,9 @@
 #include "Texture.h"
 #include "Material.h"
 
-TextureRectObject::TextureRectObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, wchar_t* pTextureFileName, unsigned int nMaterials) : BaseObject(nMaterials)
+TextureRectObject::TextureRectObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, wchar_t* pTextureFileName, float width, float height, float depth, unsigned int nMaterials) : BaseObject(nMaterials)
 {
-	TextureRectangleMesh *pTitleMesh = new TextureRectangleMesh(pd3dDevice, pd3dCommandList, 200.0f, 200.0f, 0.0f, 0.0f, 0.0f, 50.0f);
+	TextureRectangleMesh *pTitleMesh = new TextureRectangleMesh(pd3dDevice, pd3dCommandList, width, height, depth, 0.0f, 0.0f, 50.0f);
 	SetMesh(pTitleMesh);
 	
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);

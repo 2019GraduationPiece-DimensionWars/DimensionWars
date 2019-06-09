@@ -27,14 +27,22 @@ BasePlayer::BasePlayer()
 	m_pCameraUpdatedContext = nullptr;
 }
 
-
 BasePlayer::~BasePlayer()
 {
 	ReleaseShaderVariables();
 
 	if (m_pCamera) delete m_pCamera;
 }
+
 #define _WITH_LEFT_HAND_COORDINATES
+
+void BasePlayer::ResetDir()
+{
+	m_xmf3Right = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	m_xmf3Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	m_xmf3Look = XMFLOAT3(0.0f, 0.0f, 1.0f);
+}
+
 void BasePlayer::Move(ULONG dwDirection, float fDistance, bool bUpdateVelocity)
 {
 	if (dwDirection) {

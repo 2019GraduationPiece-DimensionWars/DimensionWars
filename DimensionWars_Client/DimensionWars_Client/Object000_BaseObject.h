@@ -95,4 +95,6 @@ public:
 
 	char GetDirectionBit() const { return directionBit; }
 	void SetDirectionBit(char dwBit) { directionBit = dwBit; }
+
+	void SetLookAt(XMFLOAT3& xmf3Target, XMFLOAT3& xmf3Up);
 };
