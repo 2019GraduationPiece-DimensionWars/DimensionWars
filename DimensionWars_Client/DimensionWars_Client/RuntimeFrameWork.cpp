@@ -187,8 +187,14 @@ void RuntimeFrameWork::CreateDirect3DDevice()
 
 	m_hFenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 
+<<<<<<< HEAD
 	::gnCbvSrvDescriptorIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV); // 아아아악
 	
+=======
+	// 악 악 악 
+	::gnCbvSrvDescriptorIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV); // 아아아악
+
+>>>>>>> f74d3b03076655f88e8c33148c5f8a79e776000f
 	if (pd3dAdapter) 
 		pd3dAdapter->Release();
 }
@@ -373,9 +379,9 @@ void RuntimeFrameWork::BuildObjects()
 	m_pCommandList->Reset(m_pCommandAllocator, NULL);
 
 	
-	m_pCurrScene->BuildObjects(m_pDevice, m_pCommandList);	// 루트 시그니처 생성
+	//m_pCurrScene->BuildObjects(m_pDevice, m_pCommandList);	// 루트 시그니처 생성
 	
-	// arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
+	arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
 
 	m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
 	
@@ -598,11 +604,18 @@ LRESULT RuntimeFrameWork::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, 
 	{
 	case WM_ACTIVATE:
 	{
-		if (LOWORD(wParam) == WA_INACTIVE)
+		if (LOWORD(wParam) == WA_INACTIVE) {
+			// 비활성화
 			m_Timer.Stop();
-		else
+			Activate = false;
+		}
+		else {
+			// 활성화
+			Activate = true;
 			m_Timer.Start();
+		}
 		break;
+
 	}
 	case WM_SIZE:
 		break;
@@ -654,7 +667,7 @@ LRESULT RuntimeFrameWork::WndProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPA
 	case WM_SOCKET:
 		if (WSAGETSELECTERROR(lParam)) {
 			closesocket((SOCKET)wParam);
-			//exit(-1);
+			exit(-1);
 			break;
 		}
 		switch (WSAGETSELECTEVENT(lParam))
@@ -664,7 +677,7 @@ LRESULT RuntimeFrameWork::WndProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPA
 			break;
 		case FD_CLOSE:
 			closesocket((SOCKET)wParam);
-			//exit(-1);
+			exit(-1);
 			break;
 		}
 		break;

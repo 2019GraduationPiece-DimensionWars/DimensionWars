@@ -335,6 +335,7 @@ void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 	float cxDelta = 0.0f, cyDelta = 0.0f;
 	POINT ptCursorPos;
 	//if (GetCapture() == m_pFramework->GetHandle())
+	if (m_pFramework->GetActivated())
 	{
 		SetCursor(NULL);
 		GetCursorPos(&ptCursorPos);
@@ -429,12 +430,17 @@ bool GamblerPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPAR
 					m_pSkinnedAnimationController->SetAnimationSet(state = Wild_Card);
 				}
 				break;
+<<<<<<< HEAD
 			case VK_SPACE:
 				if (isCancleEnabled()) {
 					animation_check = true;
 					m_pSkinnedAnimationController->SetAnimationSet(state = Jump);
 					SendjumpDirection();
 				}
+=======
+			case '0':
+				ResetDir();
+>>>>>>> f74d3b03076655f88e8c33148c5f8a79e776000f
 				break;
 			}
 		}

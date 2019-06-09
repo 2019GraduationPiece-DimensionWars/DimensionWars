@@ -57,6 +57,7 @@ private:
 	_TCHAR						m_pszFrameRate[70];
 	ResourceManager*			resourceMgr = nullptr;
 
+	bool Activate;
 public:
 	RuntimeFrameWork();
 	~RuntimeFrameWork();
@@ -105,6 +106,7 @@ public:
 	void SendPacket(char * clientToServerPacket);
 
 	char* GetSendBuf() { return send_buffer; }
+	const bool GetActivated() const { return Activate; }
 	ResourceManager* GetResource() const { return resourceMgr; }
 
 	float cubeSize[50];
