@@ -1014,10 +1014,7 @@ void ServerManager::Update(unsigned int id)
 				
 				objects[k].hp -= 2;
 				SendHitPaket(k,id);
-				/*if (character_type = 1)
-					ani_state = Gambler::OnHit;
-				else if (character_type = 0)
-					ani_state = GrimReaper::OnHit;*/
+			
 				if (objects[k].hp <= 0) {
 					objects[k].position = XMFLOAT3(0, 6000, 0);
 					objects[k].hp = 100;

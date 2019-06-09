@@ -451,7 +451,7 @@ void BattleScene::ProcessPacket(char * ptr)
 			m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(anime);
 			//printf("서버한테 받음 : %d\n", anime);
 		}
-		//printf("어택! 서버한테 받기 성공\n");
+
 		break;
 	}
 	case SC_Type::MapInfo:
@@ -497,8 +497,6 @@ void BattleScene::ProcessPacket(char * ptr)
 		unsigned short other_id = my_packet->id;
 		if (other_id == myid) {
 			m_pPlayer->hp = my_packet->hp;
-			
-			
 		}
 		else if (other_id < MAX_PLAYER) {
 			m_ppOtherPlayers[other_id]->hp = my_packet->hp;
