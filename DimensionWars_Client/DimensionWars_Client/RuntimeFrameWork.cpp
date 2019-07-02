@@ -187,14 +187,11 @@ void RuntimeFrameWork::CreateDirect3DDevice()
 
 	m_hFenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 
-<<<<<<< HEAD
-	::gnCbvSrvDescriptorIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV); // 嬴嬴嬴學
-	
-=======
+
 	// 學 學 學 
 	::gnCbvSrvDescriptorIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV); // 嬴嬴嬴學
 
->>>>>>> f74d3b03076655f88e8c33148c5f8a79e776000f
+
 	if (pd3dAdapter) 
 		pd3dAdapter->Release();
 }

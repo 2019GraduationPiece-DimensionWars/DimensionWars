@@ -15,7 +15,7 @@ CardObject::CardObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3d
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 
-	SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
+	SetPosition(XMFLOAT3(0.0f, -200000.0f, 0.0f));
 
 	SetScale(XMFLOAT3(2.5f, 2.5f, 2.5f));
 }

@@ -407,10 +407,5 @@ void GrimReaperPlayer::SendSlash()
 	myPacket->attack_type = GrimReaper::Slash_Wave;
 	myPacket->position = GetPosition();
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
-<<<<<<< HEAD
-	
-
-=======
->>>>>>> f74d3b03076655f88e8c33148c5f8a79e776000f
 }
 

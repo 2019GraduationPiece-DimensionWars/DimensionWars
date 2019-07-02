@@ -430,17 +430,16 @@ bool GamblerPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPAR
 					m_pSkinnedAnimationController->SetAnimationSet(state = Wild_Card);
 				}
 				break;
-<<<<<<< HEAD
+
 			case VK_SPACE:
 				if (isCancleEnabled()) {
 					animation_check = true;
 					m_pSkinnedAnimationController->SetAnimationSet(state = Jump);
 					SendjumpDirection();
 				}
-=======
+
 			case '0':
 				ResetDir();
->>>>>>> f74d3b03076655f88e8c33148c5f8a79e776000f
 				break;
 			}
 		}

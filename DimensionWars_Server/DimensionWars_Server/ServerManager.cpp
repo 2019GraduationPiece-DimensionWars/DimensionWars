@@ -613,7 +613,7 @@ void ServerManager::SendCardPaket(unsigned short to, unsigned short obj)
 	packet.id = obj;
 	packet.size = sizeof(packet);
 	packet.type = SC_Type::ProjectTile;
-	packet.position = XMFLOAT3(objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);;
+	packet.position = XMFLOAT3(objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);
 	packet.projectTile_type = ProjectTile::Card;
 
 	SendPacket(to, reinterpret_cast<char *>(&packet));
@@ -635,9 +635,8 @@ void ServerManager::SendSlashPaket(unsigned short to, unsigned short obj)
 	packet.id = obj;
 	packet.size = sizeof(packet);
 	packet.type = SC_Type::ProjectTile;
-	packet.position = XMFLOAT3(objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);;
+	packet.position = XMFLOAT3(objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);
 	packet.projectTile_type = ProjectTile::Slash;
-
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 

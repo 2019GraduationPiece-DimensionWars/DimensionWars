@@ -320,11 +320,10 @@ void BattleScene::BuildCube()
 
 		for (unsigned int i = 0; i < Slash_end - Slash_start; ++i)
 			if (slashWave && slashWave[i])
-				slashWave[i]->SetPosition(m_pFramework->slashWavePos[i]);
-
+				slashWave[i]->SetPosition(10000,10000,10000);
 		for (unsigned int i = 0; i < Card_end - Card_start; ++i)
 			if (card && card[i])
-				card[i]->SetPosition(m_pFramework->cardPos[i]);
+				card[i]->SetPosition(10000, 10000, 10000);
 
 		for (unsigned int i = 0; i < Potal_end - Potal_start; ++i)
 			if (m_ppPotalObjects&& m_ppPotalObjects[i])
@@ -487,6 +486,8 @@ void BattleScene::ProcessPacket(char * ptr)
 			unsigned short slash_id = my_packet->id - Slash_start;
 			m_pFramework->slashWavePos[slash_id] = my_packet->position;
 			my_packet->position = m_pPlayer[myid].GetPosition();
+			
+
 		}
 		break;
 	}
