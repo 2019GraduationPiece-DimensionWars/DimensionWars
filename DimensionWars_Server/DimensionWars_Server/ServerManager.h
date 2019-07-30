@@ -1,5 +1,6 @@
 #pragma once
-
+#include "BaseObject.h"
+#include "PlayerObject.h"
 enum  Object_coll
 {
 	not_coll = 0,
@@ -47,7 +48,7 @@ private:
 	XMFLOAT3					m_xmf3Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 	XMFLOAT3					m_xmf3Look = XMFLOAT3(0.0f, 0.0f, 1.0f);
 	unsigned int ani_state;
-
+	//PlayerObject **player;
 
 private:
 	bool NetworkInitialize();

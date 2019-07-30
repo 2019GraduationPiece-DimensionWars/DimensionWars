@@ -120,6 +120,7 @@ protected:
 
 	// 오브젝트 관련
 	BaseObject					**m_ppObjects = nullptr;
+	BaseObject					**m_titleObjects = nullptr;
 	unsigned int				m_nObjects = 0;
 
 	// 조명 관련

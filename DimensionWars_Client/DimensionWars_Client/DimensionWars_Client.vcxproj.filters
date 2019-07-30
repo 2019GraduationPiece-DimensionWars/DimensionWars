@@ -228,6 +228,9 @@
     <ClInclude Include="Object011_CardObject.h">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="Shader008_CubeShader.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -385,6 +388,9 @@
     </ClCompile>
     <ClCompile Include="Object011_CardObject.cpp">
       <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader008_CubeShader.cpp">
+      <Filter>Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

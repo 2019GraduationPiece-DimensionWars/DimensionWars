@@ -382,7 +382,7 @@ struct SOCKETINFO
 	float cube_size;
 	//XMFLOAT3 position;
 	XMFLOAT3 rotate;
-	bool cube_stay = false;
+	//bool cube_stay = false;
 
 	//충돌 정보
 	BoundingOrientedBox colbox;
@@ -399,22 +399,3 @@ struct SOCKETINFO
 
 };
 
-class BaseProjectTile : SOCKETINFO 
-{
-	//위치 바운딩박스 속도 
-};
-
-class Arrow : BaseProjectTile 
-{
-
-};
-
-class Card : BaseProjectTile
-{
-
-};
-
-class Slash : BaseProjectTile
-{
-
-};

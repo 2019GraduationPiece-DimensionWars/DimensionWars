@@ -32,10 +32,10 @@ void TitleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
 
 	m_nObjects = 1;
-	m_ppObjects = new BaseObject*[m_nObjects];
-	
-	TextureRectObject *titleImageObject = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/TitleTest800x600.dds");
-	m_ppObjects[0] = titleImageObject;
+	m_titleObjects = new BaseObject*[m_nObjects];
+	//
+	TextureRectObject *titleImageObject = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/TitleTest800x600.dds",300,300);
+	m_titleObjects[0] = titleImageObject;
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
@@ -53,7 +53,7 @@ void TitleScene::ReleaseUploadBuffers()
 {
 	if (m_pSkyBox) m_pSkyBox->ReleaseUploadBuffers();
 
-	if (m_ppObjects) if (m_ppObjects[0]) m_ppObjects[0]->ReleaseUploadBuffers();
+	if (m_titleObjects) if (m_titleObjects[0]) m_titleObjects[0]->ReleaseUploadBuffers();
 }
 
 bool TitleScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -83,7 +83,7 @@ void TitleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 	pCamera->UpdateShaderVariables(pd3dCommandList);
 
-	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
+	//if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
 
-	if (m_ppObjects) if (m_ppObjects[0]) m_ppObjects[0]->Render(pd3dCommandList, pCamera);
+	if (m_titleObjects) if (m_titleObjects[0]) m_titleObjects[0]->Render(pd3dCommandList, pCamera);
 }

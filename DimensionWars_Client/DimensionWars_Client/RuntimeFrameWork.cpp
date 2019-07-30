@@ -378,6 +378,8 @@ void RuntimeFrameWork::BuildObjects()
 	
 	//m_pCurrScene->BuildObjects(m_pDevice, m_pCommandList);	// 루트 시그니처 생성
 	
+
+	arrScene[BaseScene::SceneTag::Title]->BuildObjects(m_pDevice, m_pCommandList);
 	arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
 
 	m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;

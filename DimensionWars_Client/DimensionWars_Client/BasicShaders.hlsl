@@ -57,6 +57,7 @@ Texture2DArray TextureArray : register(t4);
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
 
 Texture2D gtxtTexture : register(t14);
+TextureCube CubeTexture : register(t15);
 
 Texture2D gtxtAlbedoTexture : register(t6);
 Texture2D gtxtSpecularTexture : register(t7);
@@ -210,7 +211,7 @@ float4 PSStandard(VS_STANDARD_OUTPUT input) : SV_TARGET
     }
     float4 cIllumination = Lighting(input.positionW, normalW);
     // return (lerp(cColor, cIllumination, 0.5f));
-    return (float4(0.1f, 0.3f, 0.5f, 0.8f));
+    return (float4(0.0f, 0.0f, 0.0f, 0.8f));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -341,6 +342,39 @@ float4 PSSkyBox(VS_SKYBOX_CUBEMAP_OUTPUT input) : SV_TARGET
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+
+
+struct VS_CUBEMAP_INPUT
+{
+	float3 position : POSITION;
+};
+
+struct VS_CUBEMAP_OUTPUT
+{
+	float3 positionL : POSITION;
+	float4 position : SV_POSITION;
+};
+
+VS_CUBEMAP_OUTPUT VSCubeMap(VS_CUBEMAP_INPUT input)
+{
+	VS_CUBEMAP_OUTPUT output;
+
+	output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxProjection);
+	output.positionL = input.position;
+
+	return (output);
+}
+
+float4 PSCubeMap(VS_CUBEMAP_OUTPUT input) : SV_TARGET
+{
+	float4 cColor = CubeTexture.Sample(gssClamp, input.positionL);
+
+	return (cColor);
+}
+
+
+
+///////////////
 
 
 

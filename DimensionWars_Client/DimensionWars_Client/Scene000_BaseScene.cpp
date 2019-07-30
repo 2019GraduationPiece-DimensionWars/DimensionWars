@@ -33,7 +33,7 @@ ID3D12RootSignature * BaseScene::CreateGraphicsRootSignature(ID3D12Device * pd3d
 {
 	ID3D12RootSignature *pd3dGraphicsRootSignature = nullptr;
 
-	D3D12_DESCRIPTOR_RANGE pd3dDescriptorRanges[11];
+	D3D12_DESCRIPTOR_RANGE pd3dDescriptorRanges[12];
 
 	pd3dDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dDescriptorRanges[0].NumDescriptors = 1;
@@ -101,8 +101,14 @@ ID3D12RootSignature * BaseScene::CreateGraphicsRootSignature(ID3D12Device * pd3d
 	pd3dDescriptorRanges[10].RegisterSpace = 0;
 	pd3dDescriptorRanges[10].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
+	pd3dDescriptorRanges[11].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dDescriptorRanges[11].NumDescriptors = 1;
+	pd3dDescriptorRanges[11].BaseShaderRegister = 15; //t15: cubemap
+	pd3dDescriptorRanges[11].RegisterSpace = 0;
+	pd3dDescriptorRanges[11].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[16];
+
+	D3D12_ROOT_PARAMETER pd3dRootParameters[17];
 
 	pd3dRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pd3dRootParameters[0].Descriptor.ShaderRegister = 1; //Camera
@@ -184,6 +190,11 @@ ID3D12RootSignature * BaseScene::CreateGraphicsRootSignature(ID3D12Device * pd3d
 	pd3dRootParameters[15].DescriptorTable.NumDescriptorRanges = 1;
 	pd3dRootParameters[15].DescriptorTable.pDescriptorRanges = &(pd3dDescriptorRanges[10]);
 	pd3dRootParameters[15].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	pd3dRootParameters[16].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // t15
+	pd3dRootParameters[16].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[16].DescriptorTable.pDescriptorRanges = &(pd3dDescriptorRanges[11]);
+	pd3dRootParameters[16].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 
 	D3D12_STATIC_SAMPLER_DESC pd3dSamplerDescs[2];
@@ -321,6 +332,12 @@ void BaseScene::ReleaseObjects()
 		delete[] m_ppObjects;
 	}
 
+	if (m_titleObjects)
+	{
+		for (unsigned int i = 0; i < m_nObjects; i++) if (m_titleObjects[i]) m_titleObjects[i]->Release();
+		delete[] m_titleObjects;
+	}
+
 	ReleaseShaderVariables();
 
 	if (m_pLights) delete[] m_pLights;
@@ -450,6 +467,7 @@ void BaseScene::ReleaseUploadBuffers()
 
 	//for (int i = 0; i < m_nShaders; i++) m_ppShaders[i]->ReleaseUploadBuffers();
 	for (unsigned int i = 0; i < m_nObjects; i++) m_ppObjects[i]->ReleaseUploadBuffers();
+	for (unsigned int i = 0; i < m_nObjects; i++) m_titleObjects[i]->ReleaseUploadBuffers();
 }
 
 void BaseScene::CreateCbvSrvDescriptorHeaps(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, int nConstantBufferViews, int nShaderResourceViews)

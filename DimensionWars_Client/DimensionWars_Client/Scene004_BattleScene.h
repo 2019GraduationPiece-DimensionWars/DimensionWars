@@ -9,13 +9,14 @@ class ElfArcherPlayer;
 class SkinnedFrameObject;
 class CardObject;
 class SlashWaveObject;
+class TextureCubeObject;
 
 class BattleScene :
 	public BaseScene
 {
 private:
 	SkyBox * m_pSkyBox = nullptr;
-	DiffuseCubeObject ** m_ppCubeObjects = nullptr;
+	TextureCubeObject ** m_ppCubeObjects = nullptr;  // ∫Ø∞Ê«‘
 	DiffuseCubeObject ** m_ppPotalObjects = nullptr;
 	unsigned int m_nCubeObjects = 0;
 	HeightMapTerrain * m_pTerrain = nullptr;

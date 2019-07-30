@@ -12,9 +12,15 @@
     <Filter Include="Framework">
       <UniqueIdentifier>{1456dffb-8370-41e7-b54a-911d8e9d8b00}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\리소스 파일">
+    <Filter Include="리소스 파일">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{e4f875b4-8829-472a-81eb-86c32bf79fe5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Map">
+      <UniqueIdentifier>{1e1f0c1c-30b6-4730-b4bc-ebddb6628819}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -33,6 +39,18 @@
     <ClInclude Include="ServerManager.h">
       <Filter>Framework</Filter>
     </ClInclude>
+    <ClInclude Include="CubeObject.h">
+      <Filter>Object\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="PortalObject.h">
+      <Filter>Object\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -43,6 +61,18 @@
     </ClCompile>
     <ClCompile Include="ServerManager.cpp">
       <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeObject.cpp">
+      <Filter>Object\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="PortalObject.cpp">
+      <Filter>Object\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerObject.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

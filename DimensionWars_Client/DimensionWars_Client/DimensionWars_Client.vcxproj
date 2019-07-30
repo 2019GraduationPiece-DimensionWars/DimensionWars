@@ -196,6 +196,7 @@
     <ClInclude Include="Shader006_DiffuseShader.h" />
     <ClInclude Include="Shader007_TerrainShader.h" />
     <ClInclude Include="Object010_SlashWaveObject.h" />
+    <ClInclude Include="Shader008_CubeShader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Texture.h" />
@@ -251,6 +252,7 @@
     <ClCompile Include="Shader006_DiffuseShader.cpp" />
     <ClCompile Include="Shader007_TerrainShader.cpp" />
     <ClCompile Include="Object010_SlashWaveObject.cpp" />
+    <ClCompile Include="Shader008_CubeShader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

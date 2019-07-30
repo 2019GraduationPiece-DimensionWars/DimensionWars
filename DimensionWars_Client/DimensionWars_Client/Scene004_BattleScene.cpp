@@ -66,7 +66,8 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		m_pPlayer = pPlayer;
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			GamblerObject[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-			m_ppOtherPlayers[i] = GamblerObject[i];
+			//m_ppOtherPlayers[i] = GamblerObject[i];
+			m_ppOtherPlayers[i] = ReaperObject[i];
 			m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
 		}
 	}
@@ -90,15 +91,15 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		break;
 	}
 	
-	m_nCubeObjects = 50;
-	m_ppCubeObjects = new DiffuseCubeObject*[m_nCubeObjects];
+	m_nCubeObjects = 39;
+	m_ppCubeObjects = new TextureCubeObject*[m_nCubeObjects];
 	for (unsigned int i = 0; i < m_nCubeObjects; ++i) {
 		if (i < 5) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 400;
 		else if (i < 10) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 300;
 		else if (i < 20) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 200;
 		else if (i < 30) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 100;
 		else if (i < 50) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE;
-		m_ppCubeObjects[i] = new DiffuseCubeObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pFramework->cubeSize[i]);
+		m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pFramework->cubeSize[i]);
 	}
 
 	slashWave = new SlashWaveObject*[Slash_end - Slash_start];
@@ -124,8 +125,9 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	else
 		m_nObjects = 5;
 	m_ppObjects = new BaseObject*[m_nObjects];
-	TextureRectObject *radar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/Radar_180x180.dds", 18.0f, 18.0f);
+	TextureRectObject *radar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/Rada.dds", 18.0f, 18.0f);
 	m_ppObjects[0] = radar;
+	
 	TextureRectObject *emptyHPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
 	m_ppObjects[1] = emptyHPgauge;
 	TextureRectObject *emptySPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
@@ -232,13 +234,12 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 			}
 
 	// 레이더
-	m_ppObjects[0]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 75.0f, m_pPlayer->GetCamera()->GetPosition().y + 35.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+	m_ppObjects[0]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 25.0f, m_pPlayer->GetCamera()->GetPosition().z + 50.0f);
 
 	// 빈 HP바
-	m_ppObjects[1]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 30.0f, m_pPlayer->GetCamera()->GetPosition().z + 50.0f);
-	
+	//m_ppObjects[1]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 30.0f, m_pPlayer->GetCamera()->GetPosition().z + 50.0f);
 	// 빈 SP 바
-	m_ppObjects[2]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 20.0f, m_pPlayer->GetCamera()->GetPosition().z + 49.0f);
+	//m_ppObjects[2]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 20.0f, m_pPlayer->GetCamera()->GetPosition().z + 49.0f);
 	
 	// HP 바
 	m_ppObjects[3]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 30.0f, m_pPlayer->GetCamera()->GetPosition().z + 50.0f);

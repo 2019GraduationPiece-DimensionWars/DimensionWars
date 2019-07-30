@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -146,13 +146,21 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseObject.h" />
+    <ClInclude Include="CubeObject.h" />
     <ClInclude Include="DimensionWars_Protocol.h" />
+    <ClInclude Include="PlayerObject.h" />
+    <ClInclude Include="PortalObject.h" />
     <ClInclude Include="ServerManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseObject.cpp" />
+    <ClCompile Include="CubeObject.cpp" />
     <ClCompile Include="DimensionWarsServer.cpp" />
+    <ClCompile Include="PlayerObject.cpp" />
+    <ClCompile Include="PortalObject.cpp" />
     <ClCompile Include="ServerManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

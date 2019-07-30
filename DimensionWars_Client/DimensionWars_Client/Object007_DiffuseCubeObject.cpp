@@ -9,6 +9,7 @@
 #include "Scene000_BaseScene.h"
 #include "Shader005_TextureRectangleShader.h"
 #include "Mesh005_TextureRectangleMesh.h"
+#include "Shader008_CubeShader.h"
 
 DiffuseCubeObject::DiffuseCubeObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, float size) : BaseObject(1)
 {
@@ -52,19 +53,19 @@ void DiffuseCubeObject::Build(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 
 TextureCubeObject::TextureCubeObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, float size) : BaseObject(1)
 {
-	TextureRectangleMesh *pSkyBoxMesh = new TextureRectangleMesh(pd3dDevice, pd3dCommandList, size, size, size);
+	DiffuseCubeMesh *pSkyBoxMesh = new DiffuseCubeMesh(pd3dDevice, pd3dCommandList, size, size, size);
 	SetMesh(pSkyBoxMesh);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 	Texture *pSkyBoxTexture = new Texture(1, RESOURCE_TEXTURE_CUBE, 0);
-	pSkyBoxTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/TitleTest800x600.dds", 0);
+	pSkyBoxTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/SampleCube7.dds", 0);
 
-	TextureRectangleShader *pSkyBoxShader = new TextureRectangleShader();
+	CubeShader *pSkyBoxShader = new CubeShader();
 	pSkyBoxShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
 	pSkyBoxShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	BaseScene::CreateShaderResourceViews(pd3dDevice, pSkyBoxTexture, 15, false);
+	BaseScene::CreateShaderResourceViews(pd3dDevice, pSkyBoxTexture, 16, false);
 
 	Material *pSkyBoxMaterial = new Material(1);
 	pSkyBoxMaterial->SetTexture(pSkyBoxTexture);

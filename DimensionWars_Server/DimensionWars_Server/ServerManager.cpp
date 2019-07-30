@@ -659,6 +659,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	}
 	case CS_Type::Move:
 	{
+	
 		if (packet->dir) {
 			if (packet->dir & DIR_FORWARD)
 			{
@@ -938,8 +939,8 @@ void ServerManager::AddTimerEvent(unsigned int id, TimerEvent::Command cmd, doub
 void ServerManager::Update(unsigned int id)
 {
 
-	if (!Collision() && objects[id].connected == true)
-		objects[id].position.y -= 9.8f; // 중력 
+	//if (!Collision() && objects[id].connected == true)
+	//	objects[id].position.y -= 9.8f; // 중력 
 
 	if (objects[id].position.y <= 0)
 	{
