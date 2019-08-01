@@ -14,7 +14,7 @@
 #include "Object010_SlashWaveObject.h"
 #include "Object011_CardObject.h"
 #include "Object006_TextureRectObject.h"
-
+#include "Object012_PortalObject.h"
 
 
 BattleScene::BattleScene()
@@ -66,8 +66,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		m_pPlayer = pPlayer;
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			GamblerObject[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-			//m_ppOtherPlayers[i] = GamblerObject[i];
-			m_ppOtherPlayers[i] = ReaperObject[i];
+			m_ppOtherPlayers[i] = GamblerObject[i];
 			m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
 		}
 	}
@@ -91,15 +90,15 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		break;
 	}
 	
-	m_nCubeObjects = 39;
-	m_ppCubeObjects = new TextureCubeObject*[m_nCubeObjects];
+	m_nCubeObjects = 50;
+	m_ppCubeObjects = new DiffuseCubeObject*[m_nCubeObjects];
 	for (unsigned int i = 0; i < m_nCubeObjects; ++i) {
 		if (i < 5) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 400;
 		else if (i < 10) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 300;
 		else if (i < 20) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 200;
 		else if (i < 30) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 100;
 		else if (i < 50) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE;
-		m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pFramework->cubeSize[i]);
+		m_ppCubeObjects[i] = new DiffuseCubeObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pFramework->cubeSize[i]);
 	}
 
 	slashWave = new SlashWaveObject*[Slash_end - Slash_start];
@@ -114,7 +113,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 
 	m_ppPotalObjects = new DiffuseCubeObject*[Potal_end - Potal_start];
 	for (unsigned int i = 0; i < Potal_end - Potal_start; ++i) {
-		m_ppPotalObjects[i] = new DiffuseCubeObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, 30);
+		m_ppPotalObjects[i] = new DiffuseCubeObject(pd3dDevice, pd3dCommandList,m_pGraphicsRootSignature, 30);
 	}
 
 
@@ -296,8 +295,11 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 	}
 
 	for (unsigned int i = 0; i < Potal_end - Potal_start; ++i) {
-		if (m_ppPotalObjects && m_ppPotalObjects[i])
+		if (m_ppPotalObjects && m_ppPotalObjects[i]) {
 			m_ppPotalObjects[i]->Render(pd3dCommandList, pCamera);
+			
+		}
+
 	}
 
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);

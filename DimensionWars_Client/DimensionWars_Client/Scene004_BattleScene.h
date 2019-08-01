@@ -10,13 +10,14 @@ class SkinnedFrameObject;
 class CardObject;
 class SlashWaveObject;
 class TextureCubeObject;
+class PortalObject;
 
 class BattleScene :
 	public BaseScene
 {
 private:
 	SkyBox * m_pSkyBox = nullptr;
-	TextureCubeObject ** m_ppCubeObjects = nullptr;  // 변경함
+	DiffuseCubeObject ** m_ppCubeObjects = nullptr;  // 변경함
 	DiffuseCubeObject ** m_ppPotalObjects = nullptr;
 	unsigned int m_nCubeObjects = 0;
 	HeightMapTerrain * m_pTerrain = nullptr;
@@ -34,6 +35,7 @@ private:
 
 	CardObject** card = nullptr;
 	SlashWaveObject** slashWave = nullptr;
+	
 	SkinnedFrameObject** arrow = nullptr;
 public:
 	BattleScene();

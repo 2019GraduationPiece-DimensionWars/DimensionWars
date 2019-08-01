@@ -13,6 +13,7 @@ private:
 	LoadedModelInfo* SlashWaveModel = nullptr;
 	LoadedModelInfo* CardModel = nullptr;
 	LoadedModelInfo* ArrowModel = nullptr;
+	LoadedModelInfo* PortalModel = nullptr;
 
 public:
 	ResourceManager();
@@ -27,9 +28,12 @@ public:
 	LoadedModelInfo* GetSlashWaveModel() const { return SlashWaveModel; }
 	LoadedModelInfo* GetCardModel() const { return CardModel; }
 	LoadedModelInfo* GetArrowModel() const { return ArrowModel; }
+	LoadedModelInfo* GetPortalModel() const { return PortalModel; }
+
 
 	SkinnedFrameObject* GetSlashWaveObject() const;
 	SkinnedFrameObject* GetCardObject() const;
 	SkinnedFrameObject* GetArrowbject() const;
+	SkinnedFrameObject* GetPortalObject() const;
 };
 
