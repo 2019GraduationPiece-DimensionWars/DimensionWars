@@ -215,8 +215,8 @@ bool BattleScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 void BattleScene::AnimateObjects(float fTimeElapsed)
 {
-	SendMoveDirection();
-	SendAnimationInfo();
+	//SendMoveDirection();
+	//SendAnimationInfo();
 	
 	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed);
 

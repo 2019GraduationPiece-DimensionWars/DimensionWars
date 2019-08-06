@@ -1,6 +1,9 @@
 #pragma once
 #include "Scene000_BaseScene.h"
+#include "Object008_HeightmapTerrain.h"
 class SkyBox;
+class GrimReaperPlayer;
+class GamblerPlayer;
 class TitleScene :
 	public BaseScene
 {
@@ -21,5 +24,8 @@ public:
 	
 private:
 	SkyBox* m_pSkyBox = nullptr;
+	GamblerPlayer * sample;
+	HeightMapTerrain * m_pTerrain = nullptr;
+
 };
 

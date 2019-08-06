@@ -49,10 +49,10 @@ RuntimeFrameWork::RuntimeFrameWork()
 	m_pCurrScene = nullptr;
 	m_pCamera = nullptr;
 	m_pPlayer = nullptr;
-#ifdef USE_CONSOLE_WINDOW
-	printf(" Server IP를 입력하세요. >> ");
-	scanf_s("%s", server_ip, unsigned int(sizeof(server_ip)));
-#endif
+//#ifdef USE_CONSOLE_WINDOW
+//	printf(" Server IP를 입력하세요. >> ");
+//	scanf_s("%s", server_ip, unsigned int(sizeof(server_ip)));
+//#endif
 
 	_tcscpy_s(m_pszFrameRate, _T("Dimension Wars - 차원대전 - "));
 }
@@ -83,11 +83,11 @@ bool RuntimeFrameWork::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	BuildAllScene();
 	ChangeScene(BaseScene::SceneTag::Title);
-	ChangeScene(BaseScene::SceneTag::Game);
+	//ChangeScene(BaseScene::SceneTag::Game);
 	
 
 	// 네트워크 초기화
-	NetworkInitialize();
+	//NetworkInitialize();
 	BuildObjects();
 	return (m_hWnd != NULL);
 }
@@ -380,10 +380,16 @@ void RuntimeFrameWork::BuildObjects()
 	
 
 	arrScene[BaseScene::SceneTag::Title]->BuildObjects(m_pDevice, m_pCommandList);
-	arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
-
-	m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
+	//arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
 	
+	if (arrScene[BaseScene::SceneTag::Title])
+	{
+		//printf("z");
+		m_pPlayer = arrScene[BaseScene::SceneTag::Title]->m_pPlayer;
+	}
+	
+	
+	//m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
 	m_pCommandList->Close();
@@ -436,6 +442,7 @@ void RuntimeFrameWork::Update()
 	float fTimeElapsed = m_Timer.GetTimeElapsed();
 
 	if (m_pCurrScene) m_pCurrScene->AnimateObjects(fTimeElapsed);
+	
 }
 
 void RuntimeFrameWork::FrameAdvance()
@@ -443,6 +450,8 @@ void RuntimeFrameWork::FrameAdvance()
 	m_Timer.Tick(60.0f);
 
 	BattleScene *pScene = reinterpret_cast<BattleScene*>(arrScene[BaseScene::SceneTag::Game]);
+
+	
 
 	pScene->BuildCube();
 	ProcessInput();
@@ -572,7 +581,7 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 		switch (wParam)
 		{
 		case VK_ESCAPE:
-			if (m_CurrSceneTag == BaseScene::SceneTag::Title)
+			if (m_CurrSceneTag == BaseScene::SceneTag::Room)
 				ChangeScene(BaseScene::SceneTag::Game);
 			else
 				ChangeScene(BaseScene::SceneTag::Title);
@@ -587,6 +596,31 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 		case VK_F9:
 			ChangeSwapChainState();
 		case VK_SPACE:
+			if (m_CurrSceneTag==BaseScene::SceneTag::Title)
+			{
+				ChangeScene(BaseScene::SceneTag::Lobby);
+				printf("t->l\n");
+				
+			}
+			else if (m_CurrSceneTag == BaseScene::SceneTag::Lobby)
+			{
+				ChangeScene(BaseScene::SceneTag::Room);
+				printf("l->r\n");
+			}
+			else if (m_CurrSceneTag == BaseScene::SceneTag::Room)
+			{
+				//resourceMgr = new ResourceManager();
+				//arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList);
+				//m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
+				printf("r->g\n");
+				ChangeScene(BaseScene::SceneTag::Title);
+			}
+			else if (m_CurrSceneTag == BaseScene::SceneTag::Game)
+			{
+				//m_pPlayer = arrScene[BaseScene::SceneTag::Title]->m_pPlayer;
+				printf("g->t\n");
+				ChangeScene(BaseScene::SceneTag::Title);
+			}
 			break;
 		default:
 			break;

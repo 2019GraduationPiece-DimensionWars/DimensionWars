@@ -9,8 +9,10 @@
 #include "Object101_GrimReaperPlayer.h"
 #include "Material.h"
 #include "Texture.h"
-
-
+#include "Object008_HeightmapTerrain.h"
+#include "RuntimeFrameWork.h"
+#include "ResourceManager.h"
+#include "Object102_GamblerPlayer.h"
 TitleScene::TitleScene(SceneTag tag, RuntimeFrameWork * pFramework) : BaseScene(tag, pFramework)
 {
 }
@@ -26,18 +28,33 @@ void TitleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	CreateCbvSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 45);
 
 	Material::PrepareShaders(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
+	m_pFramework->GetResource()->AllModelLoad(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
 
 	BuildLightsAndMaterials();
+
+	
 
 	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
 
 	m_nObjects = 1;
 	m_titleObjects = new BaseObject*[m_nObjects];
 	//
-	TextureRectObject *titleImageObject = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/TitleTest800x600.dds",300,300);
-	m_titleObjects[0] = titleImageObject;
+	GamblerPlayer *pPlayer = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	m_pPlayer = pPlayer;
 
+	//m_pPlayer->GetCamera()->SetOffset(XMFLOAT3(0, 0, 0));
+	//m_pPlayer->GetCamera()->SetPosition(XMFLOAT3(0, 0, 0));
+
+	TextureRectObject *titleImageObject = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/Titleimage.dds",680,480);
+	m_titleObjects[0] = titleImageObject;
+	// 카메라를 위해 생성  렌더하지 않음
+	
+	m_titleObjects[0]->SetPosition(0, -25, 0);
+	
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	
+	
+
 }
 
 void TitleScene::ReleaseObjects()
@@ -86,4 +103,5 @@ void TitleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 	//if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
 
 	if (m_titleObjects) if (m_titleObjects[0]) m_titleObjects[0]->Render(pd3dCommandList, pCamera);
+	
 }
