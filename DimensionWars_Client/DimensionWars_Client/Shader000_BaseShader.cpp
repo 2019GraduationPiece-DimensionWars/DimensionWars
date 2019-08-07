@@ -52,7 +52,7 @@ D3D12_BLEND_DESC BaseShader::CreateBlendState()
 {
 	D3D12_BLEND_DESC blendDesc;
 	::ZeroMemory(&blendDesc, sizeof(D3D12_BLEND_DESC));
-	blendDesc.AlphaToCoverageEnable = FALSE;
+	blendDesc.AlphaToCoverageEnable = TRUE;
 	blendDesc.IndependentBlendEnable = FALSE;
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
 	blendDesc.RenderTarget[0].LogicOpEnable = FALSE;

@@ -6,6 +6,7 @@ class BaseObject;
 class BasePlayer;
 class RuntimeFrameWork;
 
+
 struct LIGHT
 {
 	XMFLOAT4							m_xmf4Ambient;
@@ -65,8 +66,8 @@ public:
 	virtual ~BaseScene();
 
 	ID3D12RootSignature *CreateGraphicsRootSignature(ID3D12Device *pd3dDevice);
-	ID3D12RootSignature *GetGraphicsRootSignature() { return(m_pGraphicsRootSignature); }
-	void SetGraphicsRootSignature(ID3D12GraphicsCommandList *pd3dCommandList) { pd3dCommandList->SetGraphicsRootSignature(m_pGraphicsRootSignature); }
+	//ID3D12RootSignature *GetGraphicsRootSignature() { return(m_pGraphicsRootSignature); }
+	//void SetGraphicsRootSignature(ID3D12GraphicsCommandList *pd3dCommandList) { pd3dCommandList->SetGraphicsRootSignature(m_pGraphicsRootSignature); }
 
 	virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
@@ -89,7 +90,10 @@ public:
 	static void CreateCbvSrvDescriptorHeaps(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, int nConstantBufferViews, int nShaderResourceViews);
 
 	static D3D12_GPU_DESCRIPTOR_HANDLE CreateConstantBufferViews(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, int nConstantBufferViews, ID3D12Resource *pd3dConstantBuffers, UINT nStride);
-	static D3D12_GPU_DESCRIPTOR_HANDLE CreateShaderResourceViews(ID3D12Device *pd3dDevice, Texture *pTexture, UINT nRootParameter, bool bAutoIncrement);
+	static D3D12_GPU_DESCRIPTOR_HANDLE CreateShaderResourceViews(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, Texture *pTexture, UINT nRootParameter, bool bAutoIncrement);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandleForHeapStart() { return(m_pd3dCbvSrvDescriptorHeap->GetCPUDescriptorHandleForHeapStart()); }
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandleForHeapStart() { return(m_pd3dCbvSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart()); }
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUCbvDescriptorStartHandle() { return(m_d3dCbvCPUDescriptorStartHandle); }
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUCbvDescriptorStartHandle() { return(m_d3dCbvGPUDescriptorStartHandle); }
@@ -114,15 +118,17 @@ public:
 	BasePlayer *m_ppOtherPlayers[MAX_PLAYER] = { nullptr, };
 //	AnimationController 			*m_pSkinnedAnimationController = nullptr;
 protected:
-	ID3D12RootSignature			*m_pGraphicsRootSignature = nullptr;
+	//ID3D12RootSignature			*m_pGraphicsRootSignature = nullptr;
 
 	float						m_fElapsedTime = 0.0f;
 
 	// 오브젝트 관련
 	BaseObject					**m_ppObjects = nullptr;
 	BaseObject					**m_titleObjects = nullptr;
+	BaseObject					**m_lobbyObjects = nullptr;
+	BaseObject					**m_roomObject = nullptr;
 	unsigned int				m_nObjects = 0;
-
+	unsigned int				m_nObjects2 = 0;
 	// 조명 관련
 	XMFLOAT4					m_xmf4GlobalAmbient;
 	LIGHT						*m_pLights = nullptr;
@@ -133,5 +139,6 @@ protected:
 
 	SceneTag					m_Tag;
 	RuntimeFrameWork			*m_pFramework;
+	
 };
 

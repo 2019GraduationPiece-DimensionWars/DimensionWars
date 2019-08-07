@@ -65,7 +65,7 @@ TextureCubeObject::TextureCubeObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCom
 	pSkyBoxShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
 	pSkyBoxShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	BaseScene::CreateShaderResourceViews(pd3dDevice, pSkyBoxTexture, 16, false);
+	BaseScene::CreateShaderResourceViews(pd3dDevice,pd3dCommandList ,pSkyBoxTexture, 16, false);
 
 	Material *pSkyBoxMaterial = new Material(1);
 	pSkyBoxMaterial->SetTexture(pSkyBoxTexture);

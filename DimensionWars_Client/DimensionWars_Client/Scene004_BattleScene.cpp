@@ -41,31 +41,31 @@ void BattleScene::SendChracterType(int a)
 
 void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList)
 {
-	m_pGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
+	//m_pFramework->m_pGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
-	CreateCbvSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 45); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
+	//CreateCbvSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 45); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
 
-	Material::PrepareShaders(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
+	Material::PrepareShaders(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 
 	BuildLightsAndMaterials();
 	
 	XMFLOAT3 xmf3Scale(24.0f, 6.0f, 24.0f);
 	XMFLOAT4 xmf4Color(0.1f, 0.1f, 0.1f, 0.5f);
-	//m_pTerrain = new HeightMapTerrain(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, _T("Texture/HeightMap.raw"), 257, 257, xmf3Scale, xmf4Color);
+	//m_pTerrain = new HeightMapTerrain(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, _T("Texture/HeightMap.raw"), 257, 257, xmf3Scale, xmf4Color);
 	//m_pTerrain->SetPosition(-3072.0f, 0.0f, -3072.0f);
 
-	m_pFramework->GetResource()->AllModelLoad(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
+	m_pFramework->GetResource()->AllModelLoad(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 
 	cmd = 0;
-	printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
-	scanf_s("%d", &cmd);
+	/*printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
+	scanf_s("%d", &cmd);*/
 	switch (cmd) {
 	case 0: 
 	{
-		GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+		GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 		m_pPlayer = pPlayer;
 		for (int i = 0; i < MAX_PLAYER; ++i) {
-			GamblerObject[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+			GamblerObject[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 			m_ppOtherPlayers[i] = GamblerObject[i];
 			m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
 		}
@@ -73,10 +73,10 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		break;
 	case 1:
 	{
-		GamblerPlayer *pPlayer = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+		GamblerPlayer *pPlayer = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 		m_pPlayer = pPlayer;
 		for (int i = 0; i < MAX_PLAYER; ++i) {
-			ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+			ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 			m_ppOtherPlayers[i] = ReaperObject[i];
 			m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
 		}
@@ -84,73 +84,74 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		break;
 	default:
 	{
-		ElfArcherPlayer *pPlayer = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+		ElfArcherPlayer *pPlayer = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 		m_pPlayer = pPlayer;
 	}
 		break;
 	}
 	
-	m_nCubeObjects = 50;
-	m_ppCubeObjects = new DiffuseCubeObject*[m_nCubeObjects];
+	m_nCubeObjects = 3;
+	m_ppCubeObjects = new TextureCubeObject*[m_nCubeObjects];
 	for (unsigned int i = 0; i < m_nCubeObjects; ++i) {
 		if (i < 5) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 400;
 		else if (i < 10) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 300;
 		else if (i < 20) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 200;
 		else if (i < 30) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 100;
 		else if (i < 50) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE;
-		m_ppCubeObjects[i] = new DiffuseCubeObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pFramework->cubeSize[i]);
+		m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pFramework->cubeSize[i]);
+		
 	}
 
 	slashWave = new SlashWaveObject*[Slash_end - Slash_start];
 	for (unsigned int i = 0; i < Slash_end - Slash_start; ++i) {
-		slashWave[i] = new SlashWaveObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+		slashWave[i] = new SlashWaveObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 	}
 	
 	card = new CardObject*[Card_end - Card_start];
 	for (unsigned int i = 0; i < Card_end - Card_start; ++i) {
-		card[i] = new CardObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+		card[i] = new CardObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 	}
 
 	m_ppPotalObjects = new DiffuseCubeObject*[Potal_end - Potal_start];
 	for (unsigned int i = 0; i < Potal_end - Potal_start; ++i) {
-		m_ppPotalObjects[i] = new DiffuseCubeObject(pd3dDevice, pd3dCommandList,m_pGraphicsRootSignature, 30);
+		m_ppPotalObjects[i] = new DiffuseCubeObject(pd3dDevice, pd3dCommandList,m_pFramework->m_pGraphicsRootSignature, 30);
 	}
 
 
-	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
+	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 
 	if (cmd == 1)	// 도박사이면
 		m_nObjects = 13;
 	else
 		m_nObjects = 5;
 	m_ppObjects = new BaseObject*[m_nObjects];
-	TextureRectObject *radar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/Rada.dds", 18.0f, 18.0f);
+	TextureRectObject *radar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/Rada.dds", 18.0f, 18.0f);
 	m_ppObjects[0] = radar;
 	
-	TextureRectObject *emptyHPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
+	TextureRectObject *emptyHPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
 	m_ppObjects[1] = emptyHPgauge;
-	TextureRectObject *emptySPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
+	TextureRectObject *emptySPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
 	m_ppObjects[2] = emptySPgauge;
-	TextureRectObject *hpBar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/HPBar_360x60.dds", 36.0f, 6.0f);
+	TextureRectObject *hpBar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/HPBar_360x60.dds", 36.0f, 6.0f);
 	m_ppObjects[3] = hpBar;
-	TextureRectObject *spBar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/SPBar_360x60.dds", 36.0f, 6.0f);
+	TextureRectObject *spBar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/SPBar_360x60.dds", 36.0f, 6.0f);
 	m_ppObjects[4] = spBar;
 	if (cmd == 1) {
-		TextureRectObject *remain0 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard0.dds", 48.0f, 18.0f);
+		TextureRectObject *remain0 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard0.dds", 48.0f, 18.0f);
 		m_ppObjects[5] = remain0;
-		TextureRectObject *remain1 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard1.dds", 48.0f, 18.0f);
+		TextureRectObject *remain1 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard1.dds", 48.0f, 18.0f);
 		m_ppObjects[6] = remain1;
-		TextureRectObject *remain2 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard2.dds", 48.0f, 18.0f);
+		TextureRectObject *remain2 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard2.dds", 48.0f, 18.0f);
 		m_ppObjects[7] = remain2;
-		TextureRectObject *remain3 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard3.dds", 48.0f, 18.0f);
+		TextureRectObject *remain3 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard3.dds", 48.0f, 18.0f);
 		m_ppObjects[8] = remain3;
-		TextureRectObject *remain4 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard4.dds", 48.0f, 18.0f);
+		TextureRectObject *remain4 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard4.dds", 48.0f, 18.0f);
 		m_ppObjects[9] = remain4;
-		TextureRectObject *remain5 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard5.dds", 48.0f, 18.0f);
+		TextureRectObject *remain5 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard5.dds", 48.0f, 18.0f);
 		m_ppObjects[10] = remain5;
-		TextureRectObject *remain6 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard6.dds", 48.0f, 18.0f);
+		TextureRectObject *remain6 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard6.dds", 48.0f, 18.0f);
 		m_ppObjects[11] = remain6;
-		TextureRectObject *remain7 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature, L"Texture/RemainCard7.dds", 48.0f, 18.0f);
+		TextureRectObject *remain7 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard7.dds", 48.0f, 18.0f);
 		m_ppObjects[12] = remain7;
 	}
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
@@ -158,7 +159,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 
 void BattleScene::ReleaseObjects()
 {
-	if (m_pGraphicsRootSignature) m_pGraphicsRootSignature->Release();
+	if (m_pFramework->m_pGraphicsRootSignature) m_pFramework->m_pGraphicsRootSignature->Release();
 
 	if (m_pSkyBox) delete m_pSkyBox;
 
@@ -266,7 +267,7 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 
 void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)
 {
-	SetGraphicsRootSignature(pd3dCommandList);
+	m_pFramework->SetGraphicsRootSignature(pd3dCommandList);
 	if (m_pd3dCbvSrvDescriptorHeap) pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
 
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);

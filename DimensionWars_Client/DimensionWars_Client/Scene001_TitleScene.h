@@ -4,6 +4,7 @@
 class SkyBox;
 class GrimReaperPlayer;
 class GamblerPlayer;
+
 class TitleScene :
 	public BaseScene
 {
@@ -21,7 +22,7 @@ public:
 	virtual bool ProcessInput(UCHAR *pKeysBuffer, float fTimeElapsed = 0.0f);
 	virtual void AnimateObjects(float fTimeElapsed);
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera = nullptr);
-	
+
 private:
 	SkyBox* m_pSkyBox = nullptr;
 	GamblerPlayer * sample;

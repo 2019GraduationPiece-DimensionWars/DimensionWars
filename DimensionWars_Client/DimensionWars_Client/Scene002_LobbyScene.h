@@ -22,5 +22,9 @@ public:
 	virtual bool ProcessInput(UCHAR *pKeysBuffer, float fTimeElapsed = 0.0f);
 	virtual void AnimateObjects(float fTimeElapsed);
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera = nullptr);
+private:
+	POINT pt;
+	bool left_active = false;
+	bool right_active = false;
 };
 

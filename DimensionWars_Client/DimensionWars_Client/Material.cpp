@@ -134,7 +134,7 @@ void Material::LoadTextureFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsComm
 			if (*ppTexture) (*ppTexture)->AddRef();
 
 			//if (pShader) 
-			BaseScene::CreateShaderResourceViews(pd3dDevice, *ppTexture, nRootParameter, false);
+			BaseScene::CreateShaderResourceViews(pd3dDevice,pd3dCommandList, *ppTexture, nRootParameter, false);
 		}
 		else
 		{

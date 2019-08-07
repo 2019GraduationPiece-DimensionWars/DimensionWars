@@ -269,47 +269,23 @@ void BaseScene::ReleaseShaderVariables()
 
 void BaseScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList)
 {
-	m_pGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
+	// = CreateGraphicsRootSignature(pd3dDevice);
 
-	CreateCbvSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 45); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
+	CreateCbvSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 1); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
 
-	Material::PrepareShaders(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
+	//Material::PrepareShaders(pd3dDevice, pd3dCommandList, m_pGraphicsRootSignature);
 
-	BuildLightsAndMaterials();
+	//BuildLightsAndMaterials();
 
-	//m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+	////m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	/*
-	XMFLOAT3 xmf3Scale(8.0f, 2.0f, 8.0f);
-	XMFLOAT4 xmf4Color(0.0f, 0.3f, 0.0f, 0.0f);
-	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("Terrain/HeightMap.raw"), 257, 257, xmf3Scale, xmf4Color);
-
-	m_nGameObjects = 2;
-	m_ppGameObjects = new CGameObject*[m_nGameObjects];
-
-	CLoadedModelInfo *pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Angrybot.bin", NULL);
-
-	m_ppGameObjects[0] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pAngrybotModel, 1);
-	m_ppGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppGameObjects[0]->SetPosition(280.0f, m_pTerrain->GetHeight(280.0f, 725.0f), 725.0f);
-
-	if (pAngrybotModel) delete pAngrybotModel;
-
-	CLoadedModelInfo *pElvenWitchModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Elven_Witch.bin", NULL);
-
-	m_ppGameObjects[1] = new CElvenWitchObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pElvenWitchModel, 1);
-	m_ppGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppGameObjects[1]->SetPosition(320.0f, m_pTerrain->GetHeight(400.0f, 700.0f) + 25.0f, 700.0f);
-
-	if (pElvenWitchModel) delete pElvenWitchModel;
-	*/
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
 void BaseScene::ReleaseObjects()
 {
-	if (m_pGraphicsRootSignature) m_pGraphicsRootSignature->Release();
+	//if (m_pGraphicsRootSignature) m_pGraphicsRootSignature->Release();
 	if (m_pd3dCbvSrvDescriptorHeap) m_pd3dCbvSrvDescriptorHeap->Release();
 
 	/*if (m_ppShaders)
@@ -432,7 +408,7 @@ void BaseScene::AnimateObjects(float fTimeElapsed)
 
 void BaseScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)
 {
-	if (m_pGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pGraphicsRootSignature);
+	//if (m_pGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pGraphicsRootSignature);
 	if (m_pd3dCbvSrvDescriptorHeap) pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
 
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
@@ -483,6 +459,8 @@ void BaseScene::CreateCbvSrvDescriptorHeaps(ID3D12Device * pd3dDevice, ID3D12Gra
 	m_d3dCbvGPUDescriptorNextHandle = m_d3dCbvGPUDescriptorStartHandle = m_pd3dCbvSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
 	m_d3dSrvCPUDescriptorNextHandle.ptr = m_d3dSrvCPUDescriptorStartHandle.ptr = m_d3dCbvCPUDescriptorStartHandle.ptr + (::gnCbvSrvDescriptorIncrementSize * nConstantBufferViews);
 	m_d3dSrvGPUDescriptorNextHandle.ptr = m_d3dSrvGPUDescriptorStartHandle.ptr = m_d3dCbvGPUDescriptorStartHandle.ptr + (::gnCbvSrvDescriptorIncrementSize * nConstantBufferViews);
+
+
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE BaseScene::CreateConstantBufferViews(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, int nConstantBufferViews, ID3D12Resource * pd3dConstantBuffers, UINT nStride)
@@ -498,9 +476,12 @@ D3D12_GPU_DESCRIPTOR_HANDLE BaseScene::CreateConstantBufferViews(ID3D12Device * 
 		m_d3dCbvGPUDescriptorNextHandle.ptr = m_d3dCbvGPUDescriptorNextHandle.ptr + ::gnCbvSrvDescriptorIncrementSize;
 	}
 	return(d3dCbvGPUDescriptorHandle);
+
+
+
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE BaseScene::CreateShaderResourceViews(ID3D12Device * pd3dDevice, Texture * pTexture, UINT nRootParameter, bool bAutoIncrement)
+D3D12_GPU_DESCRIPTOR_HANDLE BaseScene::CreateShaderResourceViews(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, Texture * pTexture, UINT nRootParameter, bool bAutoIncrement)
 {
 	D3D12_GPU_DESCRIPTOR_HANDLE d3dSrvGPUDescriptorHandle = m_d3dSrvGPUDescriptorNextHandle;
 	if (pTexture) {
@@ -518,6 +499,8 @@ D3D12_GPU_DESCRIPTOR_HANDLE BaseScene::CreateShaderResourceViews(ID3D12Device * 
 		}
 	}
 	return(d3dSrvGPUDescriptorHandle);
+
+
 }
 
 void BaseScene::ProcessPacket(char * ptr)

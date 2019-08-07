@@ -377,19 +377,19 @@ void RuntimeFrameWork::BuildObjects()
 
 	
 	//m_pCurrScene->BuildObjects(m_pDevice, m_pCommandList);	// 루트 시그니처 생성
-	
-
+	m_pGraphicsRootSignature = m_pCurrScene->CreateGraphicsRootSignature(m_pDevice);
+	m_pCurrScene->CreateCbvSrvDescriptorHeaps(m_pDevice, m_pCommandList, 2, 45);
+	arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
 	arrScene[BaseScene::SceneTag::Title]->BuildObjects(m_pDevice, m_pCommandList);
-	//arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
-	
-	if (arrScene[BaseScene::SceneTag::Title])
-	{
-		//printf("z");
-		m_pPlayer = arrScene[BaseScene::SceneTag::Title]->m_pPlayer;
-	}
+	arrScene[BaseScene::SceneTag::Lobby]->BuildObjects(m_pDevice, m_pCommandList);
+	arrScene[BaseScene::SceneTag::Room]->BuildObjects(m_pDevice, m_pCommandList);
 	
 	
-	//m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
+	
+	
+	
+	//m_pPlayer = arrScene[BaseScene::SceneTag::Title]->m_pPlayer;
+	m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
 	m_pCommandList->Close();
@@ -442,6 +442,8 @@ void RuntimeFrameWork::Update()
 	float fTimeElapsed = m_Timer.GetTimeElapsed();
 
 	if (m_pCurrScene) m_pCurrScene->AnimateObjects(fTimeElapsed);
+
+
 	
 }
 
@@ -474,7 +476,7 @@ void RuntimeFrameWork::FrameAdvance()
 	D3D12_CPU_DESCRIPTOR_HANDLE RtvCPUDescriptorHandle = m_pRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	RtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * m_nRtvDescriptorIncrementSize);
 
-	float pfClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
+	float pfClearColor[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
 	m_pCommandList->ClearRenderTargetView(RtvCPUDescriptorHandle, pfClearColor, 0, NULL); // Colors::Azure
 
 	D3D12_CPU_DESCRIPTOR_HANDLE DsvCPUDescriptorHandle = m_pDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
@@ -581,7 +583,7 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 		switch (wParam)
 		{
 		case VK_ESCAPE:
-			if (m_CurrSceneTag == BaseScene::SceneTag::Room)
+			if (m_CurrSceneTag == BaseScene::SceneTag::Title)
 				ChangeScene(BaseScene::SceneTag::Game);
 			else
 				ChangeScene(BaseScene::SceneTag::Title);
@@ -599,26 +601,18 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 			if (m_CurrSceneTag==BaseScene::SceneTag::Title)
 			{
 				ChangeScene(BaseScene::SceneTag::Lobby);
-				printf("t->l\n");
-				
 			}
 			else if (m_CurrSceneTag == BaseScene::SceneTag::Lobby)
 			{
 				ChangeScene(BaseScene::SceneTag::Room);
-				printf("l->r\n");
+				
 			}
 			else if (m_CurrSceneTag == BaseScene::SceneTag::Room)
 			{
-				//resourceMgr = new ResourceManager();
-				//arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList);
-				//m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
-				printf("r->g\n");
-				ChangeScene(BaseScene::SceneTag::Title);
+				ChangeScene(BaseScene::SceneTag::Game);
 			}
 			else if (m_CurrSceneTag == BaseScene::SceneTag::Game)
 			{
-				//m_pPlayer = arrScene[BaseScene::SceneTag::Title]->m_pPlayer;
-				printf("g->t\n");
 				ChangeScene(BaseScene::SceneTag::Title);
 			}
 			break;

@@ -116,7 +116,8 @@ public:
 
 	XMFLOAT3 cardPos[Card_end - Card_start];
 	XMFLOAT3 slashWavePos[Slash_end - Slash_start];
-
+	ID3D12RootSignature			*m_pGraphicsRootSignature = nullptr;
+	void SetGraphicsRootSignature(ID3D12GraphicsCommandList *pd3dCommandList) { pd3dCommandList->SetGraphicsRootSignature(m_pGraphicsRootSignature); }
 private:
 	FrameTimer m_Timer;
 	BasePlayer * m_pPlayer = nullptr;
@@ -124,10 +125,10 @@ private:
 	BaseScene * arrScene[BaseScene::SceneTag::Count];
 	BaseScene * m_pCurrScene = nullptr;
 	BaseScene * m_pPrevScene = nullptr;
-	BaseScene::SceneTag m_CurrSceneTag = BaseScene::SceneTag::Title;
+	BaseScene::SceneTag m_CurrSceneTag = BaseScene::SceneTag::Game;
 
 	SOCKET mySocket; // 소켓
-	char server_ip[17] = "102.168.20.173"; // 서버 IP
+	char server_ip[17] = "127.0.0.1"; // 서버 IP
 									  // 전역변수
 	//192.168.20.173
 	WSABUF  send_wsabuf;

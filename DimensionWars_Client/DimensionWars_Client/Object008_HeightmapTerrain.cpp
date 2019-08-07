@@ -34,8 +34,8 @@ HeightMapTerrain::HeightMapTerrain(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 	pTerrainShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
 	pTerrainShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	BaseScene::CreateShaderResourceViews(pd3dDevice, pTerrainBaseTexture, 13, false);
-	BaseScene::CreateShaderResourceViews(pd3dDevice, pTerrainDetailTexture, 14, false);
+	BaseScene::CreateShaderResourceViews(pd3dDevice,pd3dCommandList, pTerrainBaseTexture, 13, false);
+	BaseScene::CreateShaderResourceViews(pd3dDevice,pd3dCommandList, pTerrainDetailTexture, 14, false);
 
 	Material *pTerrainMaterial = new Material(2);
 	pTerrainMaterial->SetTexture(pTerrainBaseTexture, 0);
