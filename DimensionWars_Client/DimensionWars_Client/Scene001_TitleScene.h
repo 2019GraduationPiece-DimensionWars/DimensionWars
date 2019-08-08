@@ -27,6 +27,7 @@ private:
 	SkyBox* m_pSkyBox = nullptr;
 	GamblerPlayer * sample;
 	HeightMapTerrain * m_pTerrain = nullptr;
+	bool network_init = false;
 
 };
 

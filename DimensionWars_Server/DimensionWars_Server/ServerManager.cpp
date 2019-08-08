@@ -127,28 +127,31 @@ void ServerManager::AcceptThread()
 		serverPrint("Client [%d] Connected\n", new_id);
 
 		SendLoginOKPacket(new_id);
-		SendPutPlayerPacket(new_id, new_id); // 나 자신에게 미리 알려준다.
 
-		for (int i = 0; i < MAX_PLAYER; ++i) {
-			if (false == objects[i].connected) continue;
-			if (i == new_id) continue; // 나 자신에게 나를 알려줄 필요는 없다.
-			else {
-				//	objects[i].viewlist.insert(new_id);
+		// 풋플레이어는 룸에서 해주자 
+		//SendPutPlayerPacket(new_id, new_id); // 나 자신에게 미리 알려준다.
 
-				SendPutPlayerPacket(i, new_id);
-			}
-		}
-		for (int i = 0; i < MAX_PLAYER; ++i) {
-			if (false == objects[i].connected) continue;
-			if (i == new_id) continue;
-			else {
-				//objects[new_id].viewlist.insert(i);
+		//for (int i = 0; i < MAX_PLAYER; ++i) {
+		//	if (false == objects[i].connected) continue;
+		//	if (i == new_id) continue; // 나 자신에게 나를 알려줄 필요는 없다.
+		//	else {
+		//		//	objects[i].viewlist.insert(new_id);
 
-				SendPutPlayerPacket(new_id, i);
-			}
-		}
+		//		SendPutPlayerPacket(i, new_id);
+		//	}
+		//}
+		//for (int i = 0; i < MAX_PLAYER; ++i) {
+		//	if (false == objects[i].connected) continue;
+		//	if (i == new_id) continue;
+		//	else {
+		//		//objects[new_id].viewlist.insert(i);
 
-		for (int i = Cube_start; i < Cube_start + 50; ++i)
+		//		SendPutPlayerPacket(new_id, i);
+		//	}
+		//}
+
+		// 이거는 맵정보니까  룸에서 하자
+		/*for (int i = Cube_start; i < Cube_start + 50; ++i)
 		{
 			SendMapInfoPacket(new_id, i);
 		}
@@ -170,7 +173,7 @@ void ServerManager::AcceptThread()
 		{
 			objects[i].position = XMFLOAT3(-100000, 0, 100000);
 			SendSlashPaket(new_id, i);
-		}
+		}*/
 
 		for (int i = 0; i < MAX_PLAYER; ++i)
 		{
@@ -641,6 +644,20 @@ void ServerManager::SendSlashPaket(unsigned short to, unsigned short obj)
 }
 
 
+void ServerManager::SendRoomPacket(unsigned short to, unsigned short obj)
+{
+	// obj가 움직였다고 to 소켓에다 보내줘야 한다.
+	SCPacket_CreateRoom packet;
+	packet.id = obj;
+	packet.size = sizeof(packet);
+	packet.type = SC_Type::CreateRoom;
+	packet.player_num = player_num;
+	packet.room_num = room_num;
+	SendPacket(to, reinterpret_cast<char *>(&packet));
+	printf("보냄");
+
+}
+
 void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 {
 
@@ -736,6 +753,20 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 
 		break;
 	}
+	case CS_Type::Room_Create:
+	{
+		CSPacket_RoomCreate *packet = reinterpret_cast<CSPacket_RoomCreate*>(buf);
+		room_num = packet->room_num;
+		player_num = packet->player_num;
+
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (objects[i].connected == true) {
+				SendRoomPacket(i, id);
+			}
+		}
+
+		break;
+	}
 
 	default:
 		serverPrint("Unknown Packet Type Error\n");
@@ -806,12 +837,12 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 
 
 
-	for (int i = 0; i < MAX_PLAYER; ++i) {
+	/*for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (objects[i].connected == true) {
 			SendPositionPacket(i, id);
 
 		}
-	}
+	}*/
 
 
 

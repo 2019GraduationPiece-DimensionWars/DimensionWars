@@ -164,7 +164,8 @@ namespace SC
 		ProjectTile = 9,
 		Animation= 10,
 		Potal =11,
-		Count
+		Count=12,
+		CreateRoom=13,
 
 	};
 }
@@ -178,7 +179,8 @@ namespace CS
 		Guard = 3,
 		Burf = 4,
 		Animation =5,
-		Character_Info,
+		Character_Info=6,
+		Room_Create=7,
 	};
 }
 using CS_Type = CS::ClientToServerSocketType;	// 약자 형태로 사용할 것이다.
@@ -240,10 +242,12 @@ struct SCPacket_ProjectTile : SCPacket_Base {
 };
 
 struct SCPacket_Hit : SCPacket_Base {
-	
 	float hp;
+};
 
-
+struct SCPacket_CreateRoom : SCPacket_Base {
+	unsigned short room_num;
+	unsigned short player_num;
 };
 
 struct CSPacket_Base {
@@ -273,6 +277,12 @@ struct CSPacket_Attack : CSPacket_Base {
 
 struct CSPacket_CharacterType : CSPacket_Base {
 	unsigned short character_type;	// 캐릭 정류
+};
+
+
+struct CSPacket_RoomCreate : CSPacket_Base {
+	unsigned short room_num;
+	unsigned short player_num;
 };
 
 #pragma pack(pop)

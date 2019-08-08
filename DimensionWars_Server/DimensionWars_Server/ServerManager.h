@@ -74,7 +74,7 @@ private:
 	void SendSlashPaket(unsigned short to, unsigned short obj);
 	void SendHitPaket(unsigned short to, unsigned short obj);
 	void SendPotalInfoPacket(unsigned short to, unsigned short obj);
-
+	void SendRoomPacket(unsigned short to, unsigned short obj);
 
 	void DisConnect(unsigned short int id);
 	const unsigned short int GetNewID();
@@ -98,4 +98,8 @@ private:
 	bool jump_check = false;
 
 	int center_cube_distance = 1500;
+
+
+	unsigned short room_num = 0;
+	unsigned short player_num = 0;
 };

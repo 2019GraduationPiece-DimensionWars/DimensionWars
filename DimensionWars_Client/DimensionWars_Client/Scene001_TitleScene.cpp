@@ -75,6 +75,29 @@ void TitleScene::ReleaseUploadBuffers()
 
 bool TitleScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
+
+	switch (nMessageID)
+	{
+	case WM_LBUTTONDOWN:
+		if (!network_init) {
+			m_pFramework->NetworkInitialize();
+			network_init = true;
+		}
+		m_pFramework->ChangeScene(BaseScene::SceneTag::Lobby);
+		break;
+	case WM_RBUTTONDOWN:
+		
+		break;
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+
+		break;
+	case WM_MOUSEMOVE:
+		break;
+	default:
+		break;
+	}
+
 	return false;
 }
 

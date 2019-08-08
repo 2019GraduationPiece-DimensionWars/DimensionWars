@@ -22,9 +22,16 @@ public:
 	virtual bool ProcessInput(UCHAR *pKeysBuffer, float fTimeElapsed = 0.0f);
 	virtual void AnimateObjects(float fTimeElapsed);
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera = nullptr);
+	virtual void ProcessPacket(char *ptr) override;
+	void SendRoomCreate();
 private:
 	POINT pt;
-	bool left_active = false;
+	bool left_active = false; 
 	bool right_active = false;
+	unsigned int list_num = 1; // 페이지 수 
+	unsigned short room_num = 0; // 서버에서 받은 룸 번호
+	unsigned short player_num = 0; // 서버에서 받은 클라수
+	unsigned short my_room_num = 0; //  내가 입장할 방 번호
+
 };
 

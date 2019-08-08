@@ -39,6 +39,7 @@ public:
 	CB_GAMEOBJECT_INFO				*m_pcbMappedGameObject = nullptr;
 
 	bool							connected = false;
+	unsigned short room_name = 0;
 protected:
 	char directionBit = 0;
 

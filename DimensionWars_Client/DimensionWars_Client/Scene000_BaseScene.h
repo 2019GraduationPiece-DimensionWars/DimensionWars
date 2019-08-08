@@ -129,6 +129,8 @@ protected:
 	BaseObject					**m_roomObject = nullptr;
 	unsigned int				m_nObjects = 0;
 	unsigned int				m_nObjects2 = 0;
+	
+
 	// 조명 관련
 	XMFLOAT4					m_xmf4GlobalAmbient;
 	LIGHT						*m_pLights = nullptr;

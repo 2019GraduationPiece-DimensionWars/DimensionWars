@@ -344,16 +344,16 @@ void BattleScene::ProcessPacket(char * ptr)
 	
 	switch (ptr[1])
 	{
-	case SC_Type::LoginOK:
-	{
-		//printf("login\n");
-		SCPacket_LoginOK *packet = reinterpret_cast<SCPacket_LoginOK *>(ptr);
-		myid = packet->id;
-#ifdef USE_CONSOLE_WINDOW
-		printf("LOGIN\n");
-#endif
-		break;
-	}
+//	case SC_Type::LoginOK:
+//	{
+//		//printf("login\n");
+//		SCPacket_LoginOK *packet = reinterpret_cast<SCPacket_LoginOK *>(ptr);
+//		myid = packet->id;
+//#ifdef USE_CONSOLE_WINDOW
+//		printf("LOGIN\n");
+//#endif
+//		break;
+//	}
 	case SC_Type::PutPlayer:
 	{
 #ifdef USE_CONSOLE_WINDOW
