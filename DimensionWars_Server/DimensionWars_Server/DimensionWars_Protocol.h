@@ -166,6 +166,7 @@ namespace SC
 		Potal =11,
 		Count=12,
 		CreateRoom=13,
+		EnterRoom=14,
 
 	};
 }
@@ -181,6 +182,7 @@ namespace CS
 		Animation =5,
 		Character_Info=6,
 		Room_Create=7,
+		Room_Enter=8,
 	};
 }
 using CS_Type = CS::ClientToServerSocketType;	// 약자 형태로 사용할 것이다.
@@ -249,6 +251,10 @@ struct SCPacket_CreateRoom : SCPacket_Base {
 	unsigned short room_num;
 	unsigned short player_num;
 };
+struct SCPacket_EnterRoom : SCPacket_Base {
+	unsigned short room_num;
+	unsigned short player_num;
+};
 
 struct CSPacket_Base {
 	char size;
@@ -281,6 +287,11 @@ struct CSPacket_CharacterType : CSPacket_Base {
 
 
 struct CSPacket_RoomCreate : CSPacket_Base {
+	unsigned short room_num;
+	unsigned short player_num;
+};
+
+struct CSPacket_RoomEnter : CSPacket_Base {
 	unsigned short room_num;
 	unsigned short player_num;
 };

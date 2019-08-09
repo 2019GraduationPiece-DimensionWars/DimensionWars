@@ -40,6 +40,7 @@ public:
 
 	bool							connected = false;
 	unsigned short room_name = 0;
+	unsigned short n_member = 0;
 protected:
 	char directionBit = 0;
 

@@ -44,11 +44,27 @@ void TitleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 	m_pPlayer = pPlayer;
 
+
+	Texture * titleImage = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	titleImage->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Titleimage.dds", 0);
+
+	TextureRectangleShader *pTextureShader = new TextureRectangleShader();
+	pTextureShader->CreateShader(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
+	pTextureShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, titleImage, 15, true);
+
+	Material *titleMaterial[1];
+	titleMaterial[0] = new Material(1);
+	titleMaterial[0]->SetTexture(titleImage);
+	titleMaterial[0]->SetShader(pTextureShader);
+
 	
-	TextureRectObject *titleImageObject = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/Titleimage.dds",680,480);
+	
+	TextureRectObject *titleImageObject = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 680, 480);
 	m_titleObjects[0] = titleImageObject;
 	// 카메라를 위해 생성  렌더하지 않음
-	
+	m_titleObjects[0]->SetMaterial(0, titleMaterial[0]);
 	m_titleObjects[0]->SetPosition(0, -25, 0);
 	
 	

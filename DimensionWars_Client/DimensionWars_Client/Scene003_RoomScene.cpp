@@ -4,6 +4,7 @@
 #include "Object006_TextureRectObject.h"
 #include "Camera000_BaseCamera.h"
 #include "RuntimeFrameWork.h"
+#include "Texture.h"
 RoomScene::RoomScene()
 {
 }
@@ -23,9 +24,11 @@ void RoomScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLis
 	m_nObjects = 1;
 	m_roomObject = new BaseObject*[m_nObjects];
 	//
-
-
-	TextureRectObject *RoomImageObject = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/Roomimage.dds", 500, 500);
+	Texture *roomImage;
+	roomImage = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	roomImage->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Roomimage.dds", 0);
+	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, roomImage, 15, true);
+	TextureRectObject *RoomImageObject = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 500, 500);
 	m_roomObject[0] = RoomImageObject;
 
 

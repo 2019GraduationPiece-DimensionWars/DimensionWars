@@ -125,7 +125,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	else
 		m_nObjects = 5;
 	m_ppObjects = new BaseObject*[m_nObjects];
-	TextureRectObject *radar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/Rada.dds", 18.0f, 18.0f);
+	/*TextureRectObject *radar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/Rada.dds", 18.0f, 18.0f);
 	m_ppObjects[0] = radar;
 	
 	TextureRectObject *emptyHPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
@@ -153,7 +153,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		m_ppObjects[11] = remain6;
 		TextureRectObject *remain7 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard7.dds", 48.0f, 18.0f);
 		m_ppObjects[12] = remain7;
-	}
+	}*/
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 

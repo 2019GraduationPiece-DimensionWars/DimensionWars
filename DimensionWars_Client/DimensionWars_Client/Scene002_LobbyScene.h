@@ -1,5 +1,7 @@
 #pragma once
 #include "Scene000_BaseScene.h"
+
+#define n_texture 14
 class LobbyScene :
 	public BaseScene
 {
@@ -24,6 +26,7 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera = nullptr);
 	virtual void ProcessPacket(char *ptr) override;
 	void SendRoomCreate();
+	void SendEnterRoom();
 private:
 	POINT pt;
 	bool left_active = false; 

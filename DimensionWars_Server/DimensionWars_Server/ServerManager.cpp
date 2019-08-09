@@ -643,7 +643,7 @@ void ServerManager::SendSlashPaket(unsigned short to, unsigned short obj)
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
-
+// 로비에서 룸 생성
 void ServerManager::SendRoomPacket(unsigned short to, unsigned short obj)
 {
 	// obj가 움직였다고 to 소켓에다 보내줘야 한다.
@@ -654,8 +654,18 @@ void ServerManager::SendRoomPacket(unsigned short to, unsigned short obj)
 	packet.player_num = player_num;
 	packet.room_num = room_num;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
-	printf("보냄");
-
+}
+// 로비에서 룸 입장
+void ServerManager::SendRoomEnterPacket(unsigned short to, unsigned short obj)
+{
+	// obj가 움직였다고 to 소켓에다 보내줘야 한다.
+	SCPacket_EnterRoom packet;
+	packet.id = obj;
+	packet.size = sizeof(packet);
+	packet.type = SC_Type::EnterRoom;
+	packet.player_num = player_num;
+	packet.room_num = room_num;
+	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
 void ServerManager::ProcessPacket(unsigned short int id, char * buf)
@@ -762,6 +772,20 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (objects[i].connected == true) {
 				SendRoomPacket(i, id);
+			}
+		}
+
+		break;
+	}
+	case CS_Type::Room_Enter:
+	{
+		CSPacket_RoomEnter *packet = reinterpret_cast<CSPacket_RoomEnter*>(buf);
+		room_num = packet->room_num;
+		member_num = packet->player_num;
+
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (objects[i].connected == true) {
+				SendRoomEnterPacket(i, id);
 			}
 		}
 
