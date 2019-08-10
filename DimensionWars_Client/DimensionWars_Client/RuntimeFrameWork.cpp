@@ -378,7 +378,7 @@ void RuntimeFrameWork::BuildObjects()
 	
 	//m_pCurrScene->BuildObjects(m_pDevice, m_pCommandList);	// 루트 시그니처 생성
 	m_pGraphicsRootSignature = m_pCurrScene->CreateGraphicsRootSignature(m_pDevice);
-	m_pCurrScene->CreateCbvSrvDescriptorHeaps(m_pDevice, m_pCommandList, 2, 45);
+	m_pCurrScene->CreateCbvSrvDescriptorHeaps(m_pDevice, m_pCommandList, 2, 128);
 	//arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
 	arrScene[BaseScene::SceneTag::Title]->BuildObjects(m_pDevice, m_pCommandList);
 	arrScene[BaseScene::SceneTag::Lobby]->BuildObjects(m_pDevice, m_pCommandList);

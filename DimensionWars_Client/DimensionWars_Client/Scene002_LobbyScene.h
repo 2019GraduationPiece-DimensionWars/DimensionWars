@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene000_BaseScene.h"
 
-#define n_texture 14
+constexpr unsigned short n_texture = 14;
 class LobbyScene :
 	public BaseScene
 {
@@ -27,14 +27,11 @@ public:
 	virtual void ProcessPacket(char *ptr) override;
 	void SendRoomCreate();
 	void SendEnterRoom();
+	void SendSceneChange(unsigned short room_n);
 private:
-	POINT pt;
+	
 	bool left_active = false; 
 	bool right_active = false;
-	unsigned int list_num = 1; // 페이지 수 
-	unsigned short room_num = 0; // 서버에서 받은 룸 번호
-	unsigned short player_num = 0; // 서버에서 받은 클라수
-	unsigned short my_room_num = 0; //  내가 입장할 방 번호
-
+	
 };
 

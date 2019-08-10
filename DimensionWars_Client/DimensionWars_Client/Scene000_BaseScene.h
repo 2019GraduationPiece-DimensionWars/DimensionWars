@@ -112,8 +112,9 @@ public:
 
 	void SendMoveDirection();
 	void SendAnimationInfo();
-
-
+	
+	unsigned short nBase_room[6] = { 0, 1, 2, 3, 4, 5 };
+	unsigned short nBase_member[6] = { 0,0,0,0,0,0 };
 	BasePlayer					*m_pPlayer = nullptr;
 	BasePlayer *m_ppOtherPlayers[MAX_PLAYER] = { nullptr, };
 //	AnimationController 			*m_pSkinnedAnimationController = nullptr;
@@ -126,10 +127,11 @@ protected:
 	BaseObject					**m_ppObjects = nullptr;
 	BaseObject					**m_titleObjects = nullptr;
 	BaseObject					**m_lobbyObjects = nullptr;
-	BaseObject					**m_roomObject = nullptr;
-	unsigned int				m_nObjects = 0;
-	unsigned int				m_nObjects2 = 0;
-	
+	BaseObject					**m_roomObjects = nullptr;
+	unsigned int				m_nObjects = 0;  // 배틀
+	unsigned int				m_nObjects2 = 0; // 로비
+	unsigned int				m_nObjects3 = 0; // 룸
+	unsigned int				m_nObjects4 = 0; // 타이틀
 
 	// 조명 관련
 	XMFLOAT4					m_xmf4GlobalAmbient;
@@ -141,6 +143,14 @@ protected:
 
 	SceneTag					m_Tag;
 	RuntimeFrameWork			*m_pFramework;
-	
+	POINT pt;
+
+	unsigned int list_num = 1; // 페이지 수 
+	unsigned short room_num = 0; // 방 그릴 번호
+	unsigned short player_num = 0; // 서버에서 받은 클라수
+	unsigned short my_room_num = 0; //  내가 입장할 방 번호
+	unsigned short id_room_num = 0; // 방에 들어갈 번호
+
+
 };
 

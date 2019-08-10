@@ -654,6 +654,7 @@ void ServerManager::SendRoomPacket(unsigned short to, unsigned short obj)
 	packet.player_num = player_num;
 	packet.room_num = room_num;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
+
 }
 // 로비에서 룸 입장
 void ServerManager::SendRoomEnterPacket(unsigned short to, unsigned short obj)
@@ -663,8 +664,19 @@ void ServerManager::SendRoomEnterPacket(unsigned short to, unsigned short obj)
 	packet.id = obj;
 	packet.size = sizeof(packet);
 	packet.type = SC_Type::EnterRoom;
-	packet.player_num = player_num;
+	packet.player_num = member_num;
 	packet.room_num = room_num;
+	SendPacket(to, reinterpret_cast<char *>(&packet));
+}
+void ServerManager::SendSceneChagnePacket(unsigned short to, unsigned short obj)
+{
+	// obj가 움직였다고 to 소켓에다 보내줘야 한다.
+	SCPacket_EnterRoom packet;
+	packet.id = obj;
+	packet.size = sizeof(packet);
+	packet.type = SC_Type::ChangeScene;
+	packet.player_num = scene_member_num;
+	packet.room_num = scene_room_num;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
@@ -766,7 +778,8 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	case CS_Type::Room_Create:
 	{
 		CSPacket_RoomCreate *packet = reinterpret_cast<CSPacket_RoomCreate*>(buf);
-		room_num = packet->room_num;
+		room_num = packet->room_num + 1;
+		//printf("%d\n", room_num);
 		player_num = packet->player_num;
 
 		for (int i = 0; i < MAX_PLAYER; ++i) {
@@ -781,13 +794,38 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	{
 		CSPacket_RoomEnter *packet = reinterpret_cast<CSPacket_RoomEnter*>(buf);
 		room_num = packet->room_num;
-		member_num = packet->player_num;
+		member_num = packet->player_num + 1; // 방에 입장한 수 
 
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (objects[i].connected == true) {
 				SendRoomEnterPacket(i, id);
 			}
 		}
+
+		break;
+	}
+	case CS_Type::Scene_Change:
+	{
+		CSPacket_SceneChange *packet = reinterpret_cast<CSPacket_SceneChange*>(buf);
+		if (packet->scene == 1) //로비에서 보낸것
+		{
+			scene_room_num = packet->room_num;  // 로비에서 받은 방번호
+			scene_member_num = packet->player_num; // 로비에서 받은 인원수 
+		}
+		if (packet->scene == 2) // 룸에서 보낸것
+		{
+			scene_room_num = packet->room_num; //룸에서 받은 방번호
+			scene_member_num = packet->player_num; // 로비에서 받은 인원수
+		}
+		 
+
+		
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (objects[i].connected == true) {
+				SendSceneChagnePacket(i, id);
+			}
+		}
+		
 
 		break;
 	}

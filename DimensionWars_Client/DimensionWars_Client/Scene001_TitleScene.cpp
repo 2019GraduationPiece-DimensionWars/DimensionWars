@@ -36,8 +36,8 @@ void TitleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	
 
 
-	m_nObjects = 1;
-	m_titleObjects = new BaseObject*[m_nObjects];
+	m_nObjects4 = 1;
+	m_titleObjects = new BaseObject*[m_nObjects4];
 	//
 
 

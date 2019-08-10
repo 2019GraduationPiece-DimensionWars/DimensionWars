@@ -1,5 +1,9 @@
 #pragma once
 #include "Scene000_BaseScene.h"
+
+
+constexpr unsigned short room_texture = 13;
+
 class RoomScene :
 	public BaseScene
 {
@@ -22,5 +26,12 @@ public:
 	virtual bool ProcessInput(UCHAR *pKeysBuffer, float fTimeElapsed = 0.0f);
 	virtual void AnimateObjects(float fTimeElapsed);
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera = nullptr);
+	virtual void ProcessPacket(char *ptr) override;
+
+	void SendSceneChange();
+
+private:
+	bool left_act = false;
+	bool right_act = false;
 };
 

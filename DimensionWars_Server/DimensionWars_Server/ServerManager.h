@@ -76,6 +76,8 @@ private:
 	void SendPotalInfoPacket(unsigned short to, unsigned short obj);
 	void SendRoomPacket(unsigned short to, unsigned short obj);
 	void SendRoomEnterPacket(unsigned short to, unsigned short obj);
+	void SendSceneChagnePacket(unsigned short to, unsigned short obj);
+
 	void DisConnect(unsigned short int id);
 	const unsigned short int GetNewID();
 	bool isNearObject(unsigned short int a, unsigned short int b);
@@ -103,4 +105,9 @@ private:
 	unsigned short room_num = 0;
 	unsigned short player_num = 0;
 	unsigned short member_num = 0;
+
+	unsigned short scene_room_num = 0;
+	unsigned short scene_member_num = 0;
+
+
 };
