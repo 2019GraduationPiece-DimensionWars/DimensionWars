@@ -6,6 +6,8 @@
 #include "RuntimeFrameWork.h"
 #include "Texture.h"
 #include "Shader005_TextureRectangleShader.h"
+#include "ResourceManager.h"
+#include "Object104_DummyPlayer.h"
 RoomScene::RoomScene()
 {
 }
@@ -21,10 +23,13 @@ void RoomScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLis
 	m_roomObjects = new BaseObject*[m_nObjects3];
 	//
 	nCurrScene = 2;
+
+	Object104_DummyPlayer *pPlayer = new Object104_DummyPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	m_pPlayer = pPlayer;
 	Texture *roomImage[room_texture];
 
 	roomImage[0] = new Texture(1, RESOURCE_TEXTURE2D, 0);
-	roomImage[0]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Room/Room_bg.dds", 0);
+	roomImage[0]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Room/Room_bg2.dds", 0);
 
 	roomImage[1] = new Texture(1, RESOURCE_TEXTURE2D, 0);
 	roomImage[1]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Room/List_bg.dds", 0);
@@ -205,9 +210,14 @@ bool RoomScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 		}
 		if (pt.x > 841 && pt.x < 966 && pt.y>666 && pt.y < 726)
 		{
-			//m_pPlayer = m_pFramework->arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
+			SendSceneInfo(4);
+			//m_pFramework->m_pCommandList->Reset(m_pFramework->m_pCommandAllocator, NULL);
+			//m_pFramework->resourceMgr = new ResourceManager();
+			////m_pPlayer = m_pFramework->arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
 			//m_pFramework->arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pFramework->m_pDevice, m_pFramework->m_pCommandList);
-			m_pFramework->ChangeScene(BaseScene::SceneTag::Game);
+			m_pPlayer = m_pFramework->arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
+			//m_pFramework->m_pCommandList->Close();
+			//m_pFramework->ChangeScene(BaseScene::SceneTag::Game);
 		}
 		
 		break;
@@ -376,6 +386,53 @@ void RoomScene::ProcessPacket(char * ptr)
 		//room_num = packet->room_num;
 		//m_pFramework->nBase_room[room_num - 1] = packet->room_num;
 		//m_pFramework->nBase_member[room_num - 1] = packet->player_num;
+		break;
+	}
+	case SC_Type::PutPlayer:
+	{
+		SCPacket_PutPlayer *my_packet = reinterpret_cast<SCPacket_PutPlayer *>(ptr);
+		
+		break;
+	}
+	case SC_Type::Position:
+	{
+		SCPacket_Position *my_packet = reinterpret_cast<SCPacket_Position *>(ptr);
+		
+		break;
+	}
+	case SC_Type::RemovePlayer:
+	{
+		break;
+	}
+	case SC_Type::Animation:
+	{
+		SCPacket_Animation *my_packet = reinterpret_cast<SCPacket_Animation*>(ptr);
+		
+		break;
+	}
+	case SC_Type::MapInfo:
+	{
+		//Ã³¸®
+		SCPacket_MapInfo *my_packet = reinterpret_cast<SCPacket_MapInfo *>(ptr);
+
+		break;
+	}
+	case SC_Type::Potal:
+	{
+		SCPacket_PotalInfo *my_packet = reinterpret_cast<SCPacket_PotalInfo *>(ptr);
+		break;
+	}
+	case SC_Type::ProjectTile:
+	{
+		SCPacket_ProjectTile *my_packet = reinterpret_cast<SCPacket_ProjectTile *>(ptr);
+		
+		break;
+	}
+
+	case SC_Type::OnHit:
+	{
+		SCPacket_Hit *my_packet = reinterpret_cast<SCPacket_Hit *>(ptr);
+		
 		break;
 	}
 

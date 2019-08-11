@@ -129,6 +129,9 @@ bool TitleScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 void TitleScene::AnimateObjects(float fTimeElapsed)
 {
+	//printf("%f, %f, %f\n", m_pPlayer->GetLookVector().x, m_pPlayer->GetLookVector().y, m_pPlayer->GetLookVector().z);
+
+
 }
 
 void TitleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)

@@ -46,7 +46,7 @@ private:
 	ID3D12DescriptorHeap		*m_pDsvDescriptorHeap = nullptr;
 	unsigned int				m_nDsvDescriptorIncrementSize;
 
-	ID3D12CommandAllocator		*m_pCommandAllocator = nullptr;
+	//ID3D12CommandAllocator		*m_pCommandAllocator = nullptr;
 	ID3D12CommandQueue			*m_pCommandQueue = nullptr;
 	//ID3D12GraphicsCommandList	*m_pCommandList = nullptr;
 
@@ -125,7 +125,7 @@ public:
 	BaseScene * arrScene[BaseScene::SceneTag::Count];
 	ID3D12Device				*m_pDevice = nullptr;
 	ID3D12GraphicsCommandList	*m_pCommandList = nullptr;
-
+	ID3D12CommandAllocator		*m_pCommandAllocator = nullptr;
 private:
 	FrameTimer m_Timer;
 	BasePlayer * m_pPlayer = nullptr;

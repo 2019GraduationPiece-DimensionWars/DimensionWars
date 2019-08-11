@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene000_BaseScene.h"
-
+#include "Object008_HeightmapTerrain.h"
 constexpr unsigned short n_texture = 14;
 class LobbyScene :
 	public BaseScene
@@ -33,6 +33,7 @@ private:
 	bool left_active = false; 
 	bool right_active = false;
 	bool room_enter = false;
+	HeightMapTerrain * m_pTerrain = nullptr;
 	
 };
 

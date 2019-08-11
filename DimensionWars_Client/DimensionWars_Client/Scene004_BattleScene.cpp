@@ -41,6 +41,7 @@ void BattleScene::SendChracterType(int a)
 
 void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList)
 {
+
 	//m_pFramework->m_pGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
 	//CreateCbvSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 45); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
@@ -54,9 +55,10 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	//m_pTerrain = new HeightMapTerrain(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, _T("Texture/HeightMap.raw"), 257, 257, xmf3Scale, xmf4Color);
 	//m_pTerrain->SetPosition(-3072.0f, 0.0f, -3072.0f);
 
-	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
-
+	
 	m_pFramework->GetResource()->AllModelLoad(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
+
+	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 
 	cmd = 0;
 	/*printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
@@ -346,11 +348,11 @@ void BattleScene::ProcessPacket(char * ptr)
 	case SC_Type::LoginOK:
 	{
 		//printf("login\n");
-		SCPacket_LoginOK *packet = reinterpret_cast<SCPacket_LoginOK *>(ptr);
+		/*SCPacket_LoginOK *packet = reinterpret_cast<SCPacket_LoginOK *>(ptr);
 		myid = packet->id;
 #ifdef USE_CONSOLE_WINDOW
 		printf("LOGIN\n");
-#endif
+#endif*/
 		break;
 	}
 	case SC_Type::PutPlayer:

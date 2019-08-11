@@ -7,6 +7,8 @@
 #include "Object100_BasePlayer.h"
 #include "Texture.h"
 #include "Shader005_TextureRectangleShader.h"
+#include "Object104_DummyPlayer.h"
+#include "Shader007_TerrainShader.h"
 
 LobbyScene::LobbyScene()
 {
@@ -27,6 +29,9 @@ void LobbyScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	m_nObjects2 = 55; //텍스쳐 로드는 45개
 	m_lobbyObjects = new BaseObject*[m_nObjects2];
 	//
+
+	Object104_DummyPlayer *pPlayer = new Object104_DummyPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	m_pPlayer = pPlayer;
 	
 	Texture *lobbyImage[n_texture];
 	
@@ -775,6 +780,77 @@ void LobbyScene::ProcessPacket(char * ptr)
 		m_pFramework->room_num = packet->room_num;
 		m_pFramework->nBase_room[m_pFramework->room_num - 1] = packet->room_num;  // 룸번호와
 		m_pFramework->nBase_member[m_pFramework->room_num - 1] = packet->player_num; // 룸 에있는 인원
+		break;
+	}
+	case SC_Type::PutPlayer:
+	{
+		SCPacket_PutPlayer *my_packet = reinterpret_cast<SCPacket_PutPlayer *>(ptr);
+		//unsigned int id = my_packet->id;
+		//if (first_time) {
+		//	first_time = false;
+		//	myid = id;
+		//}
+		//if (id == myid) {
+		//	m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
+		//	m_pPlayer->hp = my_packet->hp;
+
+		//	//CSPacket_CharacterType *myTypePacket = reinterpret_cast<CSPacket_CharacterType *>(m_pFramework->GetSendBuf());
+		//	//myTypePacket->size = sizeof(CSPacket_CharacterType);
+		//	//// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
+		//	////myTypePacket->character_type = cmd;
+		//	//myTypePacket->type = CS_Type::Character_Info;
+		//	//m_pFramework->SendPacket(reinterpret_cast<char *>(myTypePacket));
+		//}
+		//else if (id < MAX_PLAYER) {
+		//	if (m_ppOtherPlayers[id]) {
+		//		m_ppOtherPlayers[id]->connected = true;
+		//		m_ppOtherPlayers[id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
+		//		m_ppOtherPlayers[id]->hp = my_packet->hp;
+		//	}
+
+		//}
+
+		break;
+	}
+	case SC_Type::Position:
+	{
+		SCPacket_Position *my_packet = reinterpret_cast<SCPacket_Position *>(ptr);
+
+		break;
+	}
+	case SC_Type::RemovePlayer:
+	{
+		break;
+	}
+	case SC_Type::Animation:
+	{
+		SCPacket_Animation *my_packet = reinterpret_cast<SCPacket_Animation*>(ptr);
+
+		break;
+	}
+	case SC_Type::MapInfo:
+	{
+		//처리
+		SCPacket_MapInfo *my_packet = reinterpret_cast<SCPacket_MapInfo *>(ptr);
+
+		break;
+	}
+	case SC_Type::Potal:
+	{
+		SCPacket_PotalInfo *my_packet = reinterpret_cast<SCPacket_PotalInfo *>(ptr);
+		break;
+	}
+	case SC_Type::ProjectTile:
+	{
+		SCPacket_ProjectTile *my_packet = reinterpret_cast<SCPacket_ProjectTile *>(ptr);
+
+		break;
+	}
+
+	case SC_Type::OnHit:
+	{
+		SCPacket_Hit *my_packet = reinterpret_cast<SCPacket_Hit *>(ptr);
+
 		break;
 	}
 	

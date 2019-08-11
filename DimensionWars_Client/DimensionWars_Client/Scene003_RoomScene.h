@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene000_BaseScene.h"
-
+#include "Object008_HeightmapTerrain.h"
 
 constexpr unsigned short room_texture = 13;
 
@@ -35,5 +35,6 @@ private:
 	bool left_act = false;
 	bool right_act = false;
 	bool room_exit = false;
+	HeightMapTerrain * m_pTerrain = nullptr;
 };
 

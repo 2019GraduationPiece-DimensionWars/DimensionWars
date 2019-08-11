@@ -53,19 +53,19 @@ void DiffuseCubeObject::Build(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 
 TextureCubeObject::TextureCubeObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, float size) : BaseObject(1)
 {
-	DiffuseCubeMesh *pSkyBoxMesh = new DiffuseCubeMesh(pd3dDevice, pd3dCommandList, size, size, size);
+	TextureCubeMesh *pSkyBoxMesh = new TextureCubeMesh(pd3dDevice, pd3dCommandList, size, size, size);
 	SetMesh(pSkyBoxMesh);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	Texture *pSkyBoxTexture = new Texture(1, RESOURCE_TEXTURE_CUBE, 0);
+	Texture *pSkyBoxTexture = new Texture(1, RESOURCE_TEXTURE2D, 0);
 	pSkyBoxTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/SampleCube7.dds", 0);
 
-	CubeShader *pSkyBoxShader = new CubeShader();
+	TextureRectangleShader *pSkyBoxShader = new TextureRectangleShader();
 	pSkyBoxShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
 	pSkyBoxShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	BaseScene::CreateShaderResourceViews(pd3dDevice,pd3dCommandList ,pSkyBoxTexture, 16, false);
+	BaseScene::CreateShaderResourceViews(pd3dDevice,pd3dCommandList ,pSkyBoxTexture, 15, false);
 
 	Material *pSkyBoxMaterial = new Material(1);
 	pSkyBoxMaterial->SetTexture(pSkyBoxTexture);

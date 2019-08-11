@@ -112,7 +112,7 @@ public:
 
 	void SendMoveDirection();
 	void SendAnimationInfo();
-	
+	void SendSceneInfo(unsigned short scene);
 	
 	unsigned short nCurrScene = 0;
 	BasePlayer					*m_pPlayer = nullptr;

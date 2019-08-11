@@ -650,7 +650,7 @@ void ServerManager::SendRoomPacket(unsigned short to, unsigned short obj)
 	packet.type = SC_Type::CreateRoom;
 	packet.player_num = player_num;
 	packet.room_num = room_num;
-	packet.scene = scene;
+	//packet.scene = scene;
 	packet.check = check;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 
@@ -704,6 +704,17 @@ void ServerManager::SendChagne_R_LPacket(unsigned short to, unsigned short obj)
 	packet.player_num = scene_member_num;
 	packet.room_num = scene_room_num;
 	packet.check = check;
+	SendPacket(to, reinterpret_cast<char *>(&packet));
+}
+
+void ServerManager::SendInfoScenePacket(unsigned short to, unsigned short obj)
+{
+	// obj가 움직였다고 to 소켓에다 보내줘야 한다.
+	SCPacket_InfoScene packet;
+	packet.id = obj;
+	packet.size = sizeof(packet);
+	packet.type = SC_Type::InfoScene;
+	packet.scene = scene;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
@@ -879,6 +890,29 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (objects[i].connected == true){
 				SendRoomExitPacket(i, id);
+			}
+		}
+
+		break;
+	}
+
+	case CS_Type::Sceneinfo:
+	{
+		CSPacket_SceneInfo *packet = reinterpret_cast<CSPacket_SceneInfo*>(buf);
+		scene = packet->scene;
+		unsigned short new_id = GetNewID();
+		if (scene == 4)
+		{
+			SendPutPlayerPacket(new_id, new_id); // 나 자신에게 미리 알려준다.
+
+			for (int i = 0; i < MAX_PLAYER; ++i) {
+				if (false == objects[i].connected) continue;
+				if (i == new_id) continue; // 나 자신에게 나를 알려줄 필요는 없다.
+				else {
+					//	objects[i].viewlist.insert(new_id);
+
+					SendPutPlayerPacket(i, new_id);
+				}
 			}
 		}
 

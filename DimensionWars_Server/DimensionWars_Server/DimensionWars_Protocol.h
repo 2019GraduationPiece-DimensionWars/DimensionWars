@@ -170,6 +170,7 @@ namespace SC
 		ChangeScene_L_R=15,
 		ChangeScene_R_L = 16,
 		ExitRoom=17,
+		InfoScene=18,
 	};
 }
 using SC_Type = SC::ServerToClientSocketType;	// 약자 형태로 사용할 것이다.
@@ -188,6 +189,7 @@ namespace CS
 		Scene_Change_L_R=9,
 		Scene_Change_R_L = 10,
 		Room_Exit=11,
+		Sceneinfo =12,
 	};
 }
 using CS_Type = CS::ClientToServerSocketType;	// 약자 형태로 사용할 것이다.
@@ -288,6 +290,10 @@ struct SCPacket_ExitRoom : SCPacket_Base {
 	bool check;
 };
 
+struct SCPacket_InfoScene : SCPacket_Base {
+	unsigned short scene;
+};
+
 struct CSPacket_Base {
 	char size;
 	char type;
@@ -353,6 +359,9 @@ struct CSPacket_RoomExit : SCPacket_Base {
 	bool check;
 };
 
+struct CSPacket_SceneInfo : SCPacket_Base {
+	unsigned short scene;
+};
 #pragma pack(pop)
 
 // value를 minimum, maximum 사이로 보정하는 함수

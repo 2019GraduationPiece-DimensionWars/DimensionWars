@@ -82,13 +82,14 @@ bool RuntimeFrameWork::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	// CreateOffScreenRenderTargetViews();
 
 	BuildAllScene();
+
+	//ChangeScene(BaseScene::SceneTag::Title);
 	ChangeScene(BaseScene::SceneTag::Game);
-	//ChangeScene(BaseScene::SceneTag::Game);
-	
 
 	// 네트워크 초기화
 	NetworkInitialize();
 	BuildObjects();
+
 	return (m_hWnd != NULL);
 }
 
@@ -389,7 +390,7 @@ void RuntimeFrameWork::BuildObjects()
 	
 	
 	
-	//m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
+	//m_pPlayer = arrScene[BaseScene::SceneTag::Title]->m_pPlayer;
 	m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
@@ -599,7 +600,7 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 		case VK_F9:
 			ChangeSwapChainState();
 		case VK_SPACE:
-			/*if (m_CurrSceneTag==BaseScene::SceneTag::Title)
+			if (m_CurrSceneTag==BaseScene::SceneTag::Title)
 			{
 				ChangeScene(BaseScene::SceneTag::Lobby);
 			}
@@ -610,12 +611,12 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 			}
 			else if (m_CurrSceneTag == BaseScene::SceneTag::Room)
 			{
-				ChangeScene(BaseScene::SceneTag::Title);
+				ChangeScene(BaseScene::SceneTag::Game);
 			}
 			else if (m_CurrSceneTag == BaseScene::SceneTag::Game)
 			{
 				ChangeScene(BaseScene::SceneTag::Title);
-			}*/
+			}
 			break;
 		default:
 			break;

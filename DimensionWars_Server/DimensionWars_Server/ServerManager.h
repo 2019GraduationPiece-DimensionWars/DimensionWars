@@ -79,6 +79,7 @@ private:
 	void SendChagne_L_RPacket(unsigned short to, unsigned short obj);
 	void SendChagne_R_LPacket(unsigned short to, unsigned short obj);
 	void SendRoomExitPacket(unsigned short to, unsigned short obj);
+	void SendInfoScenePacket(unsigned short to, unsigned short obj);
 
 	void DisConnect(unsigned short int id);
 	const unsigned short int GetNewID();

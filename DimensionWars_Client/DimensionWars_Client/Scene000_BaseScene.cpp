@@ -631,21 +631,31 @@ void BaseScene::SendMoveDirection()
 		//myMovePacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
 		myMovePacket->type = CS_Type::Move;
 		m_pFramework->SendPacket(reinterpret_cast<char *>(myMovePacket));
-		//printf("%d\n", myMovePacket->animation_state);
+		printf("º¸³¿\n");
 	}
+	
 }
 
 void BaseScene::SendAnimationInfo()
 {
 	if (m_pPlayer&&m_pPlayer->animation_check == true) {
-		CSPacket_Animation *myAnimationPacket = reinterpret_cast<CSPacket_Animation*>(m_pFramework->GetSendBuf());
-		myAnimationPacket->size = sizeof(CSPacket_Animation);
-		myAnimationPacket->type = CS_Type::Animation;
-		myAnimationPacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
-		m_pFramework->SendPacket(reinterpret_cast<char *>(myAnimationPacket));
-		//printf("¼­¹öÇÑÅ× º¸³¿ : %d\n", myAnimationPacket->animation_state);
+		CSPacket_Animation *myPacket = reinterpret_cast<CSPacket_Animation*>(m_pFramework->GetSendBuf());
+		myPacket->size = sizeof(CSPacket_Animation);
+		myPacket->type = CS_Type::Animation;
+		myPacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
+		m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
+		//printf("¼­¹öÇÑÅ× º¸³¿ : %d\n", myPacket->animation_state);
 	}
 }
 
+void BaseScene::SendSceneInfo(unsigned short scene)
+{
+	CSPacket_SceneInfo *myPacket = reinterpret_cast<CSPacket_SceneInfo*>(m_pFramework->GetSendBuf());
+	myPacket->size = sizeof(CSPacket_SceneInfo);
+	myPacket->type = CS_Type::Sceneinfo;
+	myPacket->scene = scene;
+	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
+	//printf("¼­¹öÇÑÅ× º¸³¿ : %d\n", myPacket->animation_state);
 
+}
 
