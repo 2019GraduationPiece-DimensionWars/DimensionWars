@@ -397,5 +397,8 @@ struct SOCKETINFO
 	// 투사체 정보
 	bool tile_life = false;
 
+	// 씬 정보
+	bool change_check;
+
 };
 

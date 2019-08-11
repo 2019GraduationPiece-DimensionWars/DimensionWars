@@ -234,6 +234,9 @@
     <ClInclude Include="Object012_PortalObject.h">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="Object104_DummyPlayer.h">
+      <Filter>Object\PlayerObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -397,6 +400,9 @@
     </ClCompile>
     <ClCompile Include="Object012_PortalObject.cpp">
       <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object104_DummyPlayer.cpp">
+      <Filter>Object\PlayerObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

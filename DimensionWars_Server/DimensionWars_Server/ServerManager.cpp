@@ -129,17 +129,17 @@ void ServerManager::AcceptThread()
 		SendLoginOKPacket(new_id);
 
 		// 풋플레이어는 룸에서 해주자 
-		//SendPutPlayerPacket(new_id, new_id); // 나 자신에게 미리 알려준다.
+		SendPutPlayerPacket(new_id, new_id); // 나 자신에게 미리 알려준다.
 
-		//for (int i = 0; i < MAX_PLAYER; ++i) {
-		//	if (false == objects[i].connected) continue;
-		//	if (i == new_id) continue; // 나 자신에게 나를 알려줄 필요는 없다.
-		//	else {
-		//		//	objects[i].viewlist.insert(new_id);
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (false == objects[i].connected) continue;
+			if (i == new_id) continue; // 나 자신에게 나를 알려줄 필요는 없다.
+			else {
+				//	objects[i].viewlist.insert(new_id);
 
-		//		SendPutPlayerPacket(i, new_id);
-		//	}
-		//}
+				SendPutPlayerPacket(i, new_id);
+			}
+		}
 		//for (int i = 0; i < MAX_PLAYER; ++i) {
 		//	if (false == objects[i].connected) continue;
 		//	if (i == new_id) continue;
@@ -151,7 +151,7 @@ void ServerManager::AcceptThread()
 		//}
 
 		// 이거는 맵정보니까  룸에서 하자
-		/*for (int i = Cube_start; i < Cube_start + 50; ++i)
+		for (int i = Cube_start; i < Cube_start + 50; ++i)
 		{
 			SendMapInfoPacket(new_id, i);
 		}
@@ -173,7 +173,7 @@ void ServerManager::AcceptThread()
 		{
 			objects[i].position = XMFLOAT3(-100000, 0, 100000);
 			SendSlashPaket(new_id, i);
-		}*/
+		}
 
 		for (int i = 0; i < MAX_PLAYER; ++i)
 		{
@@ -182,10 +182,7 @@ void ServerManager::AcceptThread()
 				AddTimerEvent(i);
 			}
 		}
-		/*for (int i = Card_start; i < Slash_end; ++i)
-		{
-		AddTimerEvent(i);
-		}*/
+		
 		RecvPacket(new_id);
 
 	}
@@ -653,6 +650,8 @@ void ServerManager::SendRoomPacket(unsigned short to, unsigned short obj)
 	packet.type = SC_Type::CreateRoom;
 	packet.player_num = player_num;
 	packet.room_num = room_num;
+	packet.scene = scene;
+	packet.check = check;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 
 }
@@ -666,17 +665,45 @@ void ServerManager::SendRoomEnterPacket(unsigned short to, unsigned short obj)
 	packet.type = SC_Type::EnterRoom;
 	packet.player_num = member_num;
 	packet.room_num = room_num;
+	packet.check = check;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
-void ServerManager::SendSceneChagnePacket(unsigned short to, unsigned short obj)
+
+void ServerManager::SendRoomExitPacket(unsigned short to, unsigned short obj)
 {
 	// obj가 움직였다고 to 소켓에다 보내줘야 한다.
 	SCPacket_EnterRoom packet;
 	packet.id = obj;
 	packet.size = sizeof(packet);
-	packet.type = SC_Type::ChangeScene;
+	packet.type = SC_Type::ExitRoom;
+	packet.player_num = member_num;
+	packet.room_num = room_num;
+	packet.check = check;
+	SendPacket(to, reinterpret_cast<char *>(&packet));
+}
+void ServerManager::SendChagne_L_RPacket(unsigned short to, unsigned short obj)
+{
+	// obj가 움직였다고 to 소켓에다 보내줘야 한다.
+	SCPacket_EnterRoom packet;
+	packet.id = obj;
+	packet.size = sizeof(packet);
+	packet.type = SC_Type::ChangeScene_L_R;
 	packet.player_num = scene_member_num;
 	packet.room_num = scene_room_num;
+	packet.check = check;
+	SendPacket(to, reinterpret_cast<char *>(&packet));
+}
+
+void ServerManager::SendChagne_R_LPacket(unsigned short to, unsigned short obj)
+{
+	// obj가 움직였다고 to 소켓에다 보내줘야 한다.
+	SCPacket_EnterRoom packet;
+	packet.id = obj;
+	packet.size = sizeof(packet);
+	packet.type = SC_Type::ChangeScene_R_L;
+	packet.player_num = scene_member_num;
+	packet.room_num = scene_room_num;
+	packet.check = check;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
@@ -778,13 +805,14 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	case CS_Type::Room_Create:
 	{
 		CSPacket_RoomCreate *packet = reinterpret_cast<CSPacket_RoomCreate*>(buf);
+		
 		room_num = packet->room_num + 1;
-		//printf("%d\n", room_num);
 		player_num = packet->player_num;
-
+		objects[id].change_check = packet->check;
+		scene = packet->scene;
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (objects[i].connected == true) {
-				SendRoomPacket(i, id);
+					SendRoomPacket(i, id);
 			}
 		}
 
@@ -795,7 +823,8 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		CSPacket_RoomEnter *packet = reinterpret_cast<CSPacket_RoomEnter*>(buf);
 		room_num = packet->room_num;
 		member_num = packet->player_num + 1; // 방에 입장한 수 
-
+		printf("%d", member_num);
+		objects[id].change_check = packet->check;
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (objects[i].connected == true) {
 				SendRoomEnterPacket(i, id);
@@ -804,28 +833,54 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 
 		break;
 	}
-	case CS_Type::Scene_Change:
+	case CS_Type::Scene_Change_L_R:
 	{
-		CSPacket_SceneChange *packet = reinterpret_cast<CSPacket_SceneChange*>(buf);
-		if (packet->scene == 1) //로비에서 보낸것
-		{
-			scene_room_num = packet->room_num;  // 로비에서 받은 방번호
-			scene_member_num = packet->player_num; // 로비에서 받은 인원수 
-		}
-		if (packet->scene == 2) // 룸에서 보낸것
-		{
-			scene_room_num = packet->room_num; //룸에서 받은 방번호
-			scene_member_num = packet->player_num; // 로비에서 받은 인원수
-		}
-		 
+		CSPacket_SceneChange_L_R *packet = reinterpret_cast<CSPacket_SceneChange_L_R*>(buf);
 
-		
+		scene_room_num = packet->room_num;  // 로비에서 받은 방번호
+		scene_member_num = packet->player_num; // 로비에서 받은 인원수 
+
+		objects[id].change_check = packet->check;
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (objects[i].connected == true) {
-				SendSceneChagnePacket(i, id);
+				SendChagne_L_RPacket(i, id);
 			}
 		}
+		break;
+	}
+	case CS_Type::Scene_Change_R_L:
+	{
+		CSPacket_SceneChange_R_L *packet = reinterpret_cast<CSPacket_SceneChange_R_L*>(buf);
+
+		scene_room_num = packet->room_num;  // 로비에서 받은 방번호
+		scene_member_num = packet->player_num; // 로비에서 받은 인원수 
+		//printf("%d", scene_member_num);
+		objects[id].change_check = packet->check;
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (objects[i].connected == true) {
+				SendChagne_R_LPacket(i, id);
+			}
+		}
+		break;
+	}
+	case CS_Type::Room_Exit:
+	{
+		CSPacket_RoomExit *packet = reinterpret_cast<CSPacket_RoomExit*>(buf);
+		member_num = packet->player_num - 1; // 방에 입장한 수 
+		if (member_num <= 0)
+		{
+			member_num = 0;
+
+		}
 		
+		room_num = packet->room_num;
+		
+		objects[id].change_check = packet->check;
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (objects[i].connected == true){
+				SendRoomExitPacket(i, id);
+			}
+		}
 
 		break;
 	}
@@ -899,12 +954,12 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 
 
 
-	/*for (int i = 0; i < MAX_PLAYER; ++i) {
+	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (objects[i].connected == true) {
 			SendPositionPacket(i, id);
 
 		}
-	}*/
+	}
 
 
 

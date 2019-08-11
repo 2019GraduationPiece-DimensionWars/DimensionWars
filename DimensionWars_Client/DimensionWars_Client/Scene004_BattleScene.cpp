@@ -54,6 +54,8 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	//m_pTerrain = new HeightMapTerrain(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, _T("Texture/HeightMap.raw"), 257, 257, xmf3Scale, xmf4Color);
 	//m_pTerrain->SetPosition(-3072.0f, 0.0f, -3072.0f);
 
+	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
+
 	m_pFramework->GetResource()->AllModelLoad(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 
 	cmd = 0;
@@ -90,7 +92,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		break;
 	}
 	
-	m_nCubeObjects = 3;
+	m_nCubeObjects = 50;
 	m_ppCubeObjects = new TextureCubeObject*[m_nCubeObjects];
 	for (unsigned int i = 0; i < m_nCubeObjects; ++i) {
 		if (i < 5) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 400;
@@ -118,25 +120,23 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	}
 
 
-	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
-
 	if (cmd == 1)	// 도박사이면
 		m_nObjects = 13;
 	else
-		m_nObjects = 5;
+		m_nObjects = 1;
 	m_ppObjects = new BaseObject*[m_nObjects];
-	/*TextureRectObject *radar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/Rada.dds", 18.0f, 18.0f);
+	TextureRectObject *radar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 18.0f, 18.0f);
 	m_ppObjects[0] = radar;
 	
-	TextureRectObject *emptyHPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
-	m_ppObjects[1] = emptyHPgauge;
-	TextureRectObject *emptySPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
-	m_ppObjects[2] = emptySPgauge;
-	TextureRectObject *hpBar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/HPBar_360x60.dds", 36.0f, 6.0f);
-	m_ppObjects[3] = hpBar;
-	TextureRectObject *spBar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/SPBar_360x60.dds", 36.0f, 6.0f);
-	m_ppObjects[4] = spBar;
-	if (cmd == 1) {
+	//TextureRectObject *emptyHPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
+	//m_ppObjects[1] = emptyHPgauge;
+	//TextureRectObject *emptySPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
+	//m_ppObjects[2] = emptySPgauge;
+	//TextureRectObject *hpBar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/HPBar_360x60.dds", 36.0f, 6.0f);
+	//m_ppObjects[3] = hpBar;
+	//TextureRectObject *spBar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/SPBar_360x60.dds", 36.0f, 6.0f);
+	//m_ppObjects[4] = spBar;
+	/*if (cmd == 1) {
 		TextureRectObject *remain0 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard0.dds", 48.0f, 18.0f);
 		m_ppObjects[5] = remain0;
 		TextureRectObject *remain1 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard1.dds", 48.0f, 18.0f);
@@ -187,7 +187,6 @@ bool BattleScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 	{
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-
 		break;
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
@@ -216,8 +215,8 @@ bool BattleScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 void BattleScene::AnimateObjects(float fTimeElapsed)
 {
-	//SendMoveDirection();
-	//SendAnimationInfo();
+	SendMoveDirection();
+	SendAnimationInfo();
 	
 	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed);
 
@@ -242,10 +241,10 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 	//m_ppObjects[2]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 20.0f, m_pPlayer->GetCamera()->GetPosition().z + 49.0f);
 	
 	// HP 바
-	m_ppObjects[3]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 30.0f, m_pPlayer->GetCamera()->GetPosition().z + 50.0f);
+	//m_ppObjects[3]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 30.0f, m_pPlayer->GetCamera()->GetPosition().z + 50.0f);
 	
 	// SP 바
-	m_ppObjects[4]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 20.0f, m_pPlayer->GetCamera()->GetPosition().z + 49.0f);
+	//m_ppObjects[4]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 20.0f, m_pPlayer->GetCamera()->GetPosition().z + 49.0f);
 	
 	if (m_nObjects > 5) {
 		m_ppObjects[5]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
@@ -344,16 +343,16 @@ void BattleScene::ProcessPacket(char * ptr)
 	
 	switch (ptr[1])
 	{
-//	case SC_Type::LoginOK:
-//	{
-//		//printf("login\n");
-//		SCPacket_LoginOK *packet = reinterpret_cast<SCPacket_LoginOK *>(ptr);
-//		myid = packet->id;
-//#ifdef USE_CONSOLE_WINDOW
-//		printf("LOGIN\n");
-//#endif
-//		break;
-//	}
+	case SC_Type::LoginOK:
+	{
+		//printf("login\n");
+		SCPacket_LoginOK *packet = reinterpret_cast<SCPacket_LoginOK *>(ptr);
+		myid = packet->id;
+#ifdef USE_CONSOLE_WINDOW
+		printf("LOGIN\n");
+#endif
+		break;
+	}
 	case SC_Type::PutPlayer:
 	{
 #ifdef USE_CONSOLE_WINDOW

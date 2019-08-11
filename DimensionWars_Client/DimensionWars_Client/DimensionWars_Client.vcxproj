@@ -180,6 +180,7 @@
     <ClInclude Include="Object101_GrimReaperPlayer.h" />
     <ClInclude Include="Object103_ElfArcherPlayer.h" />
     <ClInclude Include="Object011_CardObject.h" />
+    <ClInclude Include="Object104_DummyPlayer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RuntimeFrameWork.h" />
@@ -238,6 +239,7 @@
     <ClCompile Include="Object101_GrimReaperPlayer.cpp" />
     <ClCompile Include="Object103_ElfArcherPlayer.cpp" />
     <ClCompile Include="Object011_CardObject.cpp" />
+    <ClCompile Include="Object104_DummyPlayer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="RuntimeFrameWork.cpp" />
     <ClCompile Include="Scene000_BaseScene.cpp" />

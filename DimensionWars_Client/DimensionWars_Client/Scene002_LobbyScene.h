@@ -27,11 +27,12 @@ public:
 	virtual void ProcessPacket(char *ptr) override;
 	void SendRoomCreate();
 	void SendEnterRoom();
-	void SendSceneChange(unsigned short room_n);
+	void SendLobby_RoomChange(unsigned short room_n);
 private:
 	
 	bool left_active = false; 
 	bool right_active = false;
+	bool room_enter = false;
 	
 };
 

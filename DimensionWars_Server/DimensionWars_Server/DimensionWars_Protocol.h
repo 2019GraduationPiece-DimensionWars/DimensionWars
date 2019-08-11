@@ -167,8 +167,9 @@ namespace SC
 		Count=12,
 		CreateRoom=13,
 		EnterRoom=14,
-		ChangeScene=15,
-
+		ChangeScene_L_R=15,
+		ChangeScene_R_L = 16,
+		ExitRoom=17,
 	};
 }
 using SC_Type = SC::ServerToClientSocketType;	// 약자 형태로 사용할 것이다.
@@ -184,7 +185,9 @@ namespace CS
 		Character_Info=6,
 		Room_Create=7,
 		Room_Enter=8,
-		Scene_Change=9,
+		Scene_Change_L_R=9,
+		Scene_Change_R_L = 10,
+		Room_Exit=11,
 	};
 }
 using CS_Type = CS::ClientToServerSocketType;	// 약자 형태로 사용할 것이다.
@@ -252,20 +255,38 @@ struct SCPacket_Hit : SCPacket_Base {
 struct SCPacket_CreateRoom : SCPacket_Base {
 	unsigned short room_num;
 	unsigned short player_num;
+	unsigned short scene;
+	bool check;
 };
 
 struct SCPacket_EnterRoom : SCPacket_Base {
 	unsigned short room_num;
 	unsigned short player_num;
+	unsigned short scene;
+	bool check;
 };
 
-struct SCPacket_ChangeScene : SCPacket_Base {
+struct SCPacket_ChangeScene_L_R : SCPacket_Base {
 	unsigned short room_num;
 	unsigned short player_num;
 	unsigned short scene;
+	bool check;
 };
 
 
+struct SCPacket_ChangeScene_R_L : SCPacket_Base {
+	unsigned short room_num;
+	unsigned short player_num;
+	unsigned short scene;
+	bool check;
+};
+
+struct SCPacket_ExitRoom : SCPacket_Base {
+	unsigned short room_num;
+	unsigned short player_num;
+	unsigned short scene;
+	bool check;
+};
 
 struct CSPacket_Base {
 	char size;
@@ -300,17 +321,36 @@ struct CSPacket_CharacterType : CSPacket_Base {
 struct CSPacket_RoomCreate : CSPacket_Base {
 	unsigned short room_num;
 	unsigned short player_num;
+	unsigned short scene;
+	bool check;
 };
 
 struct CSPacket_RoomEnter : CSPacket_Base {
 	unsigned short room_num;
 	unsigned short player_num;
+	unsigned short scene;
+	bool check;
 };
 
-struct CSPacket_SceneChange : CSPacket_Base {
+struct CSPacket_SceneChange_L_R : CSPacket_Base {
 	unsigned short room_num;
 	unsigned short player_num;
 	unsigned short scene;
+	bool check;
+};
+
+struct CSPacket_SceneChange_R_L : CSPacket_Base {
+	unsigned short room_num;
+	unsigned short player_num;
+	unsigned short scene;
+	bool check;
+};
+
+struct CSPacket_RoomExit : SCPacket_Base {
+	unsigned short room_num;
+	unsigned short player_num;
+	unsigned short scene;
+	bool check;
 };
 
 #pragma pack(pop)

@@ -113,8 +113,8 @@ public:
 	void SendMoveDirection();
 	void SendAnimationInfo();
 	
-	unsigned short nBase_room[6] = { 0, 1, 2, 3, 4, 5 };
-	unsigned short nBase_member[6] = { 0,0,0,0,0,0 };
+	
+	unsigned short nCurrScene = 0;
 	BasePlayer					*m_pPlayer = nullptr;
 	BasePlayer *m_ppOtherPlayers[MAX_PLAYER] = { nullptr, };
 //	AnimationController 			*m_pSkinnedAnimationController = nullptr;
@@ -146,7 +146,7 @@ protected:
 	POINT pt;
 
 	unsigned int list_num = 1; // 페이지 수 
-	unsigned short room_num = 0; // 방 그릴 번호
+	//unsigned short room_num = 0; // 방 그릴 번호
 	unsigned short player_num = 0; // 서버에서 받은 클라수
 	unsigned short my_room_num = 0; //  내가 입장할 방 번호
 	unsigned short id_room_num = 0; // 방에 들어갈 번호

@@ -82,12 +82,12 @@ bool RuntimeFrameWork::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	// CreateOffScreenRenderTargetViews();
 
 	BuildAllScene();
-	ChangeScene(BaseScene::SceneTag::Title);
+	ChangeScene(BaseScene::SceneTag::Game);
 	//ChangeScene(BaseScene::SceneTag::Game);
 	
 
 	// 네트워크 초기화
-//	NetworkInitialize();
+	NetworkInitialize();
 	BuildObjects();
 	return (m_hWnd != NULL);
 }
@@ -379,17 +379,18 @@ void RuntimeFrameWork::BuildObjects()
 	//m_pCurrScene->BuildObjects(m_pDevice, m_pCommandList);	// 루트 시그니처 생성
 	m_pGraphicsRootSignature = m_pCurrScene->CreateGraphicsRootSignature(m_pDevice);
 	m_pCurrScene->CreateCbvSrvDescriptorHeaps(m_pDevice, m_pCommandList, 2, 128);
-	//arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
+	//GetResource()->AllModelLoad(m_pDevice, m_pCommandList, m_pGraphicsRootSignature);
+
+	
 	arrScene[BaseScene::SceneTag::Title]->BuildObjects(m_pDevice, m_pCommandList);
 	arrScene[BaseScene::SceneTag::Lobby]->BuildObjects(m_pDevice, m_pCommandList);
 	arrScene[BaseScene::SceneTag::Room]->BuildObjects(m_pDevice, m_pCommandList);
+	arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pDevice, m_pCommandList); // 플레이어 선생성
 	
 	
 	
-	
-	
-	m_pPlayer = arrScene[BaseScene::SceneTag::Title]->m_pPlayer;
 	//m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
+	m_pPlayer = arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
 	m_pCommandList->Close();
@@ -598,7 +599,7 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 		case VK_F9:
 			ChangeSwapChainState();
 		case VK_SPACE:
-			if (m_CurrSceneTag==BaseScene::SceneTag::Title)
+			/*if (m_CurrSceneTag==BaseScene::SceneTag::Title)
 			{
 				ChangeScene(BaseScene::SceneTag::Lobby);
 			}
@@ -614,7 +615,7 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 			else if (m_CurrSceneTag == BaseScene::SceneTag::Game)
 			{
 				ChangeScene(BaseScene::SceneTag::Title);
-			}
+			}*/
 			break;
 		default:
 			break;

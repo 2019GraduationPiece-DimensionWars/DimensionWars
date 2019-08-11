@@ -76,7 +76,9 @@ private:
 	void SendPotalInfoPacket(unsigned short to, unsigned short obj);
 	void SendRoomPacket(unsigned short to, unsigned short obj);
 	void SendRoomEnterPacket(unsigned short to, unsigned short obj);
-	void SendSceneChagnePacket(unsigned short to, unsigned short obj);
+	void SendChagne_L_RPacket(unsigned short to, unsigned short obj);
+	void SendChagne_R_LPacket(unsigned short to, unsigned short obj);
+	void SendRoomExitPacket(unsigned short to, unsigned short obj);
 
 	void DisConnect(unsigned short int id);
 	const unsigned short int GetNewID();
@@ -109,5 +111,7 @@ private:
 	unsigned short scene_room_num = 0;
 	unsigned short scene_member_num = 0;
 
+	unsigned short scene = 0;
 
+	bool check;
 };

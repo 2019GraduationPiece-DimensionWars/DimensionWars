@@ -13,7 +13,7 @@
 #include "RuntimeFrameWork.h"
 #include "ResourceManager.h"
 #include "Object102_GamblerPlayer.h"
-
+#include "Object104_DummyPlayer.h"
 TitleScene::TitleScene(SceneTag tag, RuntimeFrameWork * pFramework) : BaseScene(tag, pFramework)
 {
 }
@@ -40,8 +40,8 @@ void TitleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	m_titleObjects = new BaseObject*[m_nObjects4];
 	//
 
-
-	GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	
+	Object104_DummyPlayer *pPlayer = new Object104_DummyPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 	m_pPlayer = pPlayer;
 
 

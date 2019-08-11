@@ -30,7 +30,7 @@ private:
 
 	IDXGIFactory4				*m_pFactory = nullptr;
 	IDXGISwapChain3				*m_pSwapChain = nullptr;
-	ID3D12Device				*m_pDevice = nullptr;
+	//ID3D12Device				*m_pDevice = nullptr;
 
 	bool						m_bMsaa4xEnable = false;
 	unsigned int				m_nMsaa4xQualityLevels = 0;
@@ -48,14 +48,14 @@ private:
 
 	ID3D12CommandAllocator		*m_pCommandAllocator = nullptr;
 	ID3D12CommandQueue			*m_pCommandQueue = nullptr;
-	ID3D12GraphicsCommandList	*m_pCommandList = nullptr;
+	//ID3D12GraphicsCommandList	*m_pCommandList = nullptr;
 
 	ID3D12Fence					*m_pFence = nullptr;
 	__int64						m_nFenceValues[m_nSwapChainBuffers];
 	HANDLE						m_hFenceEvent;
 
 	_TCHAR						m_pszFrameRate[70];
-	ResourceManager*			resourceMgr = nullptr;
+
 
 	bool Activate;
 public:
@@ -107,6 +107,7 @@ public:
 
 	char* GetSendBuf() { return send_buffer; }
 	const bool GetActivated() const { return Activate; }
+	ResourceManager*			resourceMgr = nullptr;
 	ResourceManager* GetResource() const { return resourceMgr; }
 
 	float cubeSize[50];
@@ -118,11 +119,18 @@ public:
 	XMFLOAT3 slashWavePos[Slash_end - Slash_start];
 	ID3D12RootSignature			*m_pGraphicsRootSignature = nullptr;
 	void SetGraphicsRootSignature(ID3D12GraphicsCommandList *pd3dCommandList) { pd3dCommandList->SetGraphicsRootSignature(m_pGraphicsRootSignature); }
+	unsigned short nBase_room[6] = { 0, 1, 2, 3, 4, 5 };
+	unsigned short nBase_member[6] = { 0,0,0,0,0,0 };
+	unsigned short room_num = 0; // 방 그릴 번호
+	BaseScene * arrScene[BaseScene::SceneTag::Count];
+	ID3D12Device				*m_pDevice = nullptr;
+	ID3D12GraphicsCommandList	*m_pCommandList = nullptr;
+
 private:
 	FrameTimer m_Timer;
 	BasePlayer * m_pPlayer = nullptr;
 	BaseCamera * m_pCamera = nullptr;
-	BaseScene * arrScene[BaseScene::SceneTag::Count];
+	//BaseScene * arrScene[BaseScene::SceneTag::Count];
 	BaseScene * m_pCurrScene = nullptr;
 	BaseScene * m_pPrevScene = nullptr;
 	BaseScene::SceneTag m_CurrSceneTag = BaseScene::SceneTag::Game;

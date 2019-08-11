@@ -28,10 +28,12 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, BaseCamera *pCamera = nullptr);
 	virtual void ProcessPacket(char *ptr) override;
 
-	void SendSceneChange();
+	void SendRomm_LobbyChange();
+	void SendRoomExit();
 
 private:
 	bool left_act = false;
 	bool right_act = false;
+	bool room_exit = false;
 };
 

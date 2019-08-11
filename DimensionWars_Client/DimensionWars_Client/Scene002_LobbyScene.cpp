@@ -22,6 +22,7 @@ void LobbyScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	//m_pFramework->m_pGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
 	//CreateCbvSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 45);
+	nCurrScene = 1;
 
 	m_nObjects2 = 55; //텍스쳐 로드는 45개
 	m_lobbyObjects = new BaseObject*[m_nObjects2];
@@ -259,22 +260,25 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 		//우측 화살표
 		if (pt.x > 580 && pt.x < 640 && pt.y>650 && pt.y < 680)
 		{
-			if(room_num>5)
+			///if(room_num>5)
 				list_num = 2;
 		}
 		// 방 생성
 		if (pt.x > 824 && pt.x < 950 && pt.y>665 && pt.y < 725)
 		{
 			//room_num += 1;
-			if (room_num > 6)
+			if (m_pFramework->room_num > 6)
 			{
-				list_num = 2;
+				//list_num = 2;
 			}
 			
-			if (room_num <= 12) {
+			if (m_pFramework->room_num < 6) {
+
+				room_enter = true;
 				SendRoomCreate();
-				//SendSceneChange(1);
+
 				//m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
+			//	SendLobby_RoomChange(1);
 
 			}
 			
@@ -284,11 +288,11 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 			if (pt.x > 97 && pt.x < 927 && pt.y>80 && pt.y < 144)
 			{
 				if (m_lobbyObjects[7]->room_name == my_room_num) {
-					if (nBase_member[0] < 6) 
+					if (m_pFramework->nBase_member[0] < 6) 
 					{
-
+						room_enter = true;
 						SendEnterRoom();
-						//SendSceneChange(my_room_num);
+						//SendLobby_RoomChange(my_room_num);
 						//m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
 					}
 					
@@ -297,55 +301,55 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 			if (pt.x > 97 && pt.x < 927 && pt.y>175 && pt.y < 235)
 			{
 				if (m_lobbyObjects[8]->room_name == my_room_num) {
-					if (nBase_member[1] < 6)
+					if (m_pFramework->nBase_member[1] < 6)
 					{
+						room_enter = true;
 						SendEnterRoom();
-						//SendSceneChange(my_room_num);
-						//m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
+						//SendLobby_RoomChange(my_room_num);
 					}
 				}
 			}
 			if (pt.x > 97 && pt.x < 927 && pt.y>266 && pt.y < 336)
 			{
 				if (m_lobbyObjects[9]->room_name == my_room_num) {
-					if (nBase_member[2]< 6)
+					if (m_pFramework->nBase_member[2]< 6)
 					{
+						room_enter = true;
 						SendEnterRoom();
-					//	SendSceneChange(my_room_num);
-						//m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
+						//SendLobby_RoomChange(my_room_num);
 					}
 				}
 			}
 			if (pt.x > 97 && pt.x < 927 && pt.y>363 && pt.y < 425)
 			{
 				if (m_lobbyObjects[10]->room_name == my_room_num) {
-					if (nBase_member[3] < 6)
+					if (m_pFramework->nBase_member[3] < 6)
 					{
+						room_enter = true;
 						SendEnterRoom();
-					//	SendSceneChange(my_room_num);
-						//m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
+						//SendLobby_RoomChange(my_room_num);
 					}
 				}
 			}
 			if (pt.x > 97 && pt.x < 927 && pt.y>459 && pt.y < 522)
 			{
 				if (m_lobbyObjects[11]->room_name == my_room_num) {
-					if (nBase_member[4] < 6)
+					if (m_pFramework->nBase_member[4] < 6)
 					{
+						room_enter = true;
 						SendEnterRoom();
-					//	SendSceneChange(my_room_num);
-						//m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
+						//SendLobby_RoomChange(my_room_num);
 					}
 				}
 			}
 			if (pt.x > 97 && pt.x < 927 && pt.y>555 && pt.y < 616)
 			{
 				if (m_lobbyObjects[12]->room_name == my_room_num) {
-					if (nBase_member[5] < 6)
+					if (m_pFramework->nBase_member[5] < 6)
 					{
+						room_enter = true;
 						SendEnterRoom();
-					//	SendSceneChange(my_room_num);
-						//m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
+						//SendLobby_RoomChange(my_room_num);
 					}
 				}
 			}
@@ -442,6 +446,7 @@ bool LobbyScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 void LobbyScene::AnimateObjects(float fTimeElapsed)
 {
+	
 	//좌측 화살표
 	if (pt.x > 380 && pt.x < 445 && pt.y>650 && pt.y < 680)
 		left_active = true;
@@ -573,9 +578,7 @@ void LobbyScene::AnimateObjects(float fTimeElapsed)
 
 		}
 	}
-	// 룸 입장
-	//printf("1번방%d, %d\n", nBase_room[0],room_num);
-	//printf("2번방%d, %d\n", nBase_room[1],room_num);
+	
 
 }
 
@@ -616,48 +619,48 @@ void LobbyScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 
 
 		if (list_num == 1) {
-			if (nBase_room[0] == 1)
+			if (m_pFramework->nBase_room[0] == 1)
 				m_lobbyObjects[7]->Render(pd3dCommandList, pCamera);
-			if (nBase_room[1]== 2)
+			if (m_pFramework->nBase_room[1]== 2)
 				m_lobbyObjects[8]->Render(pd3dCommandList, pCamera);
-			if (nBase_room[2] == 3)
+			if (m_pFramework->nBase_room[2] == 3)
 				m_lobbyObjects[9]->Render(pd3dCommandList, pCamera);
-			if (nBase_room[3] == 4)
+			if (m_pFramework->nBase_room[3] == 4)
 				m_lobbyObjects[10]->Render(pd3dCommandList, pCamera);
-			if (nBase_room[4] == 5)
+			if (m_pFramework->nBase_room[4] == 5)
 				m_lobbyObjects[11]->Render(pd3dCommandList, pCamera);
-			if (nBase_room[5] == 6)
+			if (m_pFramework->nBase_room[5] == 6)
 				m_lobbyObjects[12]->Render(pd3dCommandList, pCamera);
 
 			// 방에 입장한 인원 
 			for (int i = 0; i < 6; ++i)
 			{
-				if (nBase_member[0] == i+1)
+				if (m_pFramework->nBase_member[0] == i+1)
 				{
 					m_lobbyObjects[19+i]->Render(pd3dCommandList, pCamera);
 				}
 
-				if (nBase_member[1] == i + 1)
+				if (m_pFramework->nBase_member[1] == i + 1)
 				{
 					m_lobbyObjects[25 + i]->Render(pd3dCommandList, pCamera);
 				}
 
-				if (nBase_member[2] == i + 1)
+				if (m_pFramework->nBase_member[2] == i + 1)
 				{
 					m_lobbyObjects[31 + i]->Render(pd3dCommandList, pCamera);
 				}
 
-				if (nBase_member[3] == i + 1)
+				if (m_pFramework->nBase_member[3] == i + 1)
 				{
 					m_lobbyObjects[37 + i]->Render(pd3dCommandList, pCamera);
 				}
 
-				if (nBase_member[4] == i + 1)
+				if (m_pFramework->nBase_member[4] == i + 1)
 				{
 					m_lobbyObjects[43 + i]->Render(pd3dCommandList, pCamera);
 				}
 
-				if (nBase_member[5] == i + 1)
+				if (m_pFramework->nBase_member[5] == i + 1)
 				{
 					m_lobbyObjects[49 + i]->Render(pd3dCommandList, pCamera);
 				}
@@ -668,22 +671,23 @@ void LobbyScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 		
 		if (list_num == 2)
 		{
-			if (room_num >= 7)
+			if (m_pFramework->room_num >= 7)
 				m_lobbyObjects[13]->Render(pd3dCommandList, pCamera);
-			if (room_num >= 8)
+			if (m_pFramework->room_num >= 8)
 				m_lobbyObjects[14]->Render(pd3dCommandList, pCamera);
-			if (room_num >= 9)
+			if (m_pFramework->room_num >= 9)
 				m_lobbyObjects[15]->Render(pd3dCommandList, pCamera);
-			if (room_num >= 10)
+			if (m_pFramework->room_num >= 10)
 				m_lobbyObjects[16]->Render(pd3dCommandList, pCamera);
-			if (room_num >= 11)
+			if (m_pFramework->room_num >= 11)
 				m_lobbyObjects[17]->Render(pd3dCommandList, pCamera);
-			if (room_num >= 12)
+			if (m_pFramework->room_num >= 12)
 				m_lobbyObjects[18]->Render(pd3dCommandList, pCamera);
 		}
 
 
 		
+
 
 	}
 }
@@ -708,36 +712,75 @@ void LobbyScene::ProcessPacket(char * ptr)
 	{
 
 		SCPacket_CreateRoom *packet = reinterpret_cast<SCPacket_CreateRoom*>(ptr);
-		room_num = packet->room_num;
-	//	m_lobbyObjects[room_num + 6]->n_member = packet->player_num;
-		m_lobbyObjects[room_num + 6]->room_name = packet->room_num;
-		nBase_room[room_num - 1] = packet->room_num; // n번방
-		nBase_member[room_num - 1] = packet->player_num; // n번방의 인원수
-		
+		m_pFramework->room_num = packet->room_num;
+		//	m_lobbyObjects[room_num + 6]->n_member = packet->player_num;
+		m_lobbyObjects[m_pFramework->room_num + 6]->room_name = packet->room_num;
+		m_pFramework->nBase_room[m_pFramework->room_num - 1] = packet->room_num; // n번방
+		m_pFramework->nBase_member[m_pFramework->room_num - 1] = packet->player_num; // n번방의 인원수
+		if (room_enter == true)
+		{
+			//SendLobby_RoomChange(1);
+			m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
+			room_enter = false;
+		}
+		//printf("생성후 룸정보%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_room[m_pFramework->room_num - 1]);
 		break;
 	}
 	case SC_Type::EnterRoom:
 	{
 
 		SCPacket_EnterRoom *packet = reinterpret_cast<SCPacket_EnterRoom*>(ptr);
-		id_room_num = packet->room_num;
+		m_pFramework->room_num = packet->room_num;
 	//	m_lobbyObjects[id_room_num + 6]->n_member = packet->player_num;
-		//nBase_room[id_room_num - 1] = packet->room_num; // n번방
-		nBase_member[id_room_num - 1] = packet->player_num; // n번방의 인원수
-
+		m_pFramework->nBase_room[m_pFramework->room_num - 1] = packet->room_num; // n번방
+		m_pFramework->nBase_member[m_pFramework->room_num - 1] = packet->player_num; // n번방의 인원수
+		if (room_enter == true)
+		{
+			//SendLobby_RoomChange(my_room_num);
+			m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
+			room_enter = false;
+		}
+		//printf("입장후 %d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_member[m_pFramework->room_num - 1]);
 		break;
 	}
-	case SC_Type::ChangeScene:
+	case SC_Type::ExitRoom:
 	{
-		SCPacket_ChangeScene *packet = reinterpret_cast<SCPacket_ChangeScene*>(ptr);
-		nBase_room[0] = packet->room_num;
-		nBase_member[nBase_room[0] - 1] = packet->player_num;
+		SCPacket_ExitRoom *packet = reinterpret_cast<SCPacket_ExitRoom*>(ptr);
+		m_pFramework->room_num = packet->room_num;
+		if (packet->player_num == 0)
+		{
+			m_pFramework->nBase_room[m_pFramework->room_num - 1] = 0;  // 룸번호
+			m_pFramework->nBase_member[m_pFramework->room_num - 1] = packet->player_num;
+		}
+		else
+		{
+			m_pFramework->nBase_room[m_pFramework->room_num - 1] = packet->room_num;  // 룸번호
+			m_pFramework->nBase_member[m_pFramework->room_num - 1] = packet->player_num; // 룸에 있는 인원
+		}
+//		printf("%d, %d, %d\n", room_num, m_pFramework->nBase_room[room_num - 1], m_pFramework->nBase_member[room_num - 1]);
+		break;
+	}
+	case SC_Type::ChangeScene_R_L:
+	{
+		SCPacket_ChangeScene_R_L *packet = reinterpret_cast<SCPacket_ChangeScene_R_L*>(ptr);
+		m_pFramework->room_num = packet->room_num;
+		m_pFramework->nBase_room[m_pFramework->room_num - 1] = packet->room_num - 1;
+		m_pFramework->nBase_member[m_pFramework->room_num - 1] = packet->player_num;
+		//printf("룸에서받은거%d, %d, %d\n", room_num, m_pFramework->nBase_room[room_num - 1], m_pFramework->nBase_member[room_num - 1]);
+		break;
+	}
+	case SC_Type::ChangeScene_L_R:
+	{
+		SCPacket_ChangeScene_L_R *packet = reinterpret_cast<SCPacket_ChangeScene_L_R*>(ptr);
+		m_pFramework->room_num = packet->room_num;
+		m_pFramework->nBase_room[m_pFramework->room_num - 1] = packet->room_num;  // 룸번호와
+		m_pFramework->nBase_member[m_pFramework->room_num - 1] = packet->player_num; // 룸 에있는 인원
 		break;
 	}
 	
 	default:
 #ifdef USE_CONSOLE_WINDOW
-		printf("Unknown PACKET type [%d]\n", ptr[1]);
+		printf("로비Unknown PACKET type [%d]\n", ptr[1]);
 #endif
 		break;
 	}
@@ -750,12 +793,13 @@ void LobbyScene::SendRoomCreate()
 	CSPacket_RoomCreate *roomPacket = reinterpret_cast<CSPacket_RoomCreate*>(m_pFramework->GetSendBuf());
 	roomPacket->size = sizeof(CSPacket_RoomCreate);
 	roomPacket->player_num = 1;
-	roomPacket->room_num = nBase_room[room_num];  //  원래는room_num
+	roomPacket->room_num = m_pFramework->nBase_room[m_pFramework->room_num];  //  원래는room_num
 	roomPacket->type = CS_Type::Room_Create;
-
+	roomPacket->scene = nCurrScene;
+	roomPacket->check = room_enter;
 	m_pFramework->SendPacket(reinterpret_cast<char *>(roomPacket));
 	
-	
+	//printf("생성전 룸정보%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_room[m_pFramework->room_num - 1]);
 }
 
 
@@ -765,24 +809,25 @@ void LobbyScene::SendEnterRoom()
 	roomPacket->size = sizeof(CSPacket_RoomEnter);
 	//roomPacket->player_num = m_lobbyObjects[6 + my_room_num]->n_member;
 	//roomPacket->room_num = my_room_num;   // 룸넘에서 마이 룸넘으로 교체
-	roomPacket->room_num = nBase_room[my_room_num - 1];
-	roomPacket->player_num = nBase_member[my_room_num - 1];
+	roomPacket->room_num = m_pFramework->nBase_room[m_pFramework->room_num - 1];
+	roomPacket->player_num = m_pFramework->nBase_member[m_pFramework->room_num - 1];
 	roomPacket->type = CS_Type::Room_Enter;
-
+	roomPacket->scene = nCurrScene;
+	roomPacket->check = room_enter;
 	m_pFramework->SendPacket(reinterpret_cast<char *>(roomPacket));
-
+	//printf("입장전 룸정보%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_member[m_pFramework->room_num - 1]);
 	
 }
 
-void LobbyScene::SendSceneChange(unsigned short room_n)
+void LobbyScene::SendLobby_RoomChange(unsigned short room_n)
 {
-	CSPacket_SceneChange *myPacket = reinterpret_cast<CSPacket_SceneChange*>(m_pFramework->GetSendBuf());
-	myPacket->size = sizeof(CSPacket_SceneChange);
-	myPacket->type = CS_Type::Scene_Change;
-	myPacket->player_num = m_lobbyObjects[6 + my_room_num]->n_member; // 현재 인원수
-	myPacket->room_num = room_n;  // 방 번호  생성할때는 1 입장할때는 마이룸넘
+	CSPacket_SceneChange_L_R *myPacket = reinterpret_cast<CSPacket_SceneChange_L_R*>(m_pFramework->GetSendBuf());
+	myPacket->size = sizeof(CSPacket_SceneChange_L_R);
+	myPacket->type = CS_Type::Scene_Change_L_R;
+	myPacket->player_num = m_pFramework->nBase_member[m_pFramework->room_num - 1]; // 현재 인원수
+	myPacket->room_num = m_pFramework->nBase_room[m_pFramework->room_num - 1];  // 방 번호  생성할때는 1 입장할때는 마이룸넘
 	myPacket->scene = BaseScene::SceneTag::Lobby;
+	myPacket->check = room_enter;
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
-	//printf("서버한테 보냄 : %d\n", myAnimationPacket->animation_state);
-
+	
 }
