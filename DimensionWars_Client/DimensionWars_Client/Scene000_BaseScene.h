@@ -35,7 +35,7 @@ class BaseScene
 {
 protected:
 	float MoveDelay = 0.0f;
-	unsigned short myid;
+	
 
 	static ID3D12DescriptorHeap			*m_pd3dCbvSrvDescriptorHeap;
 
@@ -109,12 +109,16 @@ public:
 
 	//virtual bool ProcessInput(UCHAR *keybuffer, float fTimeElapsed) override;
 	virtual void ProcessPacket(char *ptr);
-
+	
 	void SendMoveDirection();
 	void SendAnimationInfo();
-	void SendSceneInfo(unsigned short scene);
-	
+	void SendSceneInfo(unsigned short scene, unsigned short id);
+	void SendRotate(float a, float b);
+	float cxDelta = 0.0f, cyDelta = 0.0f;
+	POINT						m_ptOldCursorPos = { 0, 0 };
+//	unsigned short GetID() { return myid; }
 	unsigned short nCurrScene = 0;
+	
 	BasePlayer					*m_pPlayer = nullptr;
 	BasePlayer *m_ppOtherPlayers[MAX_PLAYER] = { nullptr, };
 //	AnimationController 			*m_pSkinnedAnimationController = nullptr;

@@ -96,16 +96,17 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	
 	m_nCubeObjects = 50;
 	m_ppCubeObjects = new TextureCubeObject*[m_nCubeObjects];
+	
 	for (unsigned int i = 0; i < m_nCubeObjects; ++i) {
-		if (i < 5) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 400;
-		else if (i < 10) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 300;
-		else if (i < 20) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 200;
-		else if (i < 30) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE - 100;
-		else if (i < 50) m_pFramework->cubeSize[i] = MAX_CUBE_SIZE;
-		m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pFramework->cubeSize[i]);
+		if (i < 5) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 300);
+		else if (i < 10) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 400);
+		else if (i < 20) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 500);
+		else if (i < 30) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 600);
+		else if (i < 50) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 700);
+		
 		
 	}
-
+	
 	slashWave = new SlashWaveObject*[Slash_end - Slash_start];
 	for (unsigned int i = 0; i < Slash_end - Slash_start; ++i) {
 		slashWave[i] = new SlashWaveObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
@@ -220,6 +221,24 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 	SendMoveDirection();
 	SendAnimationInfo();
 	
+	POINT ptCursorPos;
+	SetCursor(NULL);
+	GetCursorPos(&ptCursorPos);
+	cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+	cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+
+	if (cxDelta || cyDelta) {
+		/*if (pKeysBuffer[VK_RBUTTON] & 0xF0)
+		Rotate(cyDelta, 0.0f, -cxDelta);
+		else*/
+		//SendRotate(cyDelta, cxDelta);
+	}
+	/*for (int i = 0; i < 50; ++i)
+	{
+		m_ppCubeObjects[i]->SetPosition(0, 6000 - 600 -100*i, 0);
+	}*/
+	BuildCube();
+	
 	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed);
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
@@ -313,7 +332,8 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 
 void BattleScene::BuildCube()
 {
-	if (!isBuilded) {
+	
+	if (cube_build) {
 		for (unsigned int i = 0; i < m_nCubeObjects; ++i) {
 #ifdef USE_CONSOLE_WINDOW
 			// printf("UP Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", i, m_pFramework->cubeSize[i], m_pFramework->cubePos[i].x, m_pFramework->cubePos[i].y, m_pFramework->cubePos[i].z, m_pFramework->cubeRot[i].x, m_pFramework->cubeRot[i].y, m_pFramework->cubeRot[i].z);
@@ -322,20 +342,29 @@ void BattleScene::BuildCube()
 			//m_ppCubeObjects[i]->SetPosition(m_pPlayer->GetPosition().x, m_pPlayer->GetPosition().y, m_pPlayer->GetPosition().z);
 			m_ppCubeObjects[i]->Rotate(m_pFramework->cubeRot[i].x, m_pFramework->cubeRot[i].y, m_pFramework->cubeRot[i].z);
 		}
-
+		cube_build = false;
+	}
+	if (card_build)
+	{
 		for (unsigned int i = 0; i < Slash_end - Slash_start; ++i)
 			if (slashWave && slashWave[i])
-				slashWave[i]->SetPosition(10000,10000,10000);
+				slashWave[i]->SetPosition(10000, 10000, 10000);
+		card_build = false;
+	}
+	if (slash_build)
+	{
 		for (unsigned int i = 0; i < Card_end - Card_start; ++i)
 			if (card && card[i])
 				card[i]->SetPosition(10000, 10000, 10000);
-
+		slash_build = false;
+	}
+	if(portal_build)
+	{
 		for (unsigned int i = 0; i < Potal_end - Potal_start; ++i)
 			if (m_ppPotalObjects&& m_ppPotalObjects[i])
 				m_ppPotalObjects[i]->SetPosition(m_pFramework->potalPos[i]);
 		
-
-		isBuilded = true;
+		portal_build = false;
 	}
 }
 
@@ -347,9 +376,9 @@ void BattleScene::ProcessPacket(char * ptr)
 	{
 	case SC_Type::LoginOK:
 	{
-		//printf("login\n");
+		printf("login\n");
 		/*SCPacket_LoginOK *packet = reinterpret_cast<SCPacket_LoginOK *>(ptr);
-		myid = packet->id;
+		m_pFramework->myid = packet->id;
 #ifdef USE_CONSOLE_WINDOW
 		printf("LOGIN\n");
 #endif*/
@@ -364,9 +393,9 @@ void BattleScene::ProcessPacket(char * ptr)
 		unsigned int id = my_packet->id;
 		if (first_time) {
 			first_time = false;
-			myid = id;
+			m_pFramework->myid = id;
 		}
-		if (id == myid) {
+		if (id == m_pFramework->myid) {
 			m_pPlayer->SetVisible(true);
 			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 			m_pPlayer->hp = my_packet->hp;
@@ -396,7 +425,7 @@ void BattleScene::ProcessPacket(char * ptr)
 		anime = my_packet->animation_state;
 		//printf("%d", anime);
 	//	printf("포지션! 서버한테 받기 성공\n");
-		if (other_id == myid) {
+		if (other_id == m_pFramework->myid) {
 			m_pPlayer->SetVisible(true);
 			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			m_pPlayer->SetPosition(my_packet->position);
@@ -424,6 +453,26 @@ void BattleScene::ProcessPacket(char * ptr)
 		}
 		break;
 	}
+	case SC_Type::Rotate:
+	{
+		SCPacket_Rotate *my_packet = reinterpret_cast<SCPacket_Rotate *>(ptr);
+		unsigned short other_id = my_packet->id;
+		
+		if (other_id == m_pFramework->myid) {
+			m_pPlayer->SetVisible(true);
+			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			
+			m_pPlayer->GetCamera()->Rotate(my_packet->x, my_packet->y, my_packet->z);
+			//m_pPlayer->Rotate(my_packet->x, my_packet->y, my_packet->z);
+		}
+		else if (other_id < MAX_PLAYER) {
+			m_ppOtherPlayers[other_id]->Rotate(my_packet->x, my_packet->y, my_packet->z);
+			m_ppOtherPlayers[other_id]->GetCamera()->Rotate(my_packet->x, my_packet->y, my_packet->z);//#ifdef USE_CONSOLE_WINDOW
+		}
+		
+		
+		break;
+	}
 	case SC_Type::RemovePlayer:
 	{
 #ifdef USE_CONSOLE_WINDOW
@@ -431,7 +480,7 @@ void BattleScene::ProcessPacket(char * ptr)
 #endif
 //		SCPacket_RemovePlayer *my_packet = reinterpret_cast<SCPacket_RemovePlayer *>(ptr);
 //		unsigned int other_id = my_packet->id;
-//		if (other_id == myid) m_pPlayer->SetVisible(false);
+//		if (other_id == m_pFramework->myid) m_pPlayer->SetVisible(false);
 //		if (other_id < MAX_USER) {
 //			if (m_ppOtherPlayers[other_id]) {
 //				//m_ppOtherPlayers[other_id]->SetVisible(false);
@@ -461,38 +510,45 @@ void BattleScene::ProcessPacket(char * ptr)
 	case SC_Type::MapInfo:
 	{
 		//처리
+		
 		SCPacket_MapInfo *my_packet = reinterpret_cast<SCPacket_MapInfo *>(ptr);
 
 		unsigned short id = my_packet->id - Cube_start;
 		m_pFramework->cubePos[id] = XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z);
 		m_pFramework->cubeRot[id] = XMFLOAT3(my_packet->rotate.x, my_packet->rotate.y, my_packet->rotate.z);
+		if(cube_build==false)
+			cube_build = my_packet->build_cube;
+		//printf("%.1f, %.1f, %.1f\n", m_pFramework->cubePos[id].x, m_pFramework->cubePos[id].y, m_pFramework->cubePos[id].z);
+		
 		break;
 	}
 	case SC_Type::Potal:
 	{
+	
 		SCPacket_PotalInfo *my_packet = reinterpret_cast<SCPacket_PotalInfo *>(ptr);
 		unsigned short id = my_packet->id - Potal_start;
 		m_pFramework->potalPos[id] = XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z);
+		portal_build = my_packet->build_portal;
 		break;
 	}
 	case SC_Type::ProjectTile:
-	{		
+	{
 		SCPacket_ProjectTile *my_packet = reinterpret_cast<SCPacket_ProjectTile *>(ptr);
 		if (my_packet->projectTile_type == ProjectTile::Card)
 		{
 			//printf("card (%.1f, %.1f, %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			unsigned short card_id = my_packet->id - Card_start;
 			m_pFramework->cardPos[card_id] = my_packet->position;
-			my_packet->position = m_pPlayer[myid].GetPosition();
+			my_packet->position = m_pPlayer[m_pFramework->myid].GetPosition();
+			card_build = my_packet->build_projecttile;
 		}
 		if (my_packet->projectTile_type == ProjectTile::Slash)
 		{
 			//printf("slash (%.1f, %.1f, %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			unsigned short slash_id = my_packet->id - Slash_start;
 			m_pFramework->slashWavePos[slash_id] = my_packet->position;
-			my_packet->position = m_pPlayer[myid].GetPosition();
-			
-
+			my_packet->position = m_pPlayer[m_pFramework->myid].GetPosition();
+			slash_build = my_packet->build_projecttile;
 		}
 		break;
 	}
@@ -501,7 +557,7 @@ void BattleScene::ProcessPacket(char * ptr)
 	{
 		SCPacket_Hit *my_packet = reinterpret_cast<SCPacket_Hit *>(ptr);
 		unsigned short other_id = my_packet->id;
-		if (other_id == myid) {
+		if (other_id == m_pFramework->myid) {
 			m_pPlayer->hp = my_packet->hp;
 		}
 		else if (other_id < MAX_PLAYER) {
@@ -510,10 +566,16 @@ void BattleScene::ProcessPacket(char * ptr)
 		}
 		break;
 	}
+	case SC_Type::CreateRoom:
+	{
+		SCPacket_CreateRoom *my_packet = reinterpret_cast<SCPacket_CreateRoom *>(ptr);
+		break;
+	}
 	default:
 #ifdef USE_CONSOLE_WINDOW
 		printf("Unknown PACKET type [%d]\n", ptr[1]);
 #endif
 		break;
 	}
+	
 }

@@ -258,16 +258,16 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 	case WM_LBUTTONDOWN:
 		//printf("%d, %d\n", pt.x, pt.y);
 		//좌측 화살표
-		if (pt.x > 380 && pt.x < 445 && pt.y>650 && pt.y < 680)
-		{
-			list_num = 1;
-		}
-		//우측 화살표
-		if (pt.x > 580 && pt.x < 640 && pt.y>650 && pt.y < 680)
-		{
-			///if(room_num>5)
-				list_num = 2;
-		}
+		//if (pt.x > 380 && pt.x < 445 && pt.y>650 && pt.y < 680)
+		//{
+		//	list_num = 1;
+		//}
+		////우측 화살표
+		//if (pt.x > 580 && pt.x < 640 && pt.y>650 && pt.y < 680)
+		//{
+		//	///if(room_num>5)
+		//		list_num = 2;
+		//}
 		// 방 생성
 		if (pt.x > 824 && pt.x < 950 && pt.y>665 && pt.y < 725)
 		{
@@ -359,7 +359,7 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 				}
 			}
 		}
-		if (list_num == 2) {
+		/*if (list_num == 2) {
 			if (pt.x > 97 && pt.x < 927 && pt.y>80 && pt.y < 144)
 			{
 				if (m_lobbyObjects[13]->room_name == my_room_num) {
@@ -420,7 +420,7 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 					}
 				}
 			}
-		}
+		}*/
 		
 		break;
 	case WM_RBUTTONDOWN:
@@ -453,15 +453,15 @@ void LobbyScene::AnimateObjects(float fTimeElapsed)
 {
 	
 	//좌측 화살표
-	if (pt.x > 380 && pt.x < 445 && pt.y>650 && pt.y < 680)
-		left_active = true;
-	else
-		left_active = false;
-	//우측 화살표
-	if (pt.x > 580 && pt.x < 640 && pt.y>650 && pt.y < 680)
-		right_active = true;
-	else
-		right_active = false;
+	//if (pt.x > 380 && pt.x < 445 && pt.y>650 && pt.y < 680)
+	//	left_active = true;
+	//else
+	//	left_active = false;
+	////우측 화살표
+	//if (pt.x > 580 && pt.x < 640 && pt.y>650 && pt.y < 680)
+	//	right_active = true;
+	//else
+	//	right_active = false;
 	// 방 생성
 	if (pt.x > 824 && pt.x < 950 && pt.y>665 && pt.y < 725)
 		m_lobbyObjects[6]->SetPosition(230, -180, -25);
@@ -603,7 +603,7 @@ void LobbyScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 		m_lobbyObjects[6]->Render(pd3dCommandList, pCamera); // 방 생성 
 		
 		// 화살표
-		if (left_active == true)
+		/*if (left_active == true)
 		{
 			m_lobbyObjects[4]->Render(pd3dCommandList, pCamera);
 		}
@@ -618,7 +618,7 @@ void LobbyScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 		else
 		{
 			m_lobbyObjects[3]->Render(pd3dCommandList, pCamera);
-		}
+		}*/
 
 		// 방 
 
@@ -674,7 +674,7 @@ void LobbyScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 		}
 
 		
-		if (list_num == 2)
+		/*if (list_num == 2)
 		{
 			if (m_pFramework->room_num >= 7)
 				m_lobbyObjects[13]->Render(pd3dCommandList, pCamera);
@@ -688,7 +688,7 @@ void LobbyScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 				m_lobbyObjects[17]->Render(pd3dCommandList, pCamera);
 			if (m_pFramework->room_num >= 12)
 				m_lobbyObjects[18]->Render(pd3dCommandList, pCamera);
-		}
+		}*/
 
 
 		
@@ -707,7 +707,8 @@ void LobbyScene::ProcessPacket(char * ptr)
 	{
 		//printf("login\n");
 		SCPacket_LoginOK *packet = reinterpret_cast<SCPacket_LoginOK *>(ptr);
-		myid = packet->id;
+		m_pFramework->myid = packet->id;
+		
 #ifdef USE_CONSOLE_WINDOW
 		printf("LOGIN\n");
 #endif

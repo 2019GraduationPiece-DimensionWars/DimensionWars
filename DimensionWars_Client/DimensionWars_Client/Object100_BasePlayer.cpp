@@ -2,6 +2,7 @@
 #include "Object100_BasePlayer.h"
 #include "Camera000_BaseCamera.h"
 #include "Camera002_ThirdPersonCamera.h"
+#include "RuntimeFrameWork.h"
 
 
 BasePlayer::BasePlayer()
@@ -314,3 +315,25 @@ bool BasePlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 }
 
 
+void BasePlayer::SendRotate(float cx, float cy)
+{
+	POINT ptCursorPos;
+	SetCursor(NULL);
+	GetCursorPos(&ptCursorPos);
+
+	CSPacket_Rotate *myPacket = reinterpret_cast<CSPacket_Rotate*>(m_pFramework->GetSendBuf());
+	myPacket->size = sizeof(CSPacket_Rotate);
+	myPacket->type = CS_Type::Rotate;
+	myPacket->x = cx;
+		myPacket->y = cy;
+	myPacket->z = 0.0f;
+	m_ptOldCursorPos = ptCursorPos;
+	myPacket->m_Look = GetLookVector();
+	myPacket->m_Right = GetRightVector();
+	myPacket->m_Up = GetUpVector();
+
+	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
+	printf("d\n");
+
+
+}

@@ -8,6 +8,7 @@
 #include "Shader005_TextureRectangleShader.h"
 #include "ResourceManager.h"
 #include "Object104_DummyPlayer.h"
+#include "Scene004_BattleScene.h"
 RoomScene::RoomScene()
 {
 }
@@ -200,6 +201,7 @@ bool RoomScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 	{
 	case WM_LBUTTONDOWN:
 		//printf("%d, %d\n", pt.x, pt.y);
+		//나가기
 		if (pt.x > 55 && pt.x < 180 && pt.y>666 && pt.y < 726)
 		{
 			room_exit = true;
@@ -208,16 +210,29 @@ bool RoomScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 			//SendSceneChange();
 			//m_pFramework->ChangeScene(BaseScene::SceneTag::Lobby);
 		}
+		// 입장
 		if (pt.x > 841 && pt.x < 966 && pt.y>666 && pt.y < 726)
 		{
-			SendSceneInfo(4);
+			
+			SendSceneInfo(4, m_pFramework->myid);
 			//m_pFramework->m_pCommandList->Reset(m_pFramework->m_pCommandAllocator, NULL);
 			//m_pFramework->resourceMgr = new ResourceManager();
 			////m_pPlayer = m_pFramework->arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
 			//m_pFramework->arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pFramework->m_pDevice, m_pFramework->m_pCommandList);
 			m_pPlayer = m_pFramework->arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
+			
 			//m_pFramework->m_pCommandList->Close();
-			//m_pFramework->ChangeScene(BaseScene::SceneTag::Game);
+			m_pFramework->ChangeScene(BaseScene::SceneTag::Game);
+		}
+		if (pt.x > 69 && pt.x < 111 && pt.y>460 && pt.y < 485)
+		{
+			
+		}
+			
+		//우측 화살표
+		if (pt.x > 154 && pt.x < 197 && pt.y>460 && pt.y < 485)
+		{
+
 		}
 		
 		break;
@@ -249,7 +264,6 @@ bool RoomScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 void RoomScene::AnimateObjects(float fTimeElapsed)
 {
-	
 	//printf("룸%d, 입장한 수%d\n",m_pFramework->nBase_room[0], m_pFramework->nBase_member[0]);
 	//좌측
 	if (pt.x > 69 && pt.x < 111 && pt.y>460 && pt.y < 485)

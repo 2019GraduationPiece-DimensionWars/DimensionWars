@@ -100,7 +100,6 @@ void ServerManager::AcceptThread()
 		}
 
 		unsigned short new_id = GetNewID();
-
 		// 클라이언트 구조체 초기화
 		// memset(&clients[new_id], 0x00, sizeof(struct SOCKETINFO)); // viewlist같은 컨테이너객체는 0으로 초기화해서는 안된다.
 		objects[new_id].socket = clientSocket;
@@ -129,17 +128,17 @@ void ServerManager::AcceptThread()
 		SendLoginOKPacket(new_id);
 
 		// 풋플레이어는 룸에서 해주자 
-		SendPutPlayerPacket(new_id, new_id); // 나 자신에게 미리 알려준다.
+		//SendPutPlayerPacket(new_id, new_id); // 나 자신에게 미리 알려준다.
 
-		for (int i = 0; i < MAX_PLAYER; ++i) {
-			if (false == objects[i].connected) continue;
-			if (i == new_id) continue; // 나 자신에게 나를 알려줄 필요는 없다.
-			else {
-				//	objects[i].viewlist.insert(new_id);
+		//for (int i = 0; i < MAX_PLAYER; ++i) {
+		//	if (false == objects[i].connected) continue;
+		//	if (i == new_id) continue; // 나 자신에게 나를 알려줄 필요는 없다.
+		//	else {
+		//		//	objects[i].viewlist.insert(new_id);
 
-				SendPutPlayerPacket(i, new_id);
-			}
-		}
+		//		SendPutPlayerPacket(i, new_id);
+		//	}
+		//}
 		//for (int i = 0; i < MAX_PLAYER; ++i) {
 		//	if (false == objects[i].connected) continue;
 		//	if (i == new_id) continue;
@@ -151,7 +150,7 @@ void ServerManager::AcceptThread()
 		//}
 
 		// 이거는 맵정보니까  룸에서 하자
-		for (int i = Cube_start; i < Cube_start + 50; ++i)
+		/*for (int i = Cube_start; i < Cube_start + 50; ++i)
 		{
 			SendMapInfoPacket(new_id, i);
 		}
@@ -173,7 +172,7 @@ void ServerManager::AcceptThread()
 		{
 			objects[i].position = XMFLOAT3(-100000, 0, 100000);
 			SendSlashPaket(new_id, i);
-		}
+		}*/
 
 		for (int i = 0; i < MAX_PLAYER; ++i)
 		{
@@ -587,10 +586,12 @@ void ServerManager::SendMapInfoPacket(unsigned short to, unsigned short obj)
 	packet.id = obj;
 	packet.size = sizeof(packet);
 	packet.type = SC_Type::MapInfo;
+	packet.build_cube = cube_build;
 	packet.position = XMFLOAT3(objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);
 	packet.rotate = XMFLOAT3(objects[obj].rotate.x, objects[obj].rotate.y, objects[obj].rotate.z);
 
 	SendPacket(to, reinterpret_cast<char *>(&packet));
+	//printf("%.1f, %.1f, %.1f\n", objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);
 }
 
 
@@ -600,6 +601,7 @@ void ServerManager::SendPotalInfoPacket(unsigned short to, unsigned short obj)
 	packet.id = obj;
 	packet.size = sizeof(packet);
 	packet.type = SC_Type::Potal;
+	packet.build_portal = portal_build;
 	packet.position = XMFLOAT3(objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);
 	packet.rotate = XMFLOAT3(objects[obj].rotate.x, objects[obj].rotate.y, objects[obj].rotate.z);
 
@@ -613,6 +615,7 @@ void ServerManager::SendCardPaket(unsigned short to, unsigned short obj)
 	packet.id = obj;
 	packet.size = sizeof(packet);
 	packet.type = SC_Type::ProjectTile;
+	packet.build_projecttile = projecttile_build;
 	packet.position = XMFLOAT3(objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);
 	packet.projectTile_type = ProjectTile::Card;
 
@@ -635,6 +638,7 @@ void ServerManager::SendSlashPaket(unsigned short to, unsigned short obj)
 	packet.id = obj;
 	packet.size = sizeof(packet);
 	packet.type = SC_Type::ProjectTile;
+	packet.build_projecttile = projecttile_build;
 	packet.position = XMFLOAT3(objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);
 	packet.projectTile_type = ProjectTile::Slash;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
@@ -718,14 +722,28 @@ void ServerManager::SendInfoScenePacket(unsigned short to, unsigned short obj)
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
+void ServerManager::SendRotatePacket(unsigned short to, unsigned short obj)
+{
+	SCPacket_Rotate packet;// obj가 움직였다고 to 소켓에다 보내줘야 한다.
+	packet.id = obj;
+	packet.size = sizeof(packet);
+	packet.type = SC_Type::Rotate;
+	packet.x = m_fPitch;
+	packet.y = m_fYaw;
+	packet.z = m_fRoll;
+	SendPacket(to, reinterpret_cast<char *>(&packet));
+}
+
 void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 {
 
 	CSPacket_Move * packet = reinterpret_cast<CSPacket_Move *>(buf);
+	CSPacket_Rotate *rpacket= reinterpret_cast<CSPacket_Rotate *>(buf);
 	XMFLOAT3 xmf3Shift = objects[id].position;
 	objects[id].m_Look = packet->m_Look;
 	objects[id].m_Right = packet->m_Right;
 	objects[id].m_Up = packet->m_Up;
+
 	switch (packet->type) {
 	case CS_Type::Character_Info:
 	{
@@ -774,6 +792,48 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 
 			}
 
+		}
+
+		break;
+	}
+	case CS_Type::Rotate:
+	{
+		CSPacket_Rotate *packet = reinterpret_cast<CSPacket_Rotate *>(buf);
+
+		if (packet->x != 0.0f)
+		{
+			m_fPitch += packet->x;
+			if (m_fPitch > +89.0f) { packet->x -= (m_fPitch - 89.0f); m_fPitch = +89.0f; }
+			if (m_fPitch < -89.0f) { packet->x -= (m_fPitch + 89.0f); m_fPitch = -89.0f; }
+		}
+		if (packet->y != 0.0f)
+		{
+			m_fYaw += packet->y;
+			if (m_fYaw > 90.0f) m_fYaw -= 90.0f;
+			if (m_fYaw < 0.0f) m_fYaw += 90.0f;
+		}
+		if (packet->z != 0.0f)
+		{
+			m_fRoll += packet->z;
+			if (m_fRoll > +20.0f) { packet->z -= (m_fRoll - 20.0f); m_fRoll = +20.0f; }
+			if (m_fRoll < -20.0f) { packet->z -= (m_fRoll + 20.0f); m_fRoll = -20.0f; }
+		}
+		//m_pCamera->Rotate(x, y, z);
+		if (packet->y != 0.0f)
+		{
+			XMMATRIX xmmtxRotate = XMMatrixRotationAxis(XMLoadFloat3(&m_xmf3Up), XMConvertToRadians(packet->y));
+			m_xmf3Look = Vector3::TransformNormal(m_xmf3Look, xmmtxRotate);
+			m_xmf3Right = Vector3::TransformNormal(m_xmf3Right, xmmtxRotate);
+		}
+
+		m_xmf3Look = Vector3::Normalize(m_xmf3Look);
+		m_xmf3Right = Vector3::CrossProduct(m_xmf3Up, m_xmf3Look, true);
+		m_xmf3Up = Vector3::CrossProduct(m_xmf3Look, m_xmf3Right, true);
+
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (objects[i].connected == true) {
+				SendRotatePacket(i, id);
+			}
 		}
 
 		break;
@@ -834,7 +894,6 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		CSPacket_RoomEnter *packet = reinterpret_cast<CSPacket_RoomEnter*>(buf);
 		room_num = packet->room_num;
 		member_num = packet->player_num + 1; // 방에 입장한 수 
-		printf("%d", member_num);
 		objects[id].change_check = packet->check;
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (objects[i].connected == true) {
@@ -900,19 +959,46 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	{
 		CSPacket_SceneInfo *packet = reinterpret_cast<CSPacket_SceneInfo*>(buf);
 		scene = packet->scene;
-		unsigned short new_id = GetNewID();
+		unsigned short id = packet->id;
+		
 		if (scene == 4)
 		{
-			SendPutPlayerPacket(new_id, new_id); // 나 자신에게 미리 알려준다.
+			SendPutPlayerPacket(id, id); // 나 자신에게 미리 알려준다.
 
 			for (int i = 0; i < MAX_PLAYER; ++i) {
 				if (false == objects[i].connected) continue;
-				if (i == new_id) continue; // 나 자신에게 나를 알려줄 필요는 없다.
+				if (i == id) continue; // 나 자신에게 나를 알려줄 필요는 없다.
 				else {
 					//	objects[i].viewlist.insert(new_id);
 
-					SendPutPlayerPacket(i, new_id);
+					SendPutPlayerPacket(i, id);
 				}
+			}
+			cube_build = true;
+			portal_build = true;
+			projecttile_build = true;
+			for (int i = Cube_start; i < Cube_start + 50; ++i)
+			{
+				SendMapInfoPacket(id, i);
+			}
+
+			for (int i = Potal_start; i < Potal_end; ++i)
+			{
+				SendPotalInfoPacket(id, i);
+			}
+
+
+			for (int i = Card_start; i < Card_end; ++i)
+			{
+				objects[i].position = XMFLOAT3(100000, 0, 100000);
+				SendCardPaket(id, i);
+
+			}
+
+			for (int i = Slash_start; i < Slash_end; ++i)
+			{
+				objects[i].position = XMFLOAT3(-100000, 0, 100000);
+				SendSlashPaket(id, i);
 			}
 		}
 
@@ -923,7 +1009,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		serverPrint("Unknown Packet Type Error\n");
 		while (true);
 	}
-
+	
 	if (Collision())
 	{
 
@@ -956,7 +1042,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		if (packet->dir & DIR_DOWN&&check_f == false && check_b == false && check_r == false && check_l == false && check_u == false) {
 			check_d = true;
 			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, +fDistance);
-
+	
 		}
 	}
 	else
@@ -967,6 +1053,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		check_l = false;
 		check_u = false;
 		check_d = false;
+		
 	}
 
 
@@ -1098,15 +1185,20 @@ bool ServerManager::Collision()
 		//큐브 충돌
 		for (int j = 0; j < MAX_PLAYER; ++j)
 		{
-			if (objects[i].colbox.Intersects(objects[j].colbox)) {
-				
+			if (objects[j].connected)
+			{
+				if (objects[i].colbox.Intersects(objects[j].colbox)) {
+					//objects[j].col_check = true;
 
-				return true;
+					return true;
+				//	printf("충돌\n");
+				}
+				
 			}
 		}
 	}
-
 	return false;
+
 }
 
 
@@ -1118,17 +1210,27 @@ void ServerManager::AddTimerEvent(unsigned int id, TimerEvent::Command cmd, doub
 	timerQueue_Lock.unlock();
 }
 
-void ServerManager::Update(unsigned int id)
+void ServerManager::Update(unsigned long id)
 {
+
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		objects[i].col_check = false;
+
+	}
+
+	//Collision();
+
 
 	if (!Collision() && objects[id].connected == true)
 		objects[id].position.y -= 9.8f; // 중력 
+
 
 	if (objects[id].position.y <= 0)
 	{
 		objects[id].position.y = 0;
 	}
-	
+
 	/*if (jump_check == true)
 	{
 	XMFLOAT3 prev = objects[id].position;
@@ -1165,7 +1267,7 @@ void ServerManager::Update(unsigned int id)
 		{
 			objects[i].position = Vector3::Add(objects[i].position, objects[id].m_Look, 10.0f);
 			//printf("%1.f, %1.f, %1.f\n", objects[i].position.x, objects[i].position.y,objects[i].position.z);
-			if (abs(objects[i].position.z- objects[id].position.z) >= 1000)
+			if (abs(objects[i].position.z - objects[id].position.z) >= 1000)
 			{
 				objects[i].tile_life = false;
 			}
@@ -1193,10 +1295,10 @@ void ServerManager::Update(unsigned int id)
 		{
 			if (objects[k].connected&&objects[id].connected&&k != id&&objects[i].tile_life&&objects[i].colbox.Intersects(objects[k].colbox))
 			{
-				
+
 				objects[k].hp -= 2;
-				SendHitPaket(k,id);
-			
+				SendHitPaket(k, id);
+
 				if (objects[k].hp <= 0) {
 					objects[k].position = XMFLOAT3(0, 6000, 0);
 					objects[k].hp = 100;
@@ -1239,7 +1341,7 @@ void ServerManager::Update(unsigned int id)
 					objects[k].position = XMFLOAT3(0, 6000, 0);
 					objects[k].hp = 100;
 				}
-				
+
 			}
 		}
 	}
@@ -1258,19 +1360,19 @@ void ServerManager::Update(unsigned int id)
 		objects[i].colbox.Center = XMFLOAT3(objects[i].position.x, objects[i].position.y, objects[i].position.z);
 		objects[i].colbox.Extents = XMFLOAT3(15, 15, 15);
 	}
-	for (int i = Potal_start; i < Potal_start+5; ++i)
+	for (int i = Potal_start; i < Potal_start + 5; ++i)
 	{
 		if (objects[id].connected&&objects[i].colbox.Intersects(objects[id].colbox))
 		{
 			objects[id].position = XMFLOAT3(0, 6000, 0);
 		}
 	}
-	
+
 	// 맨위포탈
 
 	if (objects[id].connected&&objects[Potal_start + 15].colbox.Intersects(objects[id].colbox))
 	{
-		objects[id].position = XMFLOAT3(0-300, 2000 + 400, -center_cube_distance - 300);
+		objects[id].position = XMFLOAT3(0 - 300, 2000 + 400, -center_cube_distance - 300);
 	}
 	if (objects[id].connected&&objects[Potal_start + 16].colbox.Intersects(objects[id].colbox))
 	{
@@ -1289,34 +1391,36 @@ void ServerManager::Update(unsigned int id)
 		objects[id].position = XMFLOAT3(0 - 300 + center_cube_distance, 2000 + 300, 1100 - 300);
 	}
 	// 중간포탈
-	
+
 	for (int i = Potal_start + 10; i < Potal_start + 15; ++i)
 	{
 		if (objects[id].connected&&objects[i].colbox.Intersects(objects[id].colbox))
-			objects[id].position = XMFLOAT3(1000,0,1000);
+			objects[id].position = XMFLOAT3(1000, 0, 1000);
 	}
 
 	//아래 포탈
-	if(objects[id].connected&&objects[Potal_start + 5].colbox.Intersects(objects[id].colbox))
+	if (objects[id].connected&&objects[Potal_start + 5].colbox.Intersects(objects[id].colbox))
 	{
 		objects[id].position = XMFLOAT3(100, 3000 + 400, 0);
 	}
 	if (objects[id].connected&&objects[Potal_start + 6].colbox.Intersects(objects[id].colbox))
 	{
-		objects[id].position = XMFLOAT3(-1100+100, 3000 + 300, 0);
+		objects[id].position = XMFLOAT3(-1100 + 100, 3000 + 300, 0);
 	}
 	if (objects[id].connected&&objects[Potal_start + 7].colbox.Intersects(objects[id].colbox))
 	{
-		objects[id].position = XMFLOAT3(0+100, 3000 + 300, -1100);
+		objects[id].position = XMFLOAT3(0 + 100, 3000 + 300, -1100);
 	}
 	if (objects[id].connected&&objects[Potal_start + 8].colbox.Intersects(objects[id].colbox))
 	{
-		objects[id].position = XMFLOAT3(1100+100, 3000 + 300, 0);
+		objects[id].position = XMFLOAT3(1100 + 100, 3000 + 300, 0);
 	}
 	if (objects[id].connected&&objects[Potal_start + 9].colbox.Intersects(objects[id].colbox))
 	{
-		objects[id].position = XMFLOAT3(0+100, 3000 + 300, 1100);
+		objects[id].position = XMFLOAT3(0 + 100, 3000 + 300, 1100);
 	}
+
 	AddTimerEvent(id);
+
 }
 

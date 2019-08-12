@@ -631,7 +631,7 @@ void BaseScene::SendMoveDirection()
 		//myMovePacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
 		myMovePacket->type = CS_Type::Move;
 		m_pFramework->SendPacket(reinterpret_cast<char *>(myMovePacket));
-		printf("º¸³¿\n");
+		
 	}
 	
 }
@@ -648,14 +648,37 @@ void BaseScene::SendAnimationInfo()
 	}
 }
 
-void BaseScene::SendSceneInfo(unsigned short scene)
+void BaseScene::SendSceneInfo(unsigned short scene, unsigned short id)
 {
 	CSPacket_SceneInfo *myPacket = reinterpret_cast<CSPacket_SceneInfo*>(m_pFramework->GetSendBuf());
 	myPacket->size = sizeof(CSPacket_SceneInfo);
 	myPacket->type = CS_Type::Sceneinfo;
 	myPacket->scene = scene;
+	myPacket->id = id;
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
-	//printf("¼­¹öÇÑÅ× º¸³¿ : %d\n", myPacket->animation_state);
+	
 
+}
+
+void BaseScene::SendRotate(float a, float b)
+{
+	POINT ptCursorPos;
+	SetCursor(NULL);
+	GetCursorPos(&ptCursorPos);
+	
+	CSPacket_Rotate *myPacket = reinterpret_cast<CSPacket_Rotate*>(m_pFramework->GetSendBuf());
+	myPacket->size = sizeof(CSPacket_Rotate);
+	myPacket->type = CS_Type::Rotate;
+	myPacket->x = a;
+	myPacket->y = b;
+	myPacket->z = 0.0f;
+	m_ptOldCursorPos = ptCursorPos;
+	myPacket->m_Look = m_pPlayer->GetLookVector();
+	myPacket->m_Right = m_pPlayer->GetRightVector();
+	myPacket->m_Up = m_pPlayer->GetUpVector();
+
+	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
+
+	
 }
 

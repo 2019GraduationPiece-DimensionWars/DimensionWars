@@ -83,11 +83,11 @@ bool RuntimeFrameWork::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	BuildAllScene();
 
-	//ChangeScene(BaseScene::SceneTag::Title);
-	ChangeScene(BaseScene::SceneTag::Game);
+	ChangeScene(BaseScene::SceneTag::Title);
+	//ChangeScene(BaseScene::SceneTag::Game);
 
 	// 네트워크 초기화
-	NetworkInitialize();
+	//NetworkInitialize();
 	BuildObjects();
 
 	return (m_hWnd != NULL);
@@ -453,11 +453,11 @@ void RuntimeFrameWork::FrameAdvance()
 {
 	m_Timer.Tick(60.0f);
 
-	BattleScene *pScene = reinterpret_cast<BattleScene*>(arrScene[BaseScene::SceneTag::Game]);
+	/*BattleScene *pScene = reinterpret_cast<BattleScene*>(arrScene[BaseScene::SceneTag::Game]);
 
 	
 
-	pScene->BuildCube();
+	pScene->BuildCube();*/
 	ProcessInput();
 	
     Update();
@@ -615,7 +615,7 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 			}
 			else if (m_CurrSceneTag == BaseScene::SceneTag::Game)
 			{
-				ChangeScene(BaseScene::SceneTag::Title);
+				//ChangeScene(BaseScene::SceneTag::Title);
 			}
 			break;
 		default:

@@ -126,6 +126,8 @@ public:
 	ID3D12Device				*m_pDevice = nullptr;
 	ID3D12GraphicsCommandList	*m_pCommandList = nullptr;
 	ID3D12CommandAllocator		*m_pCommandAllocator = nullptr;
+	unsigned short myid;
+
 private:
 	FrameTimer m_Timer;
 	BasePlayer * m_pPlayer = nullptr;

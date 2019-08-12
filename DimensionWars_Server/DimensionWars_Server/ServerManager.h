@@ -35,7 +35,7 @@ private:
 	std::priority_queue<TimerEvent, std::vector<TimerEvent>, TimerEvent::Priority>	timerQueue;
 	std::mutex					timerQueue_Lock;
 	SOCKETINFO							objects[MAX_OBJECTS];	// client, 투사체, 큐브 장애물 등에 다 ID를 등록 후 클라이언트에 뿌려줘야 하므로 Objects라고 명명
-	float fDistance = 10.0f;
+	float fDistance = 9.8f;
 
 	XMFLOAT3					m_xmf3Velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	XMFLOAT3     				m_xmf3Gravity = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -48,6 +48,9 @@ private:
 	XMFLOAT3					m_xmf3Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 	XMFLOAT3					m_xmf3Look = XMFLOAT3(0.0f, 0.0f, 1.0f);
 	unsigned int ani_state;
+	bool cube_build;
+	bool portal_build;
+	bool projecttile_build;
 	//PlayerObject **player;
 
 private:
@@ -80,7 +83,7 @@ private:
 	void SendChagne_R_LPacket(unsigned short to, unsigned short obj);
 	void SendRoomExitPacket(unsigned short to, unsigned short obj);
 	void SendInfoScenePacket(unsigned short to, unsigned short obj);
-
+	void SendRotatePacket(unsigned short to, unsigned short obj);
 	void DisConnect(unsigned short int id);
 	const unsigned short int GetNewID();
 	bool isNearObject(unsigned short int a, unsigned short int b);
@@ -94,7 +97,7 @@ private:
 	bool check_f, check_b, check_r, check_l, check_u, check_d;
 
 	void AddTimerEvent(unsigned int id, TimerEvent::Command cmd = TimerEvent::Command::Update, double seconds = 0.01f);
-	void Update(unsigned int id);
+	void Update(unsigned long id);
 
 	int character_type = 99;
 	int card_num = 0;
@@ -115,4 +118,9 @@ private:
 	unsigned short scene = 0;
 
 	bool check;
+	int col;
+	// 회전 정보
+	float           			m_fPitch = 0.0f;
+	float           			m_fYaw = 0.0f;
+	float           			m_fRoll = 0.0f;
 };

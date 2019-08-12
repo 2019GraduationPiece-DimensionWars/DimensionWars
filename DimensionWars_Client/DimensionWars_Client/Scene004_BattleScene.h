@@ -37,6 +37,11 @@ private:
 	SlashWaveObject** slashWave = nullptr;
 	
 	SkinnedFrameObject** arrow = nullptr;
+	bool cube_build = false;
+	bool portal_build = false;
+	bool card_build = false;
+	bool slash_build = false;
+
 public:
 	BattleScene();
 	BattleScene(SceneTag tag, RuntimeFrameWork* pFramework)

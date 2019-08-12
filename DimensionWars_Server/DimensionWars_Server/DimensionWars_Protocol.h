@@ -171,6 +171,7 @@ namespace SC
 		ChangeScene_R_L = 16,
 		ExitRoom=17,
 		InfoScene=18,
+		Rotate=19,
 	};
 }
 using SC_Type = SC::ServerToClientSocketType;	// 약자 형태로 사용할 것이다.
@@ -190,6 +191,7 @@ namespace CS
 		Scene_Change_R_L = 10,
 		Room_Exit=11,
 		Sceneinfo =12,
+		Rotate=13,
 	};
 }
 using CS_Type = CS::ClientToServerSocketType;	// 약자 형태로 사용할 것이다.
@@ -224,14 +226,14 @@ struct SCPacket_RemovePlayer : SCPacket_Base {
 struct SCPacket_MapInfo : SCPacket_Base {
 	DirectX::XMFLOAT3 position; // 위치정보
 	DirectX::XMFLOAT3 rotate; // 회전정보
-
+	bool build_cube;
 	// 맵의 기본 정보
 };
 
 struct SCPacket_PotalInfo : SCPacket_Base {
 	DirectX::XMFLOAT3 position; // 위치정보
 	DirectX::XMFLOAT3 rotate; // 회전정보
-
+	bool build_portal;
 							  // 맵의 기본 정보
 };
 
@@ -246,6 +248,7 @@ struct SCPacket_Attack : SCPacket_Base {
 struct SCPacket_ProjectTile : SCPacket_Base {
 	DirectX::XMFLOAT3 position;
 	unsigned short projectTile_type;
+	bool build_projecttile;
 	
 	
 };
@@ -292,6 +295,15 @@ struct SCPacket_ExitRoom : SCPacket_Base {
 
 struct SCPacket_InfoScene : SCPacket_Base {
 	unsigned short scene;
+};
+
+struct SCPacket_Rotate : SCPacket_Base {
+	float x;
+	float y;
+	float z;
+	DirectX::XMFLOAT3 m_Right;
+	DirectX::XMFLOAT3 m_Up;
+	DirectX::XMFLOAT3 m_Look;
 };
 
 struct CSPacket_Base {
@@ -361,6 +373,15 @@ struct CSPacket_RoomExit : SCPacket_Base {
 
 struct CSPacket_SceneInfo : SCPacket_Base {
 	unsigned short scene;
+};
+
+struct CSPacket_Rotate : SCPacket_Base {
+	float x;
+	float y;
+	float z;
+	DirectX::XMFLOAT3 m_Right;
+	DirectX::XMFLOAT3 m_Up;
+	DirectX::XMFLOAT3 m_Look;
 };
 #pragma pack(pop)
 
