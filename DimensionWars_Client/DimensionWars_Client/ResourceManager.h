@@ -21,6 +21,10 @@ public:
 
 	void AllModelLoad(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature);
 
+	void LoadGrimReaper(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature);
+	void LoadGambler(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature);
+	void LoadElfArcher(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature);
+
 	LoadedModelInfo* GetGrimReaperModel() const { return GrimReaperModel; }
 	LoadedModelInfo* GetGamblerModel() const { return GamblerModel; }
 	LoadedModelInfo* GetElfArcherModel() const { return ElfArcherModel; }

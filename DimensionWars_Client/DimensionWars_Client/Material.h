@@ -29,7 +29,7 @@ public:
 	float							m_fMetallic = 0.0f;
 	float							m_fGlossyReflection = 0.0f;
 
-	Material() = delete;
+	// Material() = delete;
 	Material(unsigned int nTextures = 1);
 	virtual ~Material();
 	void AddRef() { ++m_nReferences; }

@@ -147,6 +147,7 @@ void SkinnedMesh::ReleaseUploadBuffers()
 
 void SkinnedMesh::OnPreRender(ID3D12GraphicsCommandList * pd3dCommandList, void * pContext)
 {
-	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[3] = { m_d3dPositionBufferView, m_d3dBoneIndexBufferView, m_d3dBoneWeightBufferView };
+	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[7] = { m_d3dPositionBufferView, m_d3dBoneIndexBufferView, m_d3dBoneWeightBufferView, m_d3dTextureCoord0BufferView, m_d3dNormalBufferView, m_d3dTangentBufferView, m_d3dBiTangentBufferView };
+    // pd3dCommandList->IASetVertexBuffers(m_nSlot, 4, pVertexBufferViews);
 	pd3dCommandList->IASetVertexBuffers(m_nSlot, 3, pVertexBufferViews);
 }

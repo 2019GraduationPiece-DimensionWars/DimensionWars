@@ -600,7 +600,7 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 		case VK_F9:
 			ChangeSwapChainState();
 		case VK_SPACE:
-			if (m_CurrSceneTag==BaseScene::SceneTag::Title)
+			/*if (m_CurrSceneTag==BaseScene::SceneTag::Title)
 			{
 				ChangeScene(BaseScene::SceneTag::Lobby);
 			}
@@ -616,7 +616,7 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 			else if (m_CurrSceneTag == BaseScene::SceneTag::Game)
 			{
 				ChangeScene(BaseScene::SceneTag::Title);
-			}
+			}*/
 			break;
 		default:
 			break;

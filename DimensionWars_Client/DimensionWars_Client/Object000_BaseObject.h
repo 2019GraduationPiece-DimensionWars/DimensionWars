@@ -15,6 +15,9 @@ struct CB_GAMEOBJECT_INFO
 
 class BaseObject
 {
+private:
+	bool skinnedMesh = false;
+
 public:
 	BaseObject();
 	BaseObject(unsigned int nMaterials);
@@ -41,16 +44,19 @@ public:
 	bool							connected = false;
 	unsigned short room_name = 0;
 	unsigned short n_member = 0;  // 방에있는 인원수
+
+	
 protected:
 	char directionBit = 0;
 
 public:
-	void SetMesh(BaseMesh *pMesh, int nIndex = 0);
+	void SetMesh(BaseMesh *pMesh, bool isSkinnedMeshType = false, int nIndex = 0);
 	void SetShader(BaseShader *pShader);
 	void SetShader(int nMaterial, BaseShader *pShader);
 	void BuildShaders(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
 
 	void SetMaterial(int nMaterial, Material *pMaterial);
+	Material* GetMaterial(int nMaterial) const { if (m_ppMaterials && m_nMaterials > nMaterial) if (m_ppMaterials[nMaterial]) return m_ppMaterials[nMaterial]; }
 
 	virtual void BuildLight();
 	virtual void BuildMaterial();
@@ -99,4 +105,6 @@ public:
 	void SetDirectionBit(char dwBit) { directionBit = dwBit; }
 
 	void SetLookAt(XMFLOAT3& xmf3Target, XMFLOAT3& xmf3Up);
+
+	const bool isSkinnedMesh() const { return skinnedMesh; }
 };

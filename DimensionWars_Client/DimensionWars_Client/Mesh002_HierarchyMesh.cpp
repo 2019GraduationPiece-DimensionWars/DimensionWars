@@ -75,7 +75,10 @@ void HierarchyMesh::ReleaseUploadBuffers()
 
 void HierarchyMesh::OnPreRender(ID3D12GraphicsCommandList * pd3dCommandList, void * pContext)
 {
-	pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, &m_d3dPositionBufferView);
+	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[5] = { m_d3dPositionBufferView, m_d3dTextureCoord0BufferView, m_d3dNormalBufferView, m_d3dTangentBufferView, m_d3dBiTangentBufferView };
+	pd3dCommandList->IASetVertexBuffers(m_nSlot, 3, pVertexBufferViews);
+	
+	//pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, &m_d3dPositionBufferView);
 }
 
 void HierarchyMesh::Render(ID3D12GraphicsCommandList * pd3dCommandList, int nSubSet)
@@ -180,7 +183,16 @@ void HierarchyMesh::LoadMeshFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsCo
 							m_nType |= VERTEXT_TEXTURE_COORD0;
 							m_pxmf2TextureCoords0 = new XMFLOAT2[nTextureCoords];
 							nReads = (unsigned int)::fread(m_pxmf2TextureCoords0, sizeof(XMFLOAT2), nTextureCoords, pInFile);
+							
+							//float temp = m_pxmf2TextureCoords0->x;
+							//m_pxmf2TextureCoords0->x = m_pxmf2TextureCoords0->y;
+							//m_pxmf2TextureCoords0->y = temp;
 
+						
+							//m_pxmf2TextureCoords0->x = 1.0f - m_pxmf2TextureCoords0->x;
+							//m_pxmf2TextureCoords0->y = 1.0f - m_pxmf2TextureCoords0->y;
+							
+							
 							m_pd3dTextureCoord0Buffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pxmf2TextureCoords0, sizeof(XMFLOAT2) * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dTextureCoord0UploadBuffer);
 
 							m_d3dTextureCoord0BufferView.BufferLocation = m_pd3dTextureCoord0Buffer->GetGPUVirtualAddress();

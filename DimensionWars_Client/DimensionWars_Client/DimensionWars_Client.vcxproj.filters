@@ -425,5 +425,14 @@
     <FxCompile Include="BasicShaders.hlsl">
       <Filter>Shader\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="2DShaders.hlsl">
+      <Filter>Shader\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="ModelShaders.hlsl">
+      <Filter>Shader\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="TerrainShaders.hlsl">
+      <Filter>Shader\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

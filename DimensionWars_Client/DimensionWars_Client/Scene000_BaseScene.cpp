@@ -631,7 +631,7 @@ void BaseScene::SendMoveDirection()
 		//myMovePacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
 		myMovePacket->type = CS_Type::Move;
 		m_pFramework->SendPacket(reinterpret_cast<char *>(myMovePacket));
-		printf("º¸³¿\n");
+		//printf("º¸³¿\n");
 	}
 	
 }
