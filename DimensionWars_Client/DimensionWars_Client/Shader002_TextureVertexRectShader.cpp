@@ -47,15 +47,15 @@ D3D12_BLEND_DESC TextureVertexRectShader::CreateBlendState()
 
 D3D12_SHADER_BYTECODE TextureVertexRectShader::CreateVertexShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "VSTextureVertex", "vs_5_1", &m_pd3dVertexShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"2DShaders.hlsl", "VSTextureVertex", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE TextureVertexRectShader::CreatePixelShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "PSTextureVertex", "ps_5_1", &m_pd3dPixelShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"2DShaders.hlsl", "PSTextureVertex", "ps_5_1", &m_pd3dPixelShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE TextureVertexRectShader::CreateGeometryShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "GSTextureVertex", "gs_5_1", &m_pd3dGeometryShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"2DShaders.hlsl", "GSTextureVertex", "gs_5_1", &m_pd3dGeometryShaderBlob));
 }

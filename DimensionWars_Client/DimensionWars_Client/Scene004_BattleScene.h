@@ -11,6 +11,7 @@ class CardObject;
 class SlashWaveObject;
 class TextureCubeObject;
 class PortalObject;
+class TexturePortalObject;
 
 class BattleScene :
 	public BaseScene
@@ -18,7 +19,7 @@ class BattleScene :
 private:
 	SkyBox * m_pSkyBox = nullptr;
 	TextureCubeObject ** m_ppCubeObjects = nullptr;  // ∫Ø∞Ê«‘
-	DiffuseCubeObject ** m_ppPotalObjects = nullptr;
+	TexturePortalObject ** m_ppPotalObjects = nullptr;
 	unsigned int m_nCubeObjects = 0;
 	HeightMapTerrain * m_pTerrain = nullptr;
 

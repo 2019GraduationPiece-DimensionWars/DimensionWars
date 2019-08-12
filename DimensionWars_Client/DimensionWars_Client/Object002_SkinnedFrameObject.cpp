@@ -86,7 +86,7 @@ void SkinnedFrameObject::SetStandardShader()
 	m_nMaterials = 1;
 	m_ppMaterials = new Material*[m_nMaterials];
 	m_ppMaterials[0] = nullptr;
-	Material *pMaterial = new Material(0);
+	Material *pMaterial = new Material(1);
 	pMaterial->SetStandardShader();
 	SetMaterial(0, pMaterial);
 }
@@ -96,7 +96,7 @@ void SkinnedFrameObject::SetSkinnedAnimationShader()
 	m_nMaterials = 1;
 	m_ppMaterials = new Material*[m_nMaterials];
 	m_ppMaterials[0] = nullptr;
-	Material *pMaterial = new Material(0);
+	Material *pMaterial = new Material(1);
 	pMaterial->SetSkinnedAnimationShader();
 	SetMaterial(0, pMaterial);
 }
@@ -287,6 +287,7 @@ void SkinnedFrameObject::SetTrackAnimationPosition(int nAnimationTrack, float fP
 
 void SkinnedFrameObject::LoadMaterialsFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, SkinnedFrameObject * pParent, FILE * pInFile, BaseShader * pShader)
 {
+	/*
 	char pstrToken[64] = { '\0' };
 	int nMaterial = 0;
 	UINT nReads = 0;
@@ -389,7 +390,7 @@ void SkinnedFrameObject::LoadMaterialsFromFile(ID3D12Device * pd3dDevice, ID3D12
 		{
 			break;
 		}
-	}
+	}*/
 }
 
 void SkinnedFrameObject::LoadAnimationFromFile(FILE * pInFile, LoadedModelInfo * pLoadedModel)
@@ -494,8 +495,8 @@ SkinnedFrameObject * SkinnedFrameObject::LoadFrameHierarchyFromFile(ID3D12Device
 		else if (!strcmp(pstrToken, "<Mesh>:")) {
 			HierarchyMesh *pMesh = new HierarchyMesh(pd3dDevice, pd3dCommandList);
 			pMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
-			pFrameObject->SetMesh(pMesh);
-			
+			pFrameObject->SetMesh(pMesh, false);
+			//printf("일반계층메쉬 %s\n", pFrameObject->m_pstrFrameName);
 			/**/pFrameObject->SetStandardShader();
 		}
 		else if (!strcmp(pstrToken, "<SkinDeformations>:")) {
@@ -508,10 +509,10 @@ SkinnedFrameObject * SkinnedFrameObject::LoadFrameHierarchyFromFile(ID3D12Device
 			::ReadStringFromFile(pInFile, pstrToken); //<Mesh>:
 			if (!strcmp(pstrToken, "<Mesh>:")) pSkinnedMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
 
-			pFrameObject->SetMesh(pSkinnedMesh);
-
-			/**/pFrameObject->SetSkinnedAnimationTestShader();
-			//pFrameObject->SetSkinnedAnimationShader();	// 이자식에 하자가 있다, 수정 요망
+			pFrameObject->SetMesh(pSkinnedMesh, true);
+			//printf("스킨메쉬 %s\n", pFrameObject->m_pstrFrameName);
+			/**///pFrameObject->SetSkinnedAnimationTestShader();
+			pFrameObject->SetSkinnedAnimationShader();	// 이자식에 하자가 있다, 수정 요망
 		}
 		else if (!strcmp(pstrToken, "<Children>:")) {
 			int nChilds = ::ReadIntegerFromFile(pInFile);
@@ -520,6 +521,7 @@ SkinnedFrameObject * SkinnedFrameObject::LoadFrameHierarchyFromFile(ID3D12Device
 					::ReadStringFromFile(pInFile, pstrToken);
 					if (!strcmp(pstrToken, "<Frame>:")) {
 						SkinnedFrameObject *pChild = SkinnedFrameObject::LoadFrameHierarchyFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, pFrameObject, pInFile, pShader, pnSkinnedMeshes);
+						//printf("모든 메쉬 이름 %s\n", pChild->m_pstrFrameName);
 						if (pChild) pFrameObject->SetChild(pChild);
 #ifdef _WITH_DEBUG_FRAME_HIERARCHY
 						TCHAR pstrDebug[256] = { 0 };
@@ -538,6 +540,7 @@ SkinnedFrameObject * SkinnedFrameObject::LoadFrameHierarchyFromFile(ID3D12Device
 
 LoadedModelInfo * SkinnedFrameObject::LoadGeometryAndAnimationFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, ID3D12RootSignature * pd3dGraphicsRootSignature, char * pstrFileName, BaseShader * pShader, bool flag3DsMaxCoordinates)
 {
+	printf("모델 로드 %s\n", pstrFileName);
 	FILE *pInFile = NULL;
 	::fopen_s(&pInFile, pstrFileName, "rb");
 	::rewind(pInFile);
@@ -555,8 +558,10 @@ LoadedModelInfo * SkinnedFrameObject::LoadGeometryAndAnimationFromFile(ID3D12Dev
 					::ReadStringFromFile(pInFile, pstrToken);
 					if (!strcmp(pstrToken, "<Frame>:")) {
 						SkinnedFrameObject *pChild = SkinnedFrameObject::LoadFrameHierarchyFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, NULL, pInFile, pShader, &pLoadedModel->m_nSkinnedMeshes);
-						if (pChild) 
+						if (pChild) {
 							pLoadedModel->m_pModelRootObject->SetChild(pChild);
+							//pLoadedModel->m_pModelRootObject->CacheSkinningBoneFrames(pChild);
+						}
 					}
 					else if (!strcmp(pstrToken, "</Hierarchy>"))
 						break;
@@ -577,8 +582,10 @@ LoadedModelInfo * SkinnedFrameObject::LoadGeometryAndAnimationFromFile(ID3D12Dev
 	TCHAR pstrDebug[256] = { 0 };
 	_stprintf_s(pstrDebug, 256, _T("Frame Hierarchy\n"));
 	OutputDebugString(pstrDebug);
-
-	CGameObject::PrintFrameInfo(pLoadedModel->m_pModelRootObject, NULL);
+#ifdef USE_CONSOLE_WINDOW
+	printf("%LS ", pstrDebug);
+#endif
+	SkinnedFrameObject::PrintFrameInfo(pLoadedModel->m_pModelRootObject, NULL);
 #endif
 
 	::fclose(pInFile);
@@ -596,6 +603,10 @@ void SkinnedFrameObject::PrintFrameInfo(SkinnedFrameObject * pGameObject, Skinne
 
 	_stprintf_s(pstrDebug, 256, _T("(Frame: %p) (Parent: %p)\n"), pGameObject, pParent);
 	OutputDebugString(pstrDebug);
+#ifdef USE_CONSOLE_WINDOW
+	printf("%LS ", pstrDebug);
+#endif
+
 
 	if (pGameObject->m_pSibling) SkinnedFrameObject::PrintFrameInfo(pGameObject->m_pSibling, pParent);
 	if (pGameObject->m_pChild) SkinnedFrameObject::PrintFrameInfo(pGameObject->m_pChild, pGameObject);

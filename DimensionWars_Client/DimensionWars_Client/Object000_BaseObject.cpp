@@ -65,11 +65,12 @@ BaseObject::~BaseObject()
 */
 }
 
-void BaseObject::SetMesh(BaseMesh * pMesh, int nIndex)
+void BaseObject::SetMesh(BaseMesh * pMesh, bool isSkinnedMeshType, int nIndex)
 {
 	if (m_pMesh) m_pMesh->Release();
 	m_pMesh = pMesh;
 	if (m_pMesh) m_pMesh->AddRef();
+	skinnedMesh = isSkinnedMeshType;
 	/*
 	if (m_ppMeshes) {
 		if (m_ppMeshes[nIndex]) m_ppMeshes[nIndex]->Release();
@@ -77,7 +78,6 @@ void BaseObject::SetMesh(BaseMesh * pMesh, int nIndex)
 		if (pMesh) pMesh->AddRef();
 	}*/
 }
-
 void BaseObject::SetShader(BaseShader * pShader)
 {
 	m_nMaterials = 1;

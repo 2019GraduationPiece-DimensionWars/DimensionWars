@@ -28,10 +28,10 @@ D3D12_INPUT_LAYOUT_DESC TextureRectangleShader::CreateInputLayout()
 
 D3D12_SHADER_BYTECODE TextureRectangleShader::CreateVertexShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "VSTextured", "vs_5_1", &m_pd3dVertexShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"2DShaders.hlsl", "VSTextured", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE TextureRectangleShader::CreatePixelShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "PSTextured", "ps_5_1", &m_pd3dPixelShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"2DShaders.hlsl", "PSTextured", "ps_5_1", &m_pd3dPixelShaderBlob));
 }

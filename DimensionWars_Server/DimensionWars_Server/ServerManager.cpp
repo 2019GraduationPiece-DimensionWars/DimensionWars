@@ -315,133 +315,133 @@ void ServerManager::ObjectInitialize()
 		objects[i].rotate.z = startRotate(dre);
 	}
 
-	/*for (int i = Cube_start; i < Cube_start + 50; ++i)
+	for (int i = Cube_start; i < Cube_start + 50; ++i)
 	{
 	objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
 	}
 
 	for (int i = Cube_start; i < Cube_start + 50; ++i)
 	{
-	for (int j = i + 1; j < Cube_start + 50; ++j)
-	{
-	if (Distance(objects[i].position, objects[j].position)<400)
-	{
-	objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
-	if(Distance(objects[i].position, objects[j].position)<500)
-	{
-	objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
-	if (Distance(objects[i].position, objects[j].position)<600)
-	{
-	objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
+		for (int j = i + 1; j < Cube_start + 50; ++j)
+		{
+			if (Distance(objects[i].position, objects[j].position) < 400)
+			{
+				objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
+				if (Distance(objects[i].position, objects[j].position) < 500)
+				{
+					objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
+					if (Distance(objects[i].position, objects[j].position) < 600)
+					{
+						objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
 
-	if (Distance(objects[i].position, objects[j].position)<700)
-	{
-	objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
+						if (Distance(objects[i].position, objects[j].position) < 700)
+						{
+							objects[i].position = XMFLOAT3(startPos(dre), startYPos(dre), startPos(dre));
 
+						}
+					}
+				}
+			}
+		}
 	}
-	}
-	}
-	}
-	}
-	}*/
 
 	// ÃÊ±â À§Ä¡¸¦ ¼³Á¤
 	
 
 
 	///////1Ãþ///////
-	objects[Cube_start].position = XMFLOAT3(0, -100000, 0);
+	//objects[Cube_start].position = XMFLOAT3(0, -100000, 0);
 
-	//400
-	objects[Cube_start + 5].position = XMFLOAT3(-950 + center_cube_distance, 2000, -950);
-	objects[Cube_start + 6].position = XMFLOAT3(950 + center_cube_distance, 2000, 950);
-	//500
-	objects[Cube_start + 15].position = XMFLOAT3(-1100 + center_cube_distance, 2000, 0);
-	objects[Cube_start + 16].position = XMFLOAT3(0 + center_cube_distance, 2000, -1100);
-	objects[Cube_start + 17].position = XMFLOAT3(1100 + center_cube_distance, 2000, 0);
-	objects[Cube_start + 18].position = XMFLOAT3(0 + center_cube_distance, 2000, 1100);
-	//600
-	objects[Cube_start + 35].position = XMFLOAT3(-1050 + center_cube_distance, 2000, 1050);
-	objects[Cube_start + 36].position = XMFLOAT3(1050 + center_cube_distance, 2000, -1050);
-
-
-	objects[Cube_start + 45].position = XMFLOAT3(center_cube_distance, 2000, 0);
-
-	///////2Ãþ///////
-	objects[Cube_start + 1].position = XMFLOAT3(0, -100000, 0);
-	//400
-
-	objects[Cube_start + 7].position = XMFLOAT3(-950, 2000, -950 - center_cube_distance);
-	objects[Cube_start + 8].position = XMFLOAT3(950, 2000, 950 - center_cube_distance);
-	//500
-	objects[Cube_start + 19].position = XMFLOAT3(-1100, 2000, 0 - center_cube_distance);
-	objects[Cube_start + 20].position = XMFLOAT3(0, 2000, -1100 - center_cube_distance);
-	objects[Cube_start + 21].position = XMFLOAT3(1100, 2000, 0 - center_cube_distance);
-	objects[Cube_start + 22].position = XMFLOAT3(0, 2000, 1100 - center_cube_distance);
-	//600
-	objects[Cube_start + 37].position = XMFLOAT3(-1050, 2000, 1050 - center_cube_distance);
-	objects[Cube_start + 38].position = XMFLOAT3(1050, 2000, -1050 - center_cube_distance);
+	////400
+	//objects[Cube_start + 5].position = XMFLOAT3(-950 + center_cube_distance, 2000, -950);
+	//objects[Cube_start + 6].position = XMFLOAT3(950 + center_cube_distance, 2000, 950);
+	////500
+	//objects[Cube_start + 15].position = XMFLOAT3(-1100 + center_cube_distance, 2000, 0);
+	//objects[Cube_start + 16].position = XMFLOAT3(0 + center_cube_distance, 2000, -1100);
+	//objects[Cube_start + 17].position = XMFLOAT3(1100 + center_cube_distance, 2000, 0);
+	//objects[Cube_start + 18].position = XMFLOAT3(0 + center_cube_distance, 2000, 1100);
+	////600
+	//objects[Cube_start + 35].position = XMFLOAT3(-1050 + center_cube_distance, 2000, 1050);
+	//objects[Cube_start + 36].position = XMFLOAT3(1050 + center_cube_distance, 2000, -1050);
 
 
-	//700
-	objects[Cube_start + 46].position = XMFLOAT3(0, 2000, -center_cube_distance);
+	//objects[Cube_start + 45].position = XMFLOAT3(center_cube_distance, 2000, 0);
+
+	/////////2Ãþ///////
+	//objects[Cube_start + 1].position = XMFLOAT3(0, -100000, 0);
+	////400
+
+	//objects[Cube_start + 7].position = XMFLOAT3(-950, 2000, -950 - center_cube_distance);
+	//objects[Cube_start + 8].position = XMFLOAT3(950, 2000, 950 - center_cube_distance);
+	////500
+	//objects[Cube_start + 19].position = XMFLOAT3(-1100, 2000, 0 - center_cube_distance);
+	//objects[Cube_start + 20].position = XMFLOAT3(0, 2000, -1100 - center_cube_distance);
+	//objects[Cube_start + 21].position = XMFLOAT3(1100, 2000, 0 - center_cube_distance);
+	//objects[Cube_start + 22].position = XMFLOAT3(0, 2000, 1100 - center_cube_distance);
+	////600
+	//objects[Cube_start + 37].position = XMFLOAT3(-1050, 2000, 1050 - center_cube_distance);
+	//objects[Cube_start + 38].position = XMFLOAT3(1050, 2000, -1050 - center_cube_distance);
 
 
-	///////3Ãþ///////
-	objects[Cube_start + 2].position = XMFLOAT3(0, -100000, 0);
-	//400
-	objects[Cube_start + 9].position = XMFLOAT3(-950, 3000, -950);
-	objects[Cube_start + 10].position = XMFLOAT3(950, 3000, 950);
-	//500
-	objects[Cube_start + 23].position = XMFLOAT3(-1100, 3000, 0);
-	objects[Cube_start + 24].position = XMFLOAT3(0, 3000, -1100);
-	objects[Cube_start + 25].position = XMFLOAT3(1100, 3000, 0);
-	objects[Cube_start + 26].position = XMFLOAT3(0, 3000, 1100);
-	//600
-	objects[Cube_start + 39].position = XMFLOAT3(-1050, 3000, 1050);
-	objects[Cube_start + 40].position = XMFLOAT3(1050, 3000, -1050);
-	//center_cube_distance
-	objects[Cube_start + 47].position = XMFLOAT3(0, 3000, 0);
+	////700
+	//objects[Cube_start + 46].position = XMFLOAT3(0, 2000, -center_cube_distance);
 
 
-
-	///////4Ãþ///////
-	objects[Cube_start + 3].position = XMFLOAT3(0, -100000, 0);
-
-
-	objects[Cube_start + 11].position = XMFLOAT3(-950 - center_cube_distance, 4000, -950);
-	objects[Cube_start + 12].position = XMFLOAT3(950 - center_cube_distance, 4000, 950);
-	//500
-	objects[Cube_start + 27].position = XMFLOAT3(-1100 - center_cube_distance, 4000, 0);
-	objects[Cube_start + 28].position = XMFLOAT3(0 - center_cube_distance, 4000, -1100);
-	objects[Cube_start + 29].position = XMFLOAT3(1100 - center_cube_distance, 4000, 0);
-	objects[Cube_start + 30].position = XMFLOAT3(0 - center_cube_distance, 4000, 1100);
-	//600
-	objects[Cube_start + 41].position = XMFLOAT3(-1050 - center_cube_distance, 4000, 1050);
-	objects[Cube_start + 42].position = XMFLOAT3(1050 - center_cube_distance, 4000, -1050);
+	/////////3Ãþ///////
+	//objects[Cube_start + 2].position = XMFLOAT3(0, -100000, 0);
+	////400
+	//objects[Cube_start + 9].position = XMFLOAT3(-950, 3000, -950);
+	//objects[Cube_start + 10].position = XMFLOAT3(950, 3000, 950);
+	////500
+	//objects[Cube_start + 23].position = XMFLOAT3(-1100, 3000, 0);
+	//objects[Cube_start + 24].position = XMFLOAT3(0, 3000, -1100);
+	//objects[Cube_start + 25].position = XMFLOAT3(1100, 3000, 0);
+	//objects[Cube_start + 26].position = XMFLOAT3(0, 3000, 1100);
+	////600
+	//objects[Cube_start + 39].position = XMFLOAT3(-1050, 3000, 1050);
+	//objects[Cube_start + 40].position = XMFLOAT3(1050, 3000, -1050);
+	////center_cube_distance
+	//objects[Cube_start + 47].position = XMFLOAT3(0, 3000, 0);
 
 
 
-	objects[Cube_start + 48].position = XMFLOAT3(-center_cube_distance, 4000, 0);
+	/////////4Ãþ///////
+	//objects[Cube_start + 3].position = XMFLOAT3(0, -100000, 0);
 
 
-	///////5Ãþ///////
-	objects[Cube_start + 4].position = XMFLOAT3(0, -100000, 0);
+	//objects[Cube_start + 11].position = XMFLOAT3(-950 - center_cube_distance, 4000, -950);
+	//objects[Cube_start + 12].position = XMFLOAT3(950 - center_cube_distance, 4000, 950);
+	////500
+	//objects[Cube_start + 27].position = XMFLOAT3(-1100 - center_cube_distance, 4000, 0);
+	//objects[Cube_start + 28].position = XMFLOAT3(0 - center_cube_distance, 4000, -1100);
+	//objects[Cube_start + 29].position = XMFLOAT3(1100 - center_cube_distance, 4000, 0);
+	//objects[Cube_start + 30].position = XMFLOAT3(0 - center_cube_distance, 4000, 1100);
+	////600
+	//objects[Cube_start + 41].position = XMFLOAT3(-1050 - center_cube_distance, 4000, 1050);
+	//objects[Cube_start + 42].position = XMFLOAT3(1050 - center_cube_distance, 4000, -1050);
 
 
-	objects[Cube_start + 13].position = XMFLOAT3(-950 + center_cube_distance, 4000, -950 + center_cube_distance);
-	objects[Cube_start + 14].position = XMFLOAT3(950 + center_cube_distance, 4000, 950 + center_cube_distance);
-	//500
-	objects[Cube_start + 31].position = XMFLOAT3(-1100 + center_cube_distance, 4000, 0 + center_cube_distance);
-	objects[Cube_start + 32].position = XMFLOAT3(0 + center_cube_distance, 4000, -1100 + center_cube_distance);
-	objects[Cube_start + 33].position = XMFLOAT3(1100 + center_cube_distance, 4000, 0 + center_cube_distance);
-	objects[Cube_start + 34].position = XMFLOAT3(0 + center_cube_distance, 4000, 1100 + center_cube_distance);
-	//600
-	objects[Cube_start + 43].position = XMFLOAT3(-1050 + center_cube_distance, 4000, 1050 + center_cube_distance);
-	objects[Cube_start + 44].position = XMFLOAT3(1050 + center_cube_distance, 4000, -1050 + center_cube_distance);
+
+	//objects[Cube_start + 48].position = XMFLOAT3(-center_cube_distance, 4000, 0);
 
 
-	objects[Cube_start + 49].position = XMFLOAT3(0 + center_cube_distance, 4000, center_cube_distance);
+	/////////5Ãþ///////
+	//objects[Cube_start + 4].position = XMFLOAT3(0, -100000, 0);
+
+
+	//objects[Cube_start + 13].position = XMFLOAT3(-950 + center_cube_distance, 4000, -950 + center_cube_distance);
+	//objects[Cube_start + 14].position = XMFLOAT3(950 + center_cube_distance, 4000, 950 + center_cube_distance);
+	////500
+	//objects[Cube_start + 31].position = XMFLOAT3(-1100 + center_cube_distance, 4000, 0 + center_cube_distance);
+	//objects[Cube_start + 32].position = XMFLOAT3(0 + center_cube_distance, 4000, -1100 + center_cube_distance);
+	//objects[Cube_start + 33].position = XMFLOAT3(1100 + center_cube_distance, 4000, 0 + center_cube_distance);
+	//objects[Cube_start + 34].position = XMFLOAT3(0 + center_cube_distance, 4000, 1100 + center_cube_distance);
+	////600
+	//objects[Cube_start + 43].position = XMFLOAT3(-1050 + center_cube_distance, 4000, 1050 + center_cube_distance);
+	//objects[Cube_start + 44].position = XMFLOAT3(1050 + center_cube_distance, 4000, -1050 + center_cube_distance);
+
+
+	//objects[Cube_start + 49].position = XMFLOAT3(0 + center_cube_distance, 4000, center_cube_distance);
 
 
 	for (int i = Cube_start; i < Cube_start + 50; ++i)
@@ -456,7 +456,10 @@ void ServerManager::ObjectInitialize()
 			}
 		}
 	}
-
+	for (int i = Potal_start; i < Potal_end; ++i)
+	{
+		objects[i].position = XMFLOAT3(objects[i - 960].position.x, objects[i - 960].position.y+300, objects[i - 960].position.z);
+	}
 	// ¸Ç¾Æ·¡
 	objects[Potal_start].position = XMFLOAT3(0, 50, 0);
 	objects[Potal_start + 1].position = XMFLOAT3(1000, 50, 0);
@@ -464,26 +467,26 @@ void ServerManager::ObjectInitialize()
 	objects[Potal_start + 3].position = XMFLOAT3(0, 50, 1000);
 	objects[Potal_start + 4].position = XMFLOAT3(0, 50, -1000);
 
-	//¾Æ·¡
-	objects[Potal_start + 5].position = XMFLOAT3(0-200, 2000+400, -center_cube_distance- 200);
-	objects[Potal_start + 6].position = XMFLOAT3(-1100 - 200 + center_cube_distance, 2000+300, 0 - 200);
-	objects[Potal_start + 7].position = XMFLOAT3(0 - 200 + center_cube_distance, 2000 + 300, -1100 - 200);
-	objects[Potal_start + 8].position = XMFLOAT3(1100 - 200 + center_cube_distance, 2000 + 300, 0 - 200);
-	objects[Potal_start + 9].position = XMFLOAT3(0 - 200 + center_cube_distance, 2000 + 300, 1100 - 200);
+	////¾Æ·¡
+	//objects[Potal_start + 5].position = XMFLOAT3(0-200, 2000+400, -center_cube_distance- 200);
+	//objects[Potal_start + 6].position = XMFLOAT3(-1100 - 200 + center_cube_distance, 2000+300, 0 - 200);
+	//objects[Potal_start + 7].position = XMFLOAT3(0 - 200 + center_cube_distance, 2000 + 300, -1100 - 200);
+	//objects[Potal_start + 8].position = XMFLOAT3(1100 - 200 + center_cube_distance, 2000 + 300, 0 - 200);
+	//objects[Potal_start + 9].position = XMFLOAT3(0 - 200 + center_cube_distance, 2000 + 300, 1100 - 200);
 
-	//Áß°£
-	objects[Potal_start + 10].position = XMFLOAT3(0, 3000+400, 0);
-	objects[Potal_start + 11].position = XMFLOAT3(-1100, 3000+300, 0);
-	objects[Potal_start + 12].position = XMFLOAT3(0, 3000 + 300, -1100);
-	objects[Potal_start + 13].position = XMFLOAT3(1100, 3000 + 300, 0);
-	objects[Potal_start + 14].position = XMFLOAT3(0, 3000 + 300, 1100);
+	////Áß°£
+	//objects[Potal_start + 10].position = XMFLOAT3(0, 3000+400, 0);
+	//objects[Potal_start + 11].position = XMFLOAT3(-1100, 3000+300, 0);
+	//objects[Potal_start + 12].position = XMFLOAT3(0, 3000 + 300, -1100);
+	//objects[Potal_start + 13].position = XMFLOAT3(1100, 3000 + 300, 0);
+	//objects[Potal_start + 14].position = XMFLOAT3(0, 3000 + 300, 1100);
 
-	//¸ÇÀ§
-	objects[Potal_start + 15].position = XMFLOAT3(0 + center_cube_distance, 4000+400, center_cube_distance);
-	objects[Potal_start + 16].position = XMFLOAT3(-1100 + center_cube_distance, 4000+400, 0 + center_cube_distance);
-	objects[Potal_start + 17].position = XMFLOAT3(0 + center_cube_distance, 4000 + 400, -1100 + center_cube_distance);
-	objects[Potal_start + 18].position = XMFLOAT3(1100 + center_cube_distance, 4000 + 400, 0 + center_cube_distance);
-	objects[Potal_start + 19].position = XMFLOAT3(0 + center_cube_distance, 4000 + 400, 1100 + center_cube_distance);
+	////¸ÇÀ§
+	//objects[Potal_start + 15].position = XMFLOAT3(0 + center_cube_distance, 4000+400, center_cube_distance);
+	//objects[Potal_start + 16].position = XMFLOAT3(-1100 + center_cube_distance, 4000+400, 0 + center_cube_distance);
+	//objects[Potal_start + 17].position = XMFLOAT3(0 + center_cube_distance, 4000 + 400, -1100 + center_cube_distance);
+	//objects[Potal_start + 18].position = XMFLOAT3(1100 + center_cube_distance, 4000 + 400, 0 + center_cube_distance);
+	//objects[Potal_start + 19].position = XMFLOAT3(0 + center_cube_distance, 4000 + 400, 1100 + center_cube_distance);
 
 	for (int i = Card_start; i < Slash_end; ++i)
 	{
@@ -1358,7 +1361,17 @@ void ServerManager::Update(unsigned long id)
 	for (int i = Potal_start; i < Potal_end; ++i)
 	{
 		objects[i].colbox.Center = XMFLOAT3(objects[i].position.x, objects[i].position.y, objects[i].position.z);
-		objects[i].colbox.Extents = XMFLOAT3(15, 15, 15);
+		objects[i].colbox.Extents = XMFLOAT3(30, 30, 30);
+	}
+	
+
+	// ¸ÇÀ§Æ÷Å»
+	for (int i = Potal_start; i < Potal_end; ++i)
+	{
+		if (objects[id].connected&&objects[Potal_start].colbox.Intersects(objects[id].colbox))
+		{
+			objects[id].position = XMFLOAT3(objects[i-950].position.x, objects[i - 950].position.y+400, objects[i - 950].position.z);
+		}
 	}
 	for (int i = Potal_start; i < Potal_start + 5; ++i)
 	{
@@ -1367,8 +1380,6 @@ void ServerManager::Update(unsigned long id)
 			objects[id].position = XMFLOAT3(0, 6000, 0);
 		}
 	}
-
-	// ¸ÇÀ§Æ÷Å»
 
 	if (objects[id].connected&&objects[Potal_start + 15].colbox.Intersects(objects[id].colbox))
 	{

@@ -48,10 +48,10 @@ D3D12_DEPTH_STENCIL_DESC SkyBoxShader::CreateDepthStencilState()
 
 D3D12_SHADER_BYTECODE SkyBoxShader::CreateVertexShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "VSSkyBox", "vs_5_1", &m_pd3dVertexShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"2DShaders.hlsl", "VSSkyBox", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE SkyBoxShader::CreatePixelShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "PSSkyBox", "ps_5_1", &m_pd3dPixelShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"2DShaders.hlsl", "PSSkyBox", "ps_5_1", &m_pd3dPixelShaderBlob));
 }

@@ -138,7 +138,7 @@ private:
 	BaseScene::SceneTag m_CurrSceneTag = BaseScene::SceneTag::Game;
 
 	SOCKET mySocket; // 소켓
-	char server_ip[17] = "127.0.0.1"; // 서버 IP
+	char server_ip[17] = "10.30.1.11"; // 서버 IP
 									  // 전역변수
 	//192.168.20.173
 	WSABUF  send_wsabuf;

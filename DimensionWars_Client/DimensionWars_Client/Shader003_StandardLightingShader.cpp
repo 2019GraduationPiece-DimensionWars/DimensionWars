@@ -31,10 +31,10 @@ D3D12_INPUT_LAYOUT_DESC StandardLightingShader::CreateInputLayout()
 
 D3D12_SHADER_BYTECODE StandardLightingShader::CreateVertexShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "VSStandard", "vs_5_1", &m_pd3dVertexShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"ModelShaders.hlsl", "VSStandard", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE StandardLightingShader::CreatePixelShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "PSStandard", "ps_5_1", &m_pd3dPixelShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"ModelShaders.hlsl", "PSStandard", "ps_5_1", &m_pd3dPixelShaderBlob));
 }

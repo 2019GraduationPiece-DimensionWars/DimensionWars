@@ -275,12 +275,12 @@ D3D12_INPUT_LAYOUT_DESC TestColorShader::CreateInputLayout()
 
 D3D12_SHADER_BYTECODE TestColorShader::CreateVertexShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "VSWireFrame", "vs_5_1", &m_pd3dVertexShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"ModelShaders.hlsl", "VSWireFrame", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE TestColorShader::CreatePixelShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "PSWireFrame", "ps_5_1", &m_pd3dPixelShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"ModelShaders.hlsl", "PSWireFrame", "ps_5_1", &m_pd3dPixelShaderBlob));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -334,10 +334,10 @@ D3D12_RASTERIZER_DESC SkinnedAnimationTestColorShader::CreateRasterizerState()
 
 D3D12_SHADER_BYTECODE SkinnedAnimationTestColorShader::CreateVertexShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "VSSkinnedAnimationWireFrame", "vs_5_1", &m_pd3dVertexShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"ModelShaders.hlsl", "VSSkinnedAnimationWireFrame", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE SkinnedAnimationTestColorShader::CreatePixelShader()
 {
-	return(BaseShader::CompileShaderFromFile(L"BasicShaders.hlsl", "PSSkinnedAnimationWireFrame", "ps_5_1", &m_pd3dPixelShaderBlob));
+	return(BaseShader::CompileShaderFromFile(L"ModelShaders.hlsl", "PSSkinnedAnimationWireFrame", "ps_5_1", &m_pd3dPixelShaderBlob));
 }

@@ -61,8 +61,8 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 
 	cmd = 0;
-	/*printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
-	scanf_s("%d", &cmd);*/
+	printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
+	scanf_s("%d", &cmd);
 	switch (cmd) {
 	case 0: 
 	{
@@ -117,14 +117,14 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		card[i] = new CardObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 	}
 
-	m_ppPotalObjects = new DiffuseCubeObject*[Potal_end - Potal_start];
+	m_ppPotalObjects = new TexturePortalObject*[Potal_end - Potal_start];
 	for (unsigned int i = 0; i < Potal_end - Potal_start; ++i) {
-		m_ppPotalObjects[i] = new DiffuseCubeObject(pd3dDevice, pd3dCommandList,m_pFramework->m_pGraphicsRootSignature, 30);
+		m_ppPotalObjects[i] = new TexturePortalObject(pd3dDevice, pd3dCommandList,m_pFramework->m_pGraphicsRootSignature, 30);
 	}
 
 
 	if (cmd == 1)	// 도박사이면
-		m_nObjects = 13;
+		m_nObjects = 1;
 	else
 		m_nObjects = 1;
 	m_ppObjects = new BaseObject*[m_nObjects];
@@ -220,7 +220,10 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 {
 	SendMoveDirection();
 	SendAnimationInfo();
-	
+	if (cmd == 1) {
+		m_pPlayer->GetCamera()->SetOffset(XMFLOAT3(0, 150, -350));
+		//m_pPlayer->GetCamera()->SetPosition(Vector3::Add(m_pPlayer->GetCamera()->GetPosition(), m_pPlayer->GetCamera()->GetOffset()));
+	}
 	POINT ptCursorPos;
 	SetCursor(NULL);
 	GetCursorPos(&ptCursorPos);
@@ -326,7 +329,7 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
 
 
-	if (m_ppObjects) for (unsigned int i = 0; i < m_nObjects; ++i) if (m_ppObjects[i]) m_ppObjects[i]->Render(pd3dCommandList, pCamera);
+	//if (m_ppObjects) for (unsigned int i = 0; i < m_nObjects; ++i) if (m_ppObjects[i]) m_ppObjects[i]->Render(pd3dCommandList, pCamera);
 	
 }
 

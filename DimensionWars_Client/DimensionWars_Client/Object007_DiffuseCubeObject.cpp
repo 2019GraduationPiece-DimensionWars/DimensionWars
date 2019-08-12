@@ -78,6 +78,57 @@ TextureCubeObject::~TextureCubeObject()
 {
 }
 
+TexturePortalObject::TexturePortalObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, float size) : BaseObject(1)
+{
+	TextureCubeMesh *pSkyBoxMesh = new TextureCubeMesh(pd3dDevice, pd3dCommandList, size, size, size);
+	SetMesh(pSkyBoxMesh);
+
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	Texture *pSkyBoxTexture = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	pSkyBoxTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Portal.dds", 0);
+
+	TextureRectangleShader *pSkyBoxShader = new TextureRectangleShader();
+	pSkyBoxShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+	pSkyBoxShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	BaseScene::CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pSkyBoxTexture, 15, false);
+
+	Material *pSkyBoxMaterial = new Material(1);
+	pSkyBoxMaterial->SetTexture(pSkyBoxTexture);
+	pSkyBoxMaterial->SetShader(pSkyBoxShader);
+
+	SetMaterial(0, pSkyBoxMaterial);
+
+}
+TexturePortalObject::~TexturePortalObject()
+{
+}
+void TexturePortalObject::Build(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, float size)
+{
+	/*SkyBoxMesh *pSkyBoxMesh = new SkyBoxMesh(pd3dDevice, pd3dCommandList, size, size, size);
+	SetMesh(pSkyBoxMesh);
+
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	Texture *pSkyBoxTexture = new Texture(1, RESOURCE_TEXTURE_CUBE, 0);
+	pSkyBoxTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/TitleTest800x600.dds", 0);
+
+	TextureRectangleShader *pSkyBoxShader = new TextureRectangleShader();
+	pSkyBoxShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+	pSkyBoxShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	BaseScene::CreateShaderResourceViews(pd3dDevice, pSkyBoxTexture, 15, false);
+
+	Material *pSkyBoxMaterial = new Material(1);
+	pSkyBoxMaterial->SetTexture(pSkyBoxTexture);
+	pSkyBoxMaterial->SetShader(pSkyBoxShader);
+
+	SetMaterial(0, pSkyBoxMaterial);*/
+
+
+
+}
 void TextureCubeObject::Build(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, float size)
 {
 	/*SkyBoxMesh *pSkyBoxMesh = new SkyBoxMesh(pd3dDevice, pd3dCommandList, size, size, size);

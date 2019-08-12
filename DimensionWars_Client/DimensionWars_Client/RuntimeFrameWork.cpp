@@ -49,10 +49,10 @@ RuntimeFrameWork::RuntimeFrameWork()
 	m_pCurrScene = nullptr;
 	m_pCamera = nullptr;
 	m_pPlayer = nullptr;
-//#ifdef USE_CONSOLE_WINDOW
-//	printf(" Server IP를 입력하세요. >> ");
-//	scanf_s("%s", server_ip, unsigned int(sizeof(server_ip)));
-//#endif
+#ifdef USE_CONSOLE_WINDOW
+	printf(" Server IP를 입력하세요. >> ");
+	scanf_s("%s", server_ip, unsigned int(sizeof(server_ip)));
+#endif
 
 	_tcscpy_s(m_pszFrameRate, _T("Dimension Wars - 차원대전 - "));
 }
@@ -600,7 +600,7 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 		case VK_F9:
 			ChangeSwapChainState();
 		case VK_SPACE:
-			if (m_CurrSceneTag==BaseScene::SceneTag::Title)
+			/*if (m_CurrSceneTag==BaseScene::SceneTag::Title)
 			{
 				ChangeScene(BaseScene::SceneTag::Lobby);
 			}
@@ -615,8 +615,12 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 			}
 			else if (m_CurrSceneTag == BaseScene::SceneTag::Game)
 			{
+
 				//ChangeScene(BaseScene::SceneTag::Title);
 			}
+
+				ChangeScene(BaseScene::SceneTag::Title);
+			}*/
 			break;
 		default:
 			break;
