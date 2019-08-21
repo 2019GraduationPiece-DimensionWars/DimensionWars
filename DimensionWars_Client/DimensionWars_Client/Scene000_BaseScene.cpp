@@ -8,6 +8,8 @@
 #include "Object000_BaseObject.h"
 #include "AnimationController.h"	// 로드모델 때문
 
+
+
 ID3D12DescriptorHeap *BaseScene::m_pd3dCbvSrvDescriptorHeap = nullptr;
 
 D3D12_CPU_DESCRIPTOR_HANDLE	BaseScene::m_d3dCbvCPUDescriptorStartHandle;
@@ -660,25 +662,5 @@ void BaseScene::SendSceneInfo(unsigned short scene, unsigned short id)
 
 }
 
-void BaseScene::SendRotate(float a, float b)
-{
-	POINT ptCursorPos;
-	SetCursor(NULL);
-	GetCursorPos(&ptCursorPos);
-	
-	CSPacket_Rotate *myPacket = reinterpret_cast<CSPacket_Rotate*>(m_pFramework->GetSendBuf());
-	myPacket->size = sizeof(CSPacket_Rotate);
-	myPacket->type = CS_Type::Rotate;
-	myPacket->x = a;
-	myPacket->y = b;
-	myPacket->z = 0.0f;
-	m_ptOldCursorPos = ptCursorPos;
-	myPacket->m_Look = m_pPlayer->GetLookVector();
-	myPacket->m_Right = m_pPlayer->GetRightVector();
-	myPacket->m_Up = m_pPlayer->GetUpVector();
 
-	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
-
-	
-}
 

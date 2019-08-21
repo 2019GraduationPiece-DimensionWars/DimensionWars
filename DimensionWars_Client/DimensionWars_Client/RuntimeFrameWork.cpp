@@ -49,10 +49,10 @@ RuntimeFrameWork::RuntimeFrameWork()
 	m_pCurrScene = nullptr;
 	m_pCamera = nullptr;
 	m_pPlayer = nullptr;
-#ifdef USE_CONSOLE_WINDOW
-	printf(" Server IP를 입력하세요. >> ");
-	scanf_s("%s", server_ip, unsigned int(sizeof(server_ip)));
-#endif
+//#ifdef USE_CONSOLE_WINDOW
+//	printf(" Server IP를 입력하세요. >> ");
+//	scanf_s("%s", server_ip, unsigned int(sizeof(server_ip)));
+//#endif
 
 	_tcscpy_s(m_pszFrameRate, _T("Dimension Wars - 차원대전 - "));
 }
@@ -379,7 +379,7 @@ void RuntimeFrameWork::BuildObjects()
 	
 	//m_pCurrScene->BuildObjects(m_pDevice, m_pCommandList);	// 루트 시그니처 생성
 	m_pGraphicsRootSignature = m_pCurrScene->CreateGraphicsRootSignature(m_pDevice);
-	m_pCurrScene->CreateCbvSrvDescriptorHeaps(m_pDevice, m_pCommandList, 2, 128);
+	m_pCurrScene->CreateCbvSrvDescriptorHeaps(m_pDevice, m_pCommandList, 2, 256);
 	//GetResource()->AllModelLoad(m_pDevice, m_pCommandList, m_pGraphicsRootSignature);
 
 	
@@ -599,6 +599,7 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 			break;
 		case VK_F9:
 			ChangeSwapChainState();
+			break;
 		case VK_SPACE:
 			/*if (m_CurrSceneTag==BaseScene::SceneTag::Title)
 			{

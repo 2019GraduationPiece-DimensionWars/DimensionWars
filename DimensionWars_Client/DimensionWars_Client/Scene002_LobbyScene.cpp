@@ -87,7 +87,7 @@ void LobbyScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, lobbyImage[i], 15, true);
 	}
 	
-
+	
 	Material *lobbyMaterial[n_texture];
 	
 	for (int i = 0; i < n_texture; ++i)

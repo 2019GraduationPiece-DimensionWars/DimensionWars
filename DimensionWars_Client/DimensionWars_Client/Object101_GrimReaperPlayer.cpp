@@ -262,7 +262,11 @@ void GrimReaperPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 			if (pKeysBuffer[VK_RBUTTON] & 0xF0)
 				Rotate(cyDelta, 0.0f, -cxDelta);
 			else
+			{
+				//printf("%f, %f\n", cyDelta, cxDelta);
+				//SendRotate(cyDelta, cxDelta, 0.0f);
 				Rotate(cyDelta, cxDelta, 0.0f);
+			}
 		}
 		//if (dwDirection) Move(dwDirection, 300.0f * fTimeElapsed, true);
 	}

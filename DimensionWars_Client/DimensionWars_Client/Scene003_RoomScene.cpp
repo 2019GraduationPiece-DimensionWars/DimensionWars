@@ -71,7 +71,7 @@ void RoomScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLis
 
 
 	
-
+	
 
 	TextureRectangleShader *pTextureShader = new TextureRectangleShader();
 	pTextureShader->CreateShader(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);

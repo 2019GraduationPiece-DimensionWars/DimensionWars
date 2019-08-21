@@ -113,7 +113,7 @@ public:
 	void SendMoveDirection();
 	void SendAnimationInfo();
 	void SendSceneInfo(unsigned short scene, unsigned short id);
-	void SendRotate(float a, float b);
+
 	float cxDelta = 0.0f, cyDelta = 0.0f;
 	POINT						m_ptOldCursorPos = { 0, 0 };
 //	unsigned short GetID() { return myid; }
@@ -129,6 +129,7 @@ protected:
 
 	// 오브젝트 관련
 	BaseObject					**m_ppObjects = nullptr;
+	BaseObject					**m_battleObjects = nullptr;
 	BaseObject					**m_titleObjects = nullptr;
 	BaseObject					**m_lobbyObjects = nullptr;
 	BaseObject					**m_roomObjects = nullptr;

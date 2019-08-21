@@ -725,15 +725,16 @@ void ServerManager::SendInfoScenePacket(unsigned short to, unsigned short obj)
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
-void ServerManager::SendRotatePacket(unsigned short to, unsigned short obj)
+void ServerManager::SendRotatePacket(unsigned short to, unsigned short obj, float x, float y, float z)
 {
 	SCPacket_Rotate packet;// obj가 움직였다고 to 소켓에다 보내줘야 한다.
 	packet.id = obj;
 	packet.size = sizeof(packet);
 	packet.type = SC_Type::Rotate;
-	packet.x = m_fPitch;
-	packet.y = m_fYaw;
-	packet.z = m_fRoll;
+	packet.x = x;
+	packet.y = y;
+	packet.z = z;
+	packet.m_Look = m_xmf3Look;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
@@ -743,9 +744,9 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	CSPacket_Move * packet = reinterpret_cast<CSPacket_Move *>(buf);
 	CSPacket_Rotate *rpacket= reinterpret_cast<CSPacket_Rotate *>(buf);
 	XMFLOAT3 xmf3Shift = objects[id].position;
-	objects[id].m_Look = packet->m_Look;
-	objects[id].m_Right = packet->m_Right;
-	objects[id].m_Up = packet->m_Up;
+	objects[id].m_Look = rpacket->m_Look;
+	objects[id].m_Right = rpacket->m_Right;
+	objects[id].m_Up = rpacket->m_Up;
 
 	switch (packet->type) {
 	case CS_Type::Character_Info:
@@ -802,7 +803,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	case CS_Type::Rotate:
 	{
 		CSPacket_Rotate *packet = reinterpret_cast<CSPacket_Rotate *>(buf);
-
+		
 		if (packet->x != 0.0f)
 		{
 			m_fPitch += packet->x;
@@ -824,7 +825,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		//m_pCamera->Rotate(x, y, z);
 		if (packet->y != 0.0f)
 		{
-			XMMATRIX xmmtxRotate = XMMatrixRotationAxis(XMLoadFloat3(&m_xmf3Up), XMConvertToRadians(packet->y));
+			XMMATRIX xmmtxRotate = XMMatrixRotationAxis(XMLoadFloat3(&m_xmf3Up), XMConvertToRadians(packet->x));
 			m_xmf3Look = Vector3::TransformNormal(m_xmf3Look, xmmtxRotate);
 			m_xmf3Right = Vector3::TransformNormal(m_xmf3Right, xmmtxRotate);
 		}
@@ -835,10 +836,10 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (objects[i].connected == true) {
-				SendRotatePacket(i, id);
+				SendRotatePacket(i, id, packet->x, packet->y, packet->z);
 			}
 		}
-
+		//printf("%f, %f\n", packet->y, packet->x);
 		break;
 	}
 	case CS_Type::Animation:
@@ -1430,7 +1431,7 @@ void ServerManager::Update(unsigned long id)
 	{
 		objects[id].position = XMFLOAT3(0 + 100, 3000 + 300, 1100);
 	}
-
+	
 	AddTimerEvent(id);
 
 }

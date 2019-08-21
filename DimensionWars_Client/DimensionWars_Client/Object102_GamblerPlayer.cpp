@@ -348,9 +348,14 @@ void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f)) {
 		if (cxDelta || cyDelta)
 		{
-			//if (pKeysBuffer[VK_RBUTTON] & 0xF0) Rotate(cyDelta, 0.0f, -cxDelta);
-			// else
-			Rotate(cyDelta, cxDelta, 0.0f);
+			if (pKeysBuffer[VK_RBUTTON] & 0xF0)
+				Rotate(cyDelta, 0.0f, -cxDelta);
+			else
+			{
+				//printf("%f, %f\n", cyDelta, cxDelta);
+				//SendRotate(cyDelta, cxDelta, 0.0f);
+				Rotate(cyDelta, cxDelta, 0.0f);
+			}
 		}
 		//if (dwDirection) Move(dwDirection, 300.0f * fTimeElapsed, true);
 	}

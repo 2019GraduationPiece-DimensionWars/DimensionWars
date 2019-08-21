@@ -315,7 +315,7 @@ bool BasePlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 }
 
 
-void BasePlayer::SendRotate(float cx, float cy)
+void BasePlayer::SendRotate(float cy, float cx, float cz)
 {
 	POINT ptCursorPos;
 	SetCursor(NULL);
@@ -325,15 +325,14 @@ void BasePlayer::SendRotate(float cx, float cy)
 	myPacket->size = sizeof(CSPacket_Rotate);
 	myPacket->type = CS_Type::Rotate;
 	myPacket->x = cx;
-		myPacket->y = cy;
-	myPacket->z = 0.0f;
+	myPacket->y = cy;
+	myPacket->z = cz;
 	m_ptOldCursorPos = ptCursorPos;
 	myPacket->m_Look = GetLookVector();
 	myPacket->m_Right = GetRightVector();
 	myPacket->m_Up = GetUpVector();
 
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
-	printf("d\n");
 
 
 }

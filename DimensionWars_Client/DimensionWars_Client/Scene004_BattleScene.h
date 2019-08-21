@@ -1,5 +1,8 @@
 #pragma once
 #include "Scene000_BaseScene.h"
+
+constexpr unsigned short ui_texture = 16;
+
 class SkyBox;
 class DiffuseCubeObject;
 class HeightMapTerrain;
@@ -42,6 +45,10 @@ private:
 	bool portal_build = false;
 	bool card_build = false;
 	bool slash_build = false;
+
+	float obj_rot_x;
+	float obj_rot_y;
+	float obj_rot_z;
 
 public:
 	BattleScene();

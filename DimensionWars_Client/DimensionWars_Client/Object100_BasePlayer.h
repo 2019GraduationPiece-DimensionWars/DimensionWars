@@ -109,6 +109,6 @@ public:
 	float hp;
 
 	float cxDelta = 0.0f, cyDelta = 0.0f;
-	void SendRotate(float cx, float cy);
+	void SendRotate(float cy, float cx, float cz);
 };
 

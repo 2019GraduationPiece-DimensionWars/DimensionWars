@@ -83,12 +83,14 @@ private:
 	void SendChagne_R_LPacket(unsigned short to, unsigned short obj);
 	void SendRoomExitPacket(unsigned short to, unsigned short obj);
 	void SendInfoScenePacket(unsigned short to, unsigned short obj);
-	void SendRotatePacket(unsigned short to, unsigned short obj);
+	void SendRotatePacket(unsigned short to, unsigned short obj, float x, float y, float z);
+
+
 	void DisConnect(unsigned short int id);
 	const unsigned short int GetNewID();
 	bool isNearObject(unsigned short int a, unsigned short int b);
 	float Distance(XMFLOAT3 vector1, XMFLOAT3 vector2);
-
+	
 	/*void Move(const XMFLOAT3 & xmf3Shift, bool bUpdateVelocity);
 	void Update(float fTimeElapsed);*/
 

@@ -15,6 +15,8 @@
 #include "Object011_CardObject.h"
 #include "Object006_TextureRectObject.h"
 #include "Object012_PortalObject.h"
+#include "Texture.h"
+#include "Shader005_TextureRectangleShader.h"
 
 
 BattleScene::BattleScene()
@@ -61,8 +63,8 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 
 	cmd = 0;
-	printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
-	scanf_s("%d", &cmd);
+	//printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
+	//scanf_s("%d", &cmd);
 	switch (cmd) {
 	case 0: 
 	{
@@ -123,40 +125,148 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	}
 
 
-	if (cmd == 1)	// 도박사이면
-		m_nObjects = 1;
-	else
-		m_nObjects = 1;
-	m_ppObjects = new BaseObject*[m_nObjects];
-	TextureRectObject *radar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 18.0f, 18.0f);
-	m_ppObjects[0] = radar;
+	Texture *battleImage[ui_texture];
+
+	//0
+	battleImage[0] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[0]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/W0.dds", 0);
+	//1
+	battleImage[1] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[1]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/W1.dds", 0);
+	//2
+	battleImage[2] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[2]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/W2.dds", 0);
+	//3
+	battleImage[3] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[3]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/W3.dds", 0);
+	//4
+	battleImage[4] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[4]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/W4.dds", 0);
+	//5
+	battleImage[5] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[5]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/W5.dds", 0);
+	//6
+	battleImage[6] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[6]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/W6.dds", 0);
+	//7
+	battleImage[7] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[7]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/W7.dds", 0);
+	//8
+	battleImage[8] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[8]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/W8.dds", 0);
+	//9
+	battleImage[9] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[9]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/W9.dds", 0);
+	// hp
+	battleImage[10] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[10]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/HPBar_360x60.dds", 0);
+	// sp
+	battleImage[11] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[11]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/SPBar_360x60.dds", 0);
+	// 레이더
+	battleImage[12] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[12]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/Rada.dds", 0);
+	// 점수표
+	battleImage[13] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[13]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/Score_chart.dds", 0);
+	// :
+	battleImage[14] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[14]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/Wcolon.dds", 0);
+	// 빈 sp
+	battleImage[15] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	battleImage[15]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Battle/EmptyBar_360x60.dds", 0);
+
+
 	
-	//TextureRectObject *emptyHPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
-	//m_ppObjects[1] = emptyHPgauge;
-	//TextureRectObject *emptySPgauge = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/EmptyBar_360x60.dds", 36.0f, 6.0f);
-	//m_ppObjects[2] = emptySPgauge;
-	//TextureRectObject *hpBar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/HPBar_360x60.dds", 36.0f, 6.0f);
-	//m_ppObjects[3] = hpBar;
-	//TextureRectObject *spBar = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/SPBar_360x60.dds", 36.0f, 6.0f);
-	//m_ppObjects[4] = spBar;
-	/*if (cmd == 1) {
-		TextureRectObject *remain0 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard0.dds", 48.0f, 18.0f);
-		m_ppObjects[5] = remain0;
-		TextureRectObject *remain1 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard1.dds", 48.0f, 18.0f);
-		m_ppObjects[6] = remain1;
-		TextureRectObject *remain2 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard2.dds", 48.0f, 18.0f);
-		m_ppObjects[7] = remain2;
-		TextureRectObject *remain3 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard3.dds", 48.0f, 18.0f);
-		m_ppObjects[8] = remain3;
-		TextureRectObject *remain4 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard4.dds", 48.0f, 18.0f);
-		m_ppObjects[9] = remain4;
-		TextureRectObject *remain5 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard5.dds", 48.0f, 18.0f);
-		m_ppObjects[10] = remain5;
-		TextureRectObject *remain6 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard6.dds", 48.0f, 18.0f);
-		m_ppObjects[11] = remain6;
-		TextureRectObject *remain7 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, L"Texture/RemainCard7.dds", 48.0f, 18.0f);
-		m_ppObjects[12] = remain7;
-	}*/
+
+
+	TextureRectangleShader *pTextureShader = new TextureRectangleShader();
+	pTextureShader->CreateShader(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
+	pTextureShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	for (int i = 0; i < ui_texture; ++i)
+	{
+		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, battleImage[i], 15, true);
+	}
+
+
+	Material *battleMaterial[ui_texture];
+
+	for (int i = 0; i < ui_texture; ++i)
+	{
+		battleMaterial[i] = new Material(1);
+		battleMaterial[i]->SetTexture(battleImage[i]);
+		battleMaterial[i]->SetShader(pTextureShader);
+
+	}
+
+	m_nObjects = 31; //텍스쳐 로드는 45개
+	m_battleObjects = new BaseObject*[m_nObjects];
+
+	// 1초단위 숫자 10개 
+	for (int i = 0; i < 9; ++i)
+	{
+		TextureRectObject *battleImageObject = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 30, 30);
+		m_battleObjects[i] = battleImageObject;
+		m_battleObjects[i]->SetMaterial(0, battleMaterial[i]);
+	}
+	// 10초단위 숫자 6개 
+	for (int i = 9; i < 15; ++i)
+	{
+		TextureRectObject *battleImageObject1 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 30, 30);
+		m_battleObjects[i] = battleImageObject1;
+		m_battleObjects[i]->SetMaterial(0, battleMaterial[i-9]);
+	}
+	// 1분단위 숫자 6개 
+	for (int i = 15; i < 21; ++i)
+	{
+		TextureRectObject *battleImageObject2 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 30, 30);
+		m_battleObjects[i] = battleImageObject2;
+		m_battleObjects[i]->SetMaterial(0, battleMaterial[i - 15]);
+	}
+	// hp
+	TextureRectObject *battleImageObject3 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 20, 2);
+	m_battleObjects[21] = battleImageObject3;
+	m_battleObjects[21]->SetMaterial(0, battleMaterial[10]);
+	m_battleObjects[21]->SetPosition(0, 0, 0);
+	// sp
+	TextureRectObject *battleImageObject4 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 20, 2);
+	m_battleObjects[22] = battleImageObject4;
+	m_battleObjects[22]->SetMaterial(0, battleMaterial[11]);
+	// 레이더
+	TextureRectObject *battleImageObject5 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 15, 15);
+	m_battleObjects[23] = battleImageObject5;
+	m_battleObjects[23]->SetMaterial(0, battleMaterial[12]);
+	// 점수표
+	TextureRectObject *battleImageObject6 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 15, 5);
+	m_battleObjects[24] = battleImageObject6;
+	m_battleObjects[24]->SetMaterial(0, battleMaterial[13]);
+	// :
+	TextureRectObject *battleImageObject7 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 5, 5);
+	m_battleObjects[25] = battleImageObject7;
+	m_battleObjects[25]->SetMaterial(0, battleMaterial[14]);
+	// 분
+	TextureRectObject *battleImageObject8 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 5, 5);
+	m_battleObjects[26] = battleImageObject8;
+	m_battleObjects[26]->SetMaterial(0, battleMaterial[5]);
+	// 10초대
+	TextureRectObject *battleImageObject9 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 5, 5);
+	m_battleObjects[27] = battleImageObject9;
+	m_battleObjects[27]->SetMaterial(0, battleMaterial[0]);
+	// 1초대
+	TextureRectObject *battleImageObject10 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 5, 5);
+	m_battleObjects[28] = battleImageObject10;
+	m_battleObjects[28]->SetMaterial(0, battleMaterial[0]);
+	// 빈 hp
+	TextureRectObject *battleImageObject11 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 22.5f, 2.5f);
+	m_battleObjects[29] = battleImageObject11;
+	m_battleObjects[29]->SetMaterial(0, battleMaterial[15]);
+	// 빈 sp
+	TextureRectObject *battleImageObject12 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 22.5f, 2.5f);
+	m_battleObjects[30] = battleImageObject12;
+	m_battleObjects[30]->SetMaterial(0, battleMaterial[15]);
+	
+
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -175,10 +285,10 @@ void BattleScene::ReleaseUploadBuffers()
 
 	if (m_pTerrain) m_pTerrain->ReleaseUploadBuffers();
 
-	if (m_ppObjects) {
+	if (m_battleObjects) {
 		for (unsigned int i = 0; i < m_nObjects ; ++i)
-			if (m_ppObjects[i])
-				m_ppObjects[i]->ReleaseUploadBuffers();
+			if (m_battleObjects[i])
+				m_battleObjects[i]->ReleaseUploadBuffers();
 	}
 }
 
@@ -250,36 +360,48 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 
 
 	auto reflection = Vector3::Subtract(XMFLOAT3(0.0f, 0.0f, 0.0f), m_pPlayer->GetCamera()->GetLookVector());
-	if (m_ppObjects)
+	if (m_battleObjects)
 		for (unsigned int i = 0; i < m_nObjects; ++i)
-			if (m_ppObjects[i]) {
-				//	m_ppObjects[i]->SetLookAt(m_pPlayer->GetCamera()->GetPosition(), XMFLOAT3(0.0f, 1.0f, 0.0f));
+			if (m_battleObjects[i]) {
+				//	m_battleObjects[i]->SetLookAt(m_pPlayer->GetCamera()->GetPosition(), XMFLOAT3(0.0f, 1.0f, 0.0f));
 			}
 
 	// 레이더
-	m_ppObjects[0]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 25.0f, m_pPlayer->GetCamera()->GetPosition().z + 50.0f);
-
-	// 빈 HP바
-	//m_ppObjects[1]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 30.0f, m_pPlayer->GetCamera()->GetPosition().z + 50.0f);
-	// 빈 SP 바
-	//m_ppObjects[2]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 20.0f, m_pPlayer->GetCamera()->GetPosition().z + 49.0f);
+	//m_battleObjects[0]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 25.0f, m_pPlayer->GetCamera()->GetPosition().z + 50.0f);
 	
-	// HP 바
-	//m_ppObjects[3]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 30.0f, m_pPlayer->GetCamera()->GetPosition().z + 50.0f);
+	//HP바
+	m_battleObjects[21]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x-25.0f, m_pPlayer->GetCamera()->GetPosition().y+17.0f, m_pPlayer->GetCamera()->GetPosition().z);
+	//SP바
+	m_battleObjects[22]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 25.0f, m_pPlayer->GetCamera()->GetPosition().y + 14.0f, m_pPlayer->GetCamera()->GetPosition().z );
 	
-	// SP 바
-	//m_ppObjects[4]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 20.0f, m_pPlayer->GetCamera()->GetPosition().z + 49.0f);
+	// 레이더
+	m_battleObjects[23]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 29.0f, m_pPlayer->GetCamera()->GetPosition().y + 13.0f, m_pPlayer->GetCamera()->GetPosition().z );
 	
-	if (m_nObjects > 5) {
-		m_ppObjects[5]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
-		m_ppObjects[6]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
-		m_ppObjects[7]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
-		m_ppObjects[8]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
-		m_ppObjects[9]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
-		m_ppObjects[10]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
-		m_ppObjects[11]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
-		m_ppObjects[12]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
-	}
+	// 점수표
+	m_battleObjects[24]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x, m_pPlayer->GetCamera()->GetPosition().y + 17.0f, m_pPlayer->GetCamera()->GetPosition().z);
+	// 콜론
+	m_battleObjects[25]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x, m_pPlayer->GetCamera()->GetPosition().y + 12.0f, m_pPlayer->GetCamera()->GetPosition().z);
+	// 분
+	m_battleObjects[26]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x-3, m_pPlayer->GetCamera()->GetPosition().y + 12.0f, m_pPlayer->GetCamera()->GetPosition().z);
+	// 10초대
+	m_battleObjects[27]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x+3, m_pPlayer->GetCamera()->GetPosition().y + 12.0f, m_pPlayer->GetCamera()->GetPosition().z);
+	// 1초대
+	m_battleObjects[28]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x+6, m_pPlayer->GetCamera()->GetPosition().y + 12.0f, m_pPlayer->GetCamera()->GetPosition().z);
+	// 빈 바
+	m_battleObjects[29]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 25.0f, m_pPlayer->GetCamera()->GetPosition().y + 17.0f, m_pPlayer->GetCamera()->GetPosition().z+0.001f);
+	m_battleObjects[30]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 25.0f, m_pPlayer->GetCamera()->GetPosition().y + 14.0f, m_pPlayer->GetCamera()->GetPosition().z+0.001f);
+	
+	
+	/*if (m_nObjects > 5) {
+		m_battleObjects[5]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_battleObjects[6]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_battleObjects[7]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_battleObjects[8]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_battleObjects[9]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_battleObjects[10]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_battleObjects[11]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+		m_battleObjects[12]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
+	}*/
 	/*for (int i = 0; i < m_nCubeObjects; ++i) {
 		m_ppCubeObjects[i]->SetPosition(m_pPlayer->GetPosition().x, m_pPlayer->GetPosition().y - 60, m_pPlayer->GetPosition().z - 50);
 	}*/
@@ -329,7 +451,11 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
 
 
-	//if (m_ppObjects) for (unsigned int i = 0; i < m_nObjects; ++i) if (m_ppObjects[i]) m_ppObjects[i]->Render(pd3dCommandList, pCamera);
+	//if (m_battleObjects) for (unsigned int i = 0; i < m_nObjects; ++i) if (m_battleObjects[i]) m_battleObjects[i]->Render(pd3dCommandList, pCamera);
+	for (int i = 0; i < 10; ++i)
+	{
+		m_battleObjects[21 + i]->Render(pd3dCommandList, pCamera);
+	}
 	
 }
 
@@ -459,19 +585,28 @@ void BattleScene::ProcessPacket(char * ptr)
 	case SC_Type::Rotate:
 	{
 		SCPacket_Rotate *my_packet = reinterpret_cast<SCPacket_Rotate *>(ptr);
-		unsigned short other_id = my_packet->id;
-		
-		if (other_id == m_pFramework->myid) {
-			m_pPlayer->SetVisible(true);
-			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
-			
-			m_pPlayer->GetCamera()->Rotate(my_packet->x, my_packet->y, my_packet->z);
-			//m_pPlayer->Rotate(my_packet->x, my_packet->y, my_packet->z);
-		}
-		else if (other_id < MAX_PLAYER) {
-			m_ppOtherPlayers[other_id]->Rotate(my_packet->x, my_packet->y, my_packet->z);
-			m_ppOtherPlayers[other_id]->GetCamera()->Rotate(my_packet->x, my_packet->y, my_packet->z);//#ifdef USE_CONSOLE_WINDOW
-		}
+		//unsigned short other_id = my_packet->id;
+		//obj_rot_x = my_packet->x;
+		//obj_rot_y = my_packet->y;
+		//obj_rot_z = my_packet->z;
+		//printf(" %f, %f, %f\n", my_packet->m_Look.x, my_packet->m_Look.y, my_packet->m_Look.z);
+		//if (other_id == m_pFramework->myid) {
+		//	m_pPlayer->SetVisible(true);
+		//	m_pPlayer->GetCamera()->SetLookAt(my_packet->m_Look);
+
+		//	m_pPlayer->SetLook(my_packet->m_Look);
+		//	
+		//	//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
+		////	m_pPlayer->GetCamera()->Rotate(my_packet->y, my_packet->x, my_packet->z);
+		//	//m_pPlayer->Rotate(my_packet->y, my_packet->x, my_packet->z);
+
+		//	
+		//}
+		//else if (other_id < MAX_PLAYER) {
+		//	m_ppOtherPlayers[other_id]->GetCamera()->Rotate(my_packet->x, my_packet->y, my_packet->z);//#ifdef USE_CONSOLE_WINDOW
+		//	m_ppOtherPlayers[other_id]->Rotate(my_packet->y, my_packet->x, my_packet->z);
+		//	
+		//}
 		
 		
 		break;
