@@ -56,7 +56,12 @@ public:
 	void BuildShaders(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
 
 	void SetMaterial(int nMaterial, Material *pMaterial);
-	Material* GetMaterial(int nMaterial) const { if (m_ppMaterials && m_nMaterials > nMaterial) if (m_ppMaterials[nMaterial]) return m_ppMaterials[nMaterial]; }
+	Material* GetMaterial(int nMaterial) const { 
+		if (m_ppMaterials && m_nMaterials > nMaterial) 
+			if (m_ppMaterials[nMaterial]) 
+				return m_ppMaterials[nMaterial]; 
+		return nullptr;
+	}
 
 	virtual void BuildLight();
 	virtual void BuildMaterial();
