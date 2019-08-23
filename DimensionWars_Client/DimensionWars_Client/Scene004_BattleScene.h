@@ -77,5 +77,9 @@ public:
 	void SendChracterType(int a);
 	int cmd;
 	unsigned int anime; // 애니메이션 정보
+
+	GamblerPlayer *test;
+	GrimReaperPlayer *test1;
+	ElfArcherPlayer *test2;
 };
 

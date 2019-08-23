@@ -120,6 +120,7 @@ public:
 	unsigned short nCurrScene = 0;
 	
 	BasePlayer					*m_pPlayer = nullptr;
+	BaseCamera * m_pCamera = nullptr;
 	BasePlayer *m_ppOtherPlayers[MAX_PLAYER] = { nullptr, };
 //	AnimationController 			*m_pSkinnedAnimationController = nullptr;
 protected:

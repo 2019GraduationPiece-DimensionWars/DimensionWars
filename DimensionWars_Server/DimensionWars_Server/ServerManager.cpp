@@ -734,7 +734,9 @@ void ServerManager::SendRotatePacket(unsigned short to, unsigned short obj, floa
 	packet.x = x;
 	packet.y = y;
 	packet.z = z;
-	packet.m_Look = m_xmf3Look;
+	packet.m_Look = objects[obj].m_Look;
+	packet.m_Right = objects[obj].m_Right;
+	packet.m_Up = objects[obj].m_Up;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
@@ -804,13 +806,17 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	{
 		CSPacket_Rotate *packet = reinterpret_cast<CSPacket_Rotate *>(buf);
 		
-		if (packet->x != 0.0f)
+		objects[id].m_Right = packet->m_Right;
+		objects[id].m_Up = packet->m_Up;
+		objects[id].m_Look = packet->m_Look;
+		
+		/*if (packet->x != 0.0f)
 		{
 			m_fPitch += packet->x;
 			if (m_fPitch > +89.0f) { packet->x -= (m_fPitch - 89.0f); m_fPitch = +89.0f; }
 			if (m_fPitch < -89.0f) { packet->x -= (m_fPitch + 89.0f); m_fPitch = -89.0f; }
 		}
-		if (packet->y != 0.0f)
+		if (packet->y != 0.0f) 
 		{
 			m_fYaw += packet->y;
 			if (m_fYaw > 90.0f) m_fYaw -= 90.0f;
@@ -821,18 +827,18 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 			m_fRoll += packet->z;
 			if (m_fRoll > +20.0f) { packet->z -= (m_fRoll - 20.0f); m_fRoll = +20.0f; }
 			if (m_fRoll < -20.0f) { packet->z -= (m_fRoll + 20.0f); m_fRoll = -20.0f; }
-		}
+		}*/
 		//m_pCamera->Rotate(x, y, z);
 		if (packet->y != 0.0f)
 		{
-			XMMATRIX xmmtxRotate = XMMatrixRotationAxis(XMLoadFloat3(&m_xmf3Up), XMConvertToRadians(packet->x));
-			m_xmf3Look = Vector3::TransformNormal(m_xmf3Look, xmmtxRotate);
-			m_xmf3Right = Vector3::TransformNormal(m_xmf3Right, xmmtxRotate);
+			XMMATRIX xmmtxRotate = XMMatrixRotationAxis(XMLoadFloat3(&objects[id].m_Up), XMConvertToRadians(packet->x));
+			objects[id].m_Look = Vector3::TransformNormal(objects[id].m_Look, xmmtxRotate);
+			objects[id].m_Right = Vector3::TransformNormal(objects[id].m_Right, xmmtxRotate);
 		}
 
-		m_xmf3Look = Vector3::Normalize(m_xmf3Look);
-		m_xmf3Right = Vector3::CrossProduct(m_xmf3Up, m_xmf3Look, true);
-		m_xmf3Up = Vector3::CrossProduct(m_xmf3Look, m_xmf3Right, true);
+		objects[id].m_Look = Vector3::Normalize(objects[id].m_Look);
+		objects[id].m_Right = Vector3::CrossProduct(objects[id].m_Up, objects[id].m_Look, true);
+		objects[id].m_Up = Vector3::CrossProduct(objects[id].m_Look, objects[id].m_Right, true);
 
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (objects[i].connected == true) {

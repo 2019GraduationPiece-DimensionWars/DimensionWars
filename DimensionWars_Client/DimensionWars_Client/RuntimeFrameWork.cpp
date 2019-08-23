@@ -601,6 +601,7 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 			ChangeSwapChainState();
 			break;
 		case VK_SPACE:
+			//m_pCamera = m_pPlayer->GetCamera();
 			/*if (m_CurrSceneTag==BaseScene::SceneTag::Title)
 			{
 				ChangeScene(BaseScene::SceneTag::Lobby);

@@ -141,7 +141,7 @@ void TitleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 	pCamera->UpdateShaderVariables(pd3dCommandList);
-
+	m_pPlayer->Render(pd3dCommandList, pCamera);
 
 	if (m_titleObjects) if (m_titleObjects[0]) m_titleObjects[0]->Render(pd3dCommandList, pCamera);
 	

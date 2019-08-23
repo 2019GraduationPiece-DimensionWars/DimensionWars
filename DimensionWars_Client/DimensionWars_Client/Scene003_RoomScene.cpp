@@ -219,10 +219,11 @@ bool RoomScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 			//m_pFramework->resourceMgr = new ResourceManager();
 			////m_pPlayer = m_pFramework->arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
 			//m_pFramework->arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pFramework->m_pDevice, m_pFramework->m_pCommandList);
-			m_pPlayer = m_pFramework->arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
-			
+			//m_pFramework->m_pPlayer = m_pFramework->arrScene[BaseScene::SceneTag::Title]->m_pPlayer;
+			//m_pCamera = m_pPlayer->GetCamera();
 			//m_pFramework->m_pCommandList->Close();
 			m_pFramework->ChangeScene(BaseScene::SceneTag::Game);
+			
 		}
 		if (pt.x > 69 && pt.x < 111 && pt.y>460 && pt.y < 485)
 		{

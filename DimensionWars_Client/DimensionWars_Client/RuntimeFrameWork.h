@@ -127,11 +127,12 @@ public:
 	ID3D12GraphicsCommandList	*m_pCommandList = nullptr;
 	ID3D12CommandAllocator		*m_pCommandAllocator = nullptr;
 	unsigned short myid;
-
-private:
-	FrameTimer m_Timer;
 	BasePlayer * m_pPlayer = nullptr;
 	BaseCamera * m_pCamera = nullptr;
+private:
+	FrameTimer m_Timer;
+	//BasePlayer * m_pPlayer = nullptr;
+	//BaseCamera * m_pCamera = nullptr;
 	//BaseScene * arrScene[BaseScene::SceneTag::Count];
 	BaseScene * m_pCurrScene = nullptr;
 	BaseScene * m_pPrevScene = nullptr;

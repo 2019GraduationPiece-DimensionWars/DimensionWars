@@ -3,6 +3,7 @@
 #include "Object008_HeightmapTerrain.h"
 
 constexpr unsigned short room_texture = 13;
+class BaseCamera;
 
 class RoomScene :
 	public BaseScene
@@ -36,5 +37,6 @@ private:
 	bool right_act = false;
 	bool room_exit = false;
 	HeightMapTerrain * m_pTerrain = nullptr;
+	
 };
 

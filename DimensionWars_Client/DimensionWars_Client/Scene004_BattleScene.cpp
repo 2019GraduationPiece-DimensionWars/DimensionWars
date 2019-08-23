@@ -61,6 +61,9 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	m_pFramework->GetResource()->AllModelLoad(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 
 	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
+	test = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	test1 = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	test2 = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 
 	cmd = 0;
 	//printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
@@ -317,6 +320,36 @@ bool BattleScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 {
 	if (m_pPlayer) m_pPlayer->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 
+	switch (nMessageID)
+	{
+	case WM_KEYDOWN:
+		// 키보드를 누르고 있을 경우 최초 한번만 실행.
+		if ((lParam & 0x40000000) != 0x40000000) {
+			switch (wParam) {
+			case 'Z':
+				m_pPlayer = test;
+				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
+				break;
+			case 'X':
+				m_pPlayer = test1;
+				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
+				break;
+			case 'C':
+				m_pPlayer = test2;
+				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
+				break;
+			
+			
+
+			}
+
+			
+		}
+		break;
+	case WM_KEYUP:
+
+		break;
+	}
 	return false;
 }
 
@@ -334,22 +367,8 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 		m_pPlayer->GetCamera()->SetOffset(XMFLOAT3(0, 150, -350));
 		//m_pPlayer->GetCamera()->SetPosition(Vector3::Add(m_pPlayer->GetCamera()->GetPosition(), m_pPlayer->GetCamera()->GetOffset()));
 	}
-	POINT ptCursorPos;
-	SetCursor(NULL);
-	GetCursorPos(&ptCursorPos);
-	cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
-	cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
-
-	if (cxDelta || cyDelta) {
-		/*if (pKeysBuffer[VK_RBUTTON] & 0xF0)
-		Rotate(cyDelta, 0.0f, -cxDelta);
-		else*/
-		//SendRotate(cyDelta, cxDelta);
-	}
-	/*for (int i = 0; i < 50; ++i)
-	{
-		m_ppCubeObjects[i]->SetPosition(0, 6000 - 600 -100*i, 0);
-	}*/
+	
+	
 	BuildCube();
 	
 	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed);
@@ -363,11 +382,10 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 	if (m_battleObjects)
 		for (unsigned int i = 0; i < m_nObjects; ++i)
 			if (m_battleObjects[i]) {
-				//	m_battleObjects[i]->SetLookAt(m_pPlayer->GetCamera()->GetPosition(), XMFLOAT3(0.0f, 1.0f, 0.0f));
+					//m_battleObjects[i]->SetLookAt(m_pPlayer->GetPosition(), m_pPlayer->GetUpVector());
 			}
 
 	// 레이더
-	//m_battleObjects[0]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 50.0f, m_pPlayer->GetCamera()->GetPosition().y + 25.0f, m_pPlayer->GetCamera()->GetPosition().z + 50.0f);
 	
 	//HP바
 	m_battleObjects[21]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x-25.0f, m_pPlayer->GetCamera()->GetPosition().y+17.0f, m_pPlayer->GetCamera()->GetPosition().z);
@@ -585,28 +603,36 @@ void BattleScene::ProcessPacket(char * ptr)
 	case SC_Type::Rotate:
 	{
 		SCPacket_Rotate *my_packet = reinterpret_cast<SCPacket_Rotate *>(ptr);
-		//unsigned short other_id = my_packet->id;
-		//obj_rot_x = my_packet->x;
-		//obj_rot_y = my_packet->y;
-		//obj_rot_z = my_packet->z;
+		unsigned short other_id = my_packet->id;
+		obj_rot_x = my_packet->x;
+		obj_rot_y = my_packet->y;
+		obj_rot_z = my_packet->z;
+		
 		//printf(" %f, %f, %f\n", my_packet->m_Look.x, my_packet->m_Look.y, my_packet->m_Look.z);
-		//if (other_id == m_pFramework->myid) {
-		//	m_pPlayer->SetVisible(true);
-		//	m_pPlayer->GetCamera()->SetLookAt(my_packet->m_Look);
+		if (other_id == m_pFramework->myid) {
+			m_pPlayer->SetVisible(true);
+			//m_pPlayer->GetCamera()->Rotate(my_packet->y, my_packet->x, my_packet->z);
+			m_pPlayer->SetRight(my_packet->m_Right);
+			m_pPlayer->SetUp(my_packet->m_Up);
+			m_pPlayer->SetLook(my_packet->m_Look);
+			//m_battleObjects[21]->SetLookAt(XMFLOAT3(0,0,0), my_packet->m_Up);
+			//m_battleObjects[21]->Rotate(0,my_packet->x,0);
+			//m_pPlayer->GetCamera()->SetLookAt(my_packet->m_Look);
 
-		//	m_pPlayer->SetLook(my_packet->m_Look);
-		//	
-		//	//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
-		////	m_pPlayer->GetCamera()->Rotate(my_packet->y, my_packet->x, my_packet->z);
-		//	//m_pPlayer->Rotate(my_packet->y, my_packet->x, my_packet->z);
+			//m_pPlayer->SetLook(my_packet->m_Look);
+			
+			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
+		//	m_pPlayer->GetCamera()->Rotate(my_packet->y, my_packet->x, my_packet->z);
+			//m_pPlayer->Rotate(my_packet->y, my_packet->x, my_packet->z);
 
-		//	
-		//}
-		//else if (other_id < MAX_PLAYER) {
-		//	m_ppOtherPlayers[other_id]->GetCamera()->Rotate(my_packet->x, my_packet->y, my_packet->z);//#ifdef USE_CONSOLE_WINDOW
-		//	m_ppOtherPlayers[other_id]->Rotate(my_packet->y, my_packet->x, my_packet->z);
-		//	
-		//}
+			
+		}
+		else if (other_id < MAX_PLAYER) {
+			m_ppOtherPlayers[other_id]->SetRight(my_packet->m_Right);
+			m_ppOtherPlayers[other_id]->SetUp(my_packet->m_Up);
+			m_ppOtherPlayers[other_id]->SetLook(my_packet->m_Look);
+			
+		}
 		
 		
 		break;
