@@ -100,7 +100,7 @@ private:
 
 	void AddTimerEvent(unsigned int id, TimerEvent::Command cmd = TimerEvent::Command::Update, double seconds = 0.01f);
 	void Update(unsigned long id);
-
+	void Update2(unsigned long id);
 	int character_type = 99;
 	int card_num = 0;
 	int slash_num = 0;
@@ -126,6 +126,7 @@ private:
 	float           			m_fYaw = 0.0f;
 	float           			m_fRoll = 0.0f;
 
+	float slash_time = 0.0f;
 
 	unsigned short other_ctype = 0; // 다른 플레이어 캐릭터 정보
 };

@@ -137,6 +137,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	slashWave = new SlashWaveObject*[Slash_end - Slash_start];
 	for (unsigned int i = 0; i < Slash_end - Slash_start; ++i) {
 		slashWave[i] = new SlashWaveObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+		
 	}
 	
 	card = new CardObject*[Card_end - Card_start];
@@ -290,7 +291,6 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	TextureRectObject *battleImageObject12 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 22.5f, 2.5f);
 	m_battleObjects[30] = battleImageObject12;
 	m_battleObjects[30]->SetMaterial(0, battleMaterial[15]);
-	
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
@@ -385,8 +385,11 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 {
 	SendMoveDirection();
 	SendAnimationInfo();
+	
+	
+	
 	if (cmd == 1) {
-		m_pPlayer->GetCamera()->SetOffset(XMFLOAT3(0, 150, -350));
+		//m_pPlayer->GetCamera()->SetOffset(XMFLOAT3(0, 150, -350));
 		//m_pPlayer->GetCamera()->SetPosition(Vector3::Add(m_pPlayer->GetCamera()->GetPosition(), m_pPlayer->GetCamera()->GetOffset()));
 	}
 	
@@ -463,6 +466,8 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 
 	// for (unsigned int i = 0; i < Slash_end - Slash_start; ++i) if (slashWave && slashWave[i]) slashWave[i]->Animate(fTimeElapsed);
 	//for (unsigned int i = 0; i < Card_end - Card_start; ++i) if (card && card[i]) card[i]->Animate(fTimeElapsed);
+	//slashWave[0]->SetPosition(m_pPlayer->GetPosition());
+	
 }
 
 void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)
@@ -676,7 +681,12 @@ void BattleScene::ProcessPacket(char * ptr)
 			// 그려주시고 위치 설정
 			if (slashWave && slashWave[other_id - Slash_start]) {
 				slashWave[other_id - Slash_start]->SetPosition(my_packet->position);
+				/*printf("Right : %f, %f, %f\n", slashWave[other_id - Slash_start]->GetRight().x, slashWave[other_id - Slash_start]->GetRight().y, slashWave[other_id - Slash_start]->GetRight().z);
+				printf("Up : %f, %f, %f\n", slashWave[other_id - Slash_start]->GetUp().x, slashWave[other_id - Slash_start]->GetUp().y, slashWave[other_id - Slash_start]->GetUp().z);
+				printf("Look : %f, %f, %f\n", slashWave[other_id - Slash_start]->GetLook().x, slashWave[other_id - Slash_start]->GetLook().y, slashWave[other_id - Slash_start]->GetLook().z);*/
+				//slashWave[other_id - Slash_start]->MoveForward()
 				//printf("검기 받은 후 : %1.f, %1.f, %1.f\n", slashWave[other_id - Slash_start]->GetPosition().x, slashWave[other_id - Slash_start]->GetPosition().y, slashWave[other_id - Slash_start]->GetPosition().z);
+				
 			}
 		}
 		break;
@@ -706,8 +716,11 @@ void BattleScene::ProcessPacket(char * ptr)
 			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 		//	m_pPlayer->GetCamera()->Rotate(my_packet->y, my_packet->x, my_packet->z);
 			//m_pPlayer->Rotate(my_packet->y, my_packet->x, my_packet->z);
-
 			
+			/*slashWave[0]->m_xmf4x4World._11 = m_pPlayer->m_xmf4x4World._11; slashWave[0]->m_xmf4x4World._12 = m_pPlayer->m_xmf4x4World._12; slashWave[0]->m_xmf4x4World._13 = m_pPlayer->m_xmf4x4World._13;
+			slashWave[0]->m_xmf4x4World._21 = m_pPlayer->m_xmf4x4World._21; slashWave[0]->m_xmf4x4World._22 = m_pPlayer->m_xmf4x4World._22; slashWave[0]->m_xmf4x4World._23 = m_pPlayer->m_xmf4x4World._23;
+			slashWave[0]->m_xmf4x4World._31 = m_pPlayer->m_xmf4x4World._31; slashWave[0]->m_xmf4x4World._32 = m_pPlayer->m_xmf4x4World._32; slashWave[0]->m_xmf4x4World._33 = m_pPlayer->m_xmf4x4World._33;
+			*/
 		}
 		else if (other_id < MAX_PLAYER) {
 			m_ppOtherPlayers[other_id]->SetRight(my_packet->m_Right);

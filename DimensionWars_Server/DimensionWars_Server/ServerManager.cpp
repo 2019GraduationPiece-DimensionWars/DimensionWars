@@ -249,6 +249,10 @@ void ServerManager::WorkerThread()
 			if (pEvent->command == TimerEvent::Command::Update) {
 				Update(key);
 			}
+			else if (pEvent->command == TimerEvent::Command::Tile)
+			{
+				printf("w\n");
+			}
 			delete lpover_ex;
 		}
 		break;
@@ -775,6 +779,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	}
 	case CS_Type::Move:
 	{
+		
 		objects[id].m_Look = packet->m_Look;
 		objects[id].m_Right = packet->m_Right;
 		objects[id].m_Up = packet->m_Up;
@@ -1302,6 +1307,10 @@ void ServerManager::AddTimerEvent(unsigned int id, TimerEvent::Command cmd, doub
 	timerQueue_Lock.unlock();
 }
 
+void ServerManager::Update2(unsigned long id)
+{
+
+}
 void ServerManager::Update(unsigned long id)
 {
 
@@ -1369,19 +1378,24 @@ void ServerManager::Update(unsigned long id)
 	// 사신 검기 날리기
 	//printf("%f, %f, %f\n", objects[id].m_Look.x, objects[id].m_Look.y, objects[id].m_Look.z);
 
-	for (int i = Slash_start; i < Slash_end; ++i)
+	if (scene == 4)
 	{
-		if (objects[i].tile_life == true)
+		for (int i = Slash_start; i < Slash_end; ++i)
 		{
-			objects[i].position = Vector3::Add(objects[i].position, objects[id].m_Look, 10.0f);
-			//printf("%1.f, %1.f, %1.f\n", objects[i].position.x, objects[i].position.y,objects[i].position.z);
-			if (abs(objects[i].position.z - objects[id].position.z) >= 1000)
+			if (objects[i].tile_life == true)
 			{
-				objects[i].tile_life = false;
+				slash_time += 0.01f;
+				objects[i].position = Vector3::Add(objects[i].position, objects[id].m_Look, 10.0f);
+				//printf("%1.f, %1.f, %1.f\n", objects[i].position.x, objects[i].position.y,objects[i].position.z);
+				if (slash_time > 1.0f)
+				{
+					objects[i].tile_life = false;
+					slash_time = 0.0f;
+				}
+				SendPositionPacket(id, i);
 			}
-			SendPositionPacket(id, i);
-		}
 
+		}
 	}
 
 	// 도박사 평타  충돌

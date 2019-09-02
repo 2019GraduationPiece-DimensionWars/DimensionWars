@@ -411,5 +411,6 @@ void GrimReaperPlayer::SendSlash()
 	myPacket->attack_type = GrimReaper::Slash_Wave;
 	myPacket->position = GetPosition();
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
+	//m_pFramework->GetResource()->GetGrimReaperModel()->m_pModelRootObject->FindFrame("Cylinder002");
 }
 
