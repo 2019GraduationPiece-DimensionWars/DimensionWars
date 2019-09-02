@@ -379,7 +379,7 @@ void RuntimeFrameWork::BuildObjects()
 	
 	//m_pCurrScene->BuildObjects(m_pDevice, m_pCommandList);	// 루트 시그니처 생성
 	m_pGraphicsRootSignature = m_pCurrScene->CreateGraphicsRootSignature(m_pDevice);
-	m_pCurrScene->CreateCbvSrvDescriptorHeaps(m_pDevice, m_pCommandList, 2, 256);
+	m_pCurrScene->CreateCbvSrvDescriptorHeaps(m_pDevice, m_pCommandList, 2, 512);	// 텍스쳐갯수
 	//GetResource()->AllModelLoad(m_pDevice, m_pCommandList, m_pGraphicsRootSignature);
 
 	
@@ -642,6 +642,7 @@ LRESULT RuntimeFrameWork::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, 
 			Activate = true;
 			m_Timer.Start();
 		}
+		printf("현재 창 활성화 상태 : %d\n", Activate);
 		break;
 
 	}

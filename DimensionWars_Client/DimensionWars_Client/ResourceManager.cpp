@@ -27,26 +27,29 @@ ResourceManager::~ResourceManager()
 void ResourceManager::AllModelLoad(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, ID3D12RootSignature * pd3dGraphicsRootSignature)
 {
 	for (unsigned int i = 0; i < MAX_PLAYER; ++i){
-		LoadGrimReaper(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, i);
+		LoadGrimReaper(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, i);		
 		LoadGambler(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, i);
 		LoadElfArcher(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, i);
+		printf("%d번째 플레이어 모델 로드 완료\n", i + 1);
 	}
 
-	if (!PortalModel) 
-		for (unsigned int i = 0; i < Potal_end - Potal_start ; ++i) {
+	for (unsigned int i = 0; i < Potal_end - Potal_start ; ++i) {
+		if (!PortalModel[i]) {
 			PortalModel[i] = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Portal.bin", nullptr);
 			Texture *pPortalTexture = new Texture(1, RESOURCE_TEXTURE2D, 0);
 			pPortalTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Model/Portal.dds", 0);
 			BaseScene::CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pPortalTexture, 15, false);
 			SkinnedFrameObject* portalObject = PortalModel[i]->m_pModelRootObject->FindFrame("Sphere001");
 			strncpy(portalObject->m_pstrFrameName, "Portal", 8);
-			portalObject->GetMaterial(0)->SetTexture(pPortalTexture);
+			portalObject->GetMaterial(0)->SetTexture(pPortalTexture);			
 		}
+	}
+	printf("%d개의 포탈 모델 로드 완료\n", Potal_end - Potal_start);
 }
 
 void ResourceManager::LoadGrimReaper(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, ID3D12RootSignature * pd3dGraphicsRootSignature, unsigned int index)
 {
-	if (!GrimReaperModel && !GrimReaperModel[index]) {
+	if (!GrimReaperModel[index]) {
 		GrimReaperModel[index] = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/GrimReaper.bin", nullptr);
 		
 		Texture *pSkeletonTexture = new Texture(1, RESOURCE_TEXTURE2D, 0);
@@ -71,7 +74,7 @@ void ResourceManager::LoadGrimReaper(ID3D12Device * pd3dDevice, ID3D12GraphicsCo
 		cape->GetMaterial(0)->SetTexture(pCapeTexture);
 	}
 
-	if (!SlashWaveModel && !SlashWaveModel[index]) {
+	if (!SlashWaveModel[index]) {
 		SlashWaveModel[index] = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/SlashWave.bin", nullptr);
 		Texture *pSlashWaveTexture = new Texture(1, RESOURCE_TEXTURE2D, 0);
 		pSlashWaveTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Model/GrimReaper/SlashWave_Base_Color.dds", 0);
@@ -84,7 +87,7 @@ void ResourceManager::LoadGrimReaper(ID3D12Device * pd3dDevice, ID3D12GraphicsCo
 
 void ResourceManager::LoadGambler(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, ID3D12RootSignature * pd3dGraphicsRootSignature, unsigned int index)
 {
-	if (!GamblerModel && !GamblerModel[index]) {
+	if (!GamblerModel[index]) {
 		GamblerModel[index] = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Gambler.bin", nullptr);
 		
 		Texture *pBodyTexture = new Texture(1, RESOURCE_TEXTURE2D, 0);
@@ -157,22 +160,22 @@ void ResourceManager::LoadGambler(ID3D12Device * pd3dDevice, ID3D12GraphicsComma
 		strncpy(card->m_pstrFrameName, "Gambler_Card_Base_Color", 24);
 		card->GetMaterial(0)->SetTexture(pCardTexture);
 
-		if (!CardModel) {
-			for (unsigned int i = 0; i < 3 ; ++ i)
-				if (!CardModel[index * 3 + i]) {
-					CardModel[index * 3 + i] = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Card.bin", nullptr);
-					BaseScene::CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pCardTexture, 15, false);
-					SkinnedFrameObject* cardObject = CardModel[index * 3 + i]->m_pModelRootObject->FindFrame("Box001");
-					strncpy(cardObject->m_pstrFrameName, "Card", 5);
-					cardObject->GetMaterial(0)->SetTexture(pCardTexture);
-				}
+
+		for (unsigned int i = 0; i < 3; ++i) {
+			if (!CardModel[index * 3 + i]) {
+				CardModel[index * 3 + i] = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Card.bin", nullptr);
+				BaseScene::CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pCardTexture, 15, false);
+				SkinnedFrameObject* cardObject = CardModel[index * 3 + i]->m_pModelRootObject->FindFrame("Box001");
+				strncpy(cardObject->m_pstrFrameName, "Card", 5);
+				cardObject->GetMaterial(0)->SetTexture(pCardTexture);
+			}
 		}
 	}
 }
 
 void ResourceManager::LoadElfArcher(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, ID3D12RootSignature * pd3dGraphicsRootSignature, unsigned int index)
 {
-	if (!ElfArcherModel && !ElfArcherModel[index]) {
+	if (!ElfArcherModel[index]) {
 		ElfArcherModel[index] = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/ElfArcher.bin", nullptr);
 		
 		Texture *pBodyTexture = new Texture(1, RESOURCE_TEXTURE2D, 0);
@@ -229,16 +232,49 @@ void ResourceManager::LoadElfArcher(ID3D12Device * pd3dDevice, ID3D12GraphicsCom
 		strncpy(arrow->m_pstrFrameName, "ElfArcher_Arrow_Base_Color", 27);
 		arrow->GetMaterial(0)->SetTexture(pArrowTexture);
 		
-		if (!ArrowModel) {
-			for (unsigned int i = 0; i < 7; ++i) {
-				ArrowModel[index * 7 + i] = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Arrow.bin", nullptr);
-				BaseScene::CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pArrowTexture, 15, false);
-				SkinnedFrameObject* arrowObject = ArrowModel[index * 7 + i]->m_pModelRootObject->FindFrame("Cylinder005");
-				strncpy(arrowObject->m_pstrFrameName, "Arrow", 6);
-				arrowObject->GetMaterial(0)->SetTexture(pArrowTexture);
-			}
+		for (unsigned int i = 0; i < 7; ++i) {
+			ArrowModel[index * 7 + i] = SkinnedFrameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Arrow.bin", nullptr);
+			BaseScene::CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pArrowTexture, 15, false);
+			SkinnedFrameObject* arrowObject = ArrowModel[index * 7 + i]->m_pModelRootObject->FindFrame("Cylinder005");
+			strncpy(arrowObject->m_pstrFrameName, "Arrow", 6);
+			arrowObject->GetMaterial(0)->SetTexture(pArrowTexture);
 		}
 	}
+}
+
+LoadedModelInfo * ResourceManager::GetGrimReaperModel(unsigned int index) const
+{
+	return GrimReaperModel[index];
+}
+
+LoadedModelInfo * ResourceManager::GetGamblerModel(unsigned int index) const
+{
+	return GamblerModel[index];
+}
+
+LoadedModelInfo * ResourceManager::GetElfArcherModel(unsigned int index) const
+{
+	return ElfArcherModel[index];
+}
+
+LoadedModelInfo * ResourceManager::GetSlashWaveModel(unsigned int index) const
+{
+	return SlashWaveModel[index];
+}
+
+LoadedModelInfo * ResourceManager::GetCardModel(unsigned int index) const
+{
+	return CardModel[index];
+}
+
+LoadedModelInfo * ResourceManager::GetArrowModel(unsigned int index) const
+{
+	return ArrowModel[index];
+}
+
+LoadedModelInfo * ResourceManager::GetPortalModel(unsigned int index) const
+{
+	return PortalModel[index];
 }
 
 SkinnedFrameObject * ResourceManager::GetSlashWaveObject(unsigned int index) const

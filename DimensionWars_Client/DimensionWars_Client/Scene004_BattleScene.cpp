@@ -387,9 +387,10 @@ bool BattleScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 void BattleScene::AnimateObjects(float fTimeElapsed)
 {
-	SendMoveDirection();
-	SendAnimationInfo();
-	
+	if (m_pFramework->GetActivated()) {
+		SendMoveDirection();
+		SendAnimationInfo();
+	}
 	
 	
 	if (cmd == 1) {
@@ -665,7 +666,7 @@ void BattleScene::ProcessPacket(char * ptr)
 		anime = my_packet->animation_state;
 		//printf("%d", anime);
 	//	printf("포지션! 서버한테 받기 성공\n");
-		if (other_id == m_pFramework->myid) {
+		if (other_id == m_pFramework->myid && m_pFramework->GetActivated()) {
 			m_pPlayer->SetVisible(true);
 			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			m_pPlayer->SetPosition(my_packet->position);
@@ -707,7 +708,7 @@ void BattleScene::ProcessPacket(char * ptr)
 		obj_rot_z = my_packet->z;
 		
 		//printf(" %f, %f, %f\n", my_packet->m_Look.x, my_packet->m_Look.y, my_packet->m_Look.z);
-		if (other_id == m_pFramework->myid) {
+		if (other_id == m_pFramework->myid && m_pFramework->GetActivated()) {
 			m_pPlayer->SetVisible(true);
 			m_pPlayer->GetCamera()->Rotate(my_packet->y, my_packet->x, my_packet->z);
 			m_pPlayer->SetRight(my_packet->m_Right);
