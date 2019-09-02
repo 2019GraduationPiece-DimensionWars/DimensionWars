@@ -58,6 +58,9 @@ private:
 
 
 	bool Activate;
+protected:
+	unsigned short character_type1 = 0;
+
 public:
 	RuntimeFrameWork();
 	~RuntimeFrameWork();
@@ -88,6 +91,9 @@ public:
 
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
+
+	unsigned short GetCharacter_type() const { return (character_type1); }
+
 
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
@@ -121,7 +127,9 @@ public:
 	void SetGraphicsRootSignature(ID3D12GraphicsCommandList *pd3dCommandList) { pd3dCommandList->SetGraphicsRootSignature(m_pGraphicsRootSignature); }
 	unsigned short nBase_room[6] = { 0, 1, 2, 3, 4, 5 };
 	unsigned short nBase_member[6] = { 0,0,0,0,0,0 };
+	unsigned short select_space[5] = { 0,0,0,0,0 }; // 룸씬에서 내가 있을 위치
 	unsigned short room_num = 0; // 방 그릴 번호
+	unsigned short enter_type = 0; // 방 그릴 번호
 	BaseScene * arrScene[BaseScene::SceneTag::Count];
 	ID3D12Device				*m_pDevice = nullptr;
 	ID3D12GraphicsCommandList	*m_pCommandList = nullptr;
@@ -150,5 +158,7 @@ private:
 	char	packet_buffer[BUFSIZE];
 	DWORD	in_packet_size = 0;
 	int		saved_packet_size = 0;
+	
+
 };
 

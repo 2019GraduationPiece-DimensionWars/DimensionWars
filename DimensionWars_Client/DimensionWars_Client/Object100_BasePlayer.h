@@ -107,6 +107,7 @@ public:
 	int anime_state;
 	bool animation_check = false;
 	float hp;
+	unsigned short character_type;
 
 	float cxDelta = 0.0f, cyDelta = 0.0f;
 	void SendRotate(float cy, float cx, float cz);

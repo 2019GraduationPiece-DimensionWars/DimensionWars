@@ -17,7 +17,7 @@
 #include "Object012_PortalObject.h"
 #include "Texture.h"
 #include "Shader005_TextureRectangleShader.h"
-
+#include "Object104_DummyPlayer.h"
 
 BattleScene::BattleScene()
 {
@@ -56,14 +56,36 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	XMFLOAT4 xmf4Color(0.1f, 0.1f, 0.1f, 0.5f);
 	//m_pTerrain = new HeightMapTerrain(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, _T("Texture/HeightMap.raw"), 257, 257, xmf3Scale, xmf4Color);
 	//m_pTerrain->SetPosition(-3072.0f, 0.0f, -3072.0f);
-
 	
 	m_pFramework->GetResource()->AllModelLoad(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 
 	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
-	test = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-	test1 = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-	test2 = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	
+	//GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	//m_pPlayer = pPlayer;
+
+	//for (int i = 0; i < MAX_PLAYER; ++i)
+	//{
+	//	Dummy[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	//	m_ppOtherPlayers[i] = Dummy[i];
+	//	m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
+	//}
+	
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	//	ReaperObject[i]->SetChild(m_pFramework->GetResource()->GetGrimReaperModel()->m_pModelRootObject, true);
+	}
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		GamblerObject[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+		//GamblerObject[i]->SetChild(m_pFramework->GetResource()->GetGamblerModel()->m_pModelRootObject, true);
+	}
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		ElfObject[i] = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+		//ElfObject[i]->SetChild(m_pFramework->GetResource()->GetElfArcherModel()->m_pModelRootObject, true);
+	}
 
 	cmd = 0;
 	//printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
@@ -327,15 +349,15 @@ bool BattleScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 		if ((lParam & 0x40000000) != 0x40000000) {
 			switch (wParam) {
 			case 'Z':
-				m_pPlayer = test;
+				m_pPlayer = ReaperObject[0];
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
 				break;
 			case 'X':
-				m_pPlayer = test1;
+				m_pPlayer = GamblerObject[0];
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
 				break;
 			case 'C':
-				m_pPlayer = test2;
+				m_pPlayer = ElfObject[0];
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
 				break;
 			
@@ -393,8 +415,23 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 	m_battleObjects[22]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 25.0f, m_pPlayer->GetCamera()->GetPosition().y + 14.0f, m_pPlayer->GetCamera()->GetPosition().z );
 	
 	// 레이더
-	m_battleObjects[23]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 29.0f, m_pPlayer->GetCamera()->GetPosition().y + 13.0f, m_pPlayer->GetCamera()->GetPosition().z );
+	m_battleObjects[23]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 29.0f, m_pPlayer->GetCamera()->GetPosition().y + 13.0f, m_pPlayer->GetCamera()->GetPosition().z +350);
 	
+	//m_battleObjects[23]->SetPosition(Vector3::Subtract(m_pPlayer->GetCamera()->GetPosition(), XMFLOAT3(-10, 0, 0)));
+	//m_battleObjects[23]->m_xmf4x4World._11 = m_pPlayer->GetCamera()->GetRightVector().x;
+	//m_battleObjects[23]->m_xmf4x4World._12 = m_pPlayer->GetCamera()->GetRightVector().y;
+	//m_battleObjects[23]->m_xmf4x4World._13 = m_pPlayer->GetCamera()->GetRightVector().z;
+
+	//m_battleObjects[23]->m_xmf4x4World._21 = m_pPlayer->GetCamera()->GetUpVector().x;
+	//m_battleObjects[23]->m_xmf4x4World._22 = m_pPlayer->GetCamera()->GetUpVector().y;
+	//m_battleObjects[23]->m_xmf4x4World._23 = m_pPlayer->GetCamera()->GetUpVector().z;
+
+	//m_battleObjects[23]->m_xmf4x4World._31 = m_pPlayer->GetCamera()->GetLookVector().x;
+	//m_battleObjects[23]->m_xmf4x4World._32 = m_pPlayer->GetCamera()->GetLookVector().y;
+	//m_battleObjects[23]->m_xmf4x4World._33 = m_pPlayer->GetCamera()->GetLookVector().z;
+	//m_battleObjects[23]->SetPosition(Vector3::Subtract(m_pPlayer->GetCamera()->GetPosition(), XMFLOAT3(-10, 0, 0)));
+	//m_battleObjects[23]->SetLookAt(m_pPlayer->GetPosition(), m_pPlayer->GetUpVector());
+	//printf("%1.f, %1.f, %1.f\n", m_pPlayer->GetCamera()->GetPosition().x, m_pPlayer->GetCamera()->GetPosition().y, m_pPlayer->GetCamera()->GetPosition().z);
 	// 점수표
 	m_battleObjects[24]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x, m_pPlayer->GetCamera()->GetPosition().y + 17.0f, m_pPlayer->GetCamera()->GetPosition().z);
 	// 콜론
@@ -538,27 +575,71 @@ void BattleScene::ProcessPacket(char * ptr)
 #endif
 		SCPacket_PutPlayer *my_packet = reinterpret_cast<SCPacket_PutPlayer *>(ptr);
 		unsigned int id = my_packet->id;
+		//printf("%d\n", id);
 		if (first_time) {
 			first_time = false;
 			m_pFramework->myid = id;
 		}
+	
 		if (id == m_pFramework->myid) {
+			
 			m_pPlayer->SetVisible(true);
+			m_pPlayer->character_type=my_packet->character_type;
 			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 			m_pPlayer->hp = my_packet->hp;
-
-			CSPacket_CharacterType *myTypePacket = reinterpret_cast<CSPacket_CharacterType *>(m_pFramework->GetSendBuf());
-			myTypePacket->size = sizeof(CSPacket_CharacterType);
-			// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
-			myTypePacket->character_type = cmd;
-			myTypePacket->type = CS_Type::Character_Info;
-			m_pFramework->SendPacket(reinterpret_cast<char *>(myTypePacket));
+			
+			/*if (m_pPlayer->character_type == Character_type::Reaper)
+			{
+				m_pPlayer = ReaperObject[0];
+				m_pFramework->m_pPlayer = m_pPlayer;
+				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
+				
+			}
+			if (m_pPlayer->character_type == Character_type::Gamber)
+			{
+				m_pPlayer = GamblerObject[0];
+				m_pFramework->m_pPlayer = m_pPlayer;
+				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
+			}
+			if (m_pPlayer->character_type == Character_type::Elf)
+			{
+				m_pPlayer = ElfObject[0];
+				m_pFramework->m_pPlayer = m_pPlayer;
+				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
+			}*/
+			
+			//CSPacket_CharacterType *myTypePacket = reinterpret_cast<CSPacket_CharacterType *>(m_pFramework->GetSendBuf());
+			//myTypePacket->size = sizeof(CSPacket_CharacterType);
+			//// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
+			//myTypePacket->character_type = m_pPlayer->character_type;
+			//myTypePacket->type = CS_Type::Character_Info;
+			//m_pFramework->SendPacket(reinterpret_cast<char *>(myTypePacket));
 		}
 		else if (id < MAX_PLAYER) {
 			if (m_ppOtherPlayers[id]) {
 				m_ppOtherPlayers[id]->connected = true;
+				m_ppOtherPlayers[id]->character_type = my_packet->character_type;
 				m_ppOtherPlayers[id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 				m_ppOtherPlayers[id]->hp = my_packet->hp;
+
+
+				//if (m_ppOtherPlayers[id]->character_type == Character_type::Reaper)
+				//{
+				//	m_ppOtherPlayers[id] = ReaperObject[1];
+				//	//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
+
+				//}
+				//if (m_ppOtherPlayers[id]->character_type == Character_type::Gamber)
+				//{
+				//	m_ppOtherPlayers[id] = GamblerObject[1];
+				//	//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
+				//}
+				//if (m_ppOtherPlayers[id]->character_type == Character_type::Elf)
+				//{
+				//	m_ppOtherPlayers[id] = ElfObject[1];
+				//	//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
+				//}
+				
 			}
 
 		}
@@ -611,10 +692,11 @@ void BattleScene::ProcessPacket(char * ptr)
 		//printf(" %f, %f, %f\n", my_packet->m_Look.x, my_packet->m_Look.y, my_packet->m_Look.z);
 		if (other_id == m_pFramework->myid) {
 			m_pPlayer->SetVisible(true);
-			//m_pPlayer->GetCamera()->Rotate(my_packet->y, my_packet->x, my_packet->z);
+			m_pPlayer->GetCamera()->Rotate(my_packet->y, my_packet->x, my_packet->z);
 			m_pPlayer->SetRight(my_packet->m_Right);
 			m_pPlayer->SetUp(my_packet->m_Up);
 			m_pPlayer->SetLook(my_packet->m_Look);
+			
 			//m_battleObjects[21]->SetLookAt(XMFLOAT3(0,0,0), my_packet->m_Up);
 			//m_battleObjects[21]->Rotate(0,my_packet->x,0);
 			//m_pPlayer->GetCamera()->SetLookAt(my_packet->m_Look);
@@ -726,7 +808,18 @@ void BattleScene::ProcessPacket(char * ptr)
 		}
 		else if (other_id < MAX_PLAYER) {
 			m_ppOtherPlayers[other_id]->hp = my_packet->hp;
-			
+			if (m_ppOtherPlayers[other_id]->character_type == Character_type::Gamber)
+			{
+				m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(Gambler::OnHit);
+			}
+			if (m_ppOtherPlayers[other_id]->character_type == Character_type::Reaper)
+			{
+				m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(GrimReaper::OnHit);
+			}
+			if (m_ppOtherPlayers[other_id]->character_type == Character_type::Elf)
+			{
+				m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(ElfArcher::OnHit);
+			}
 		}
 		break;
 	}

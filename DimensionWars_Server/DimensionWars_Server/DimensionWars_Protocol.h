@@ -172,6 +172,7 @@ namespace SC
 		ExitRoom=17,
 		InfoScene=18,
 		Rotate=19,
+		Chracter_type=20,
 	};
 }
 using SC_Type = SC::ServerToClientSocketType;	// 약자 형태로 사용할 것이다.
@@ -305,6 +306,9 @@ struct SCPacket_Rotate : SCPacket_Base {
 	DirectX::XMFLOAT3 m_Up;
 	DirectX::XMFLOAT3 m_Look;
 };
+struct SCPacket_OtherCharacter : SCPacket_Base {
+	unsigned short character_type;
+};
 
 struct CSPacket_Base {
 	char size;
@@ -332,7 +336,7 @@ struct CSPacket_Attack : CSPacket_Base {
 
 
 struct CSPacket_CharacterType : CSPacket_Base {
-	unsigned short character_type;	// 캐릭 정류
+	unsigned short character_type;	// 캐릭 종류
 };
 
 
@@ -340,6 +344,7 @@ struct CSPacket_RoomCreate : CSPacket_Base {
 	unsigned short room_num;
 	unsigned short player_num;
 	unsigned short scene;
+	unsigned short enter_type;
 	bool check;
 };
 
@@ -373,6 +378,7 @@ struct CSPacket_RoomExit : SCPacket_Base {
 
 struct CSPacket_SceneInfo : SCPacket_Base {
 	unsigned short scene;
+	unsigned short c_type;
 };
 
 struct CSPacket_Rotate : SCPacket_Base {
@@ -383,6 +389,8 @@ struct CSPacket_Rotate : SCPacket_Base {
 	DirectX::XMFLOAT3 m_Up;
 	DirectX::XMFLOAT3 m_Look;
 };
+
+
 #pragma pack(pop)
 
 // value를 minimum, maximum 사이로 보정하는 함수

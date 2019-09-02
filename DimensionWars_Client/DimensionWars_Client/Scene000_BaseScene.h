@@ -48,7 +48,7 @@ protected:
 	static D3D12_GPU_DESCRIPTOR_HANDLE	m_d3dCbvGPUDescriptorNextHandle;
 	static D3D12_CPU_DESCRIPTOR_HANDLE	m_d3dSrvCPUDescriptorNextHandle;
 	static D3D12_GPU_DESCRIPTOR_HANDLE	m_d3dSrvGPUDescriptorNextHandle;
-
+	
 public:
 	enum SceneTag {
 		Title
@@ -105,14 +105,13 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUSrvDescriptorNextHandle() { return(m_d3dSrvCPUDescriptorNextHandle); }
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUSrvDescriptorNextHandle() { return(m_d3dSrvGPUDescriptorNextHandle); }
 
-
-
+	
 	//virtual bool ProcessInput(UCHAR *keybuffer, float fTimeElapsed) override;
 	virtual void ProcessPacket(char *ptr);
 	
 	void SendMoveDirection();
 	void SendAnimationInfo();
-	void SendSceneInfo(unsigned short scene, unsigned short id);
+	void SendSceneInfo(unsigned short scene,  unsigned short type);
 
 	float cxDelta = 0.0f, cyDelta = 0.0f;
 	POINT						m_ptOldCursorPos = { 0, 0 };
@@ -156,6 +155,7 @@ protected:
 	unsigned short player_num = 0; // 서버에서 받은 클라수
 	unsigned short my_room_num = 0; //  내가 입장할 방 번호
 	unsigned short id_room_num = 0; // 방에 들어갈 번호
+
 
 
 };

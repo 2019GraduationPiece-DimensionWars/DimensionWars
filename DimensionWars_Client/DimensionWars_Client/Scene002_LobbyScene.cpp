@@ -281,7 +281,8 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 
 				room_enter = true;
 				SendRoomCreate();
-
+				SendSceneInfo(3,0);
+				m_pFramework->enter_type = 0;
 				//m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
 			//	SendLobby_RoomChange(1);
 
@@ -293,10 +294,12 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 			if (pt.x > 97 && pt.x < 927 && pt.y>80 && pt.y < 144)
 			{
 				if (m_lobbyObjects[7]->room_name == my_room_num) {
-					if (m_pFramework->nBase_member[0] < 6) 
+					if (m_pFramework->nBase_member[0] < 6&& m_pFramework->nBase_member[0]!=0)
 					{
 						room_enter = true;
 						SendEnterRoom();
+						SendSceneInfo(3,0);
+						m_pFramework->enter_type = 1;
 						//SendLobby_RoomChange(my_room_num);
 						//m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
 					}
@@ -306,9 +309,11 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 			if (pt.x > 97 && pt.x < 927 && pt.y>175 && pt.y < 235)
 			{
 				if (m_lobbyObjects[8]->room_name == my_room_num) {
-					if (m_pFramework->nBase_member[1] < 6)
+					if (m_pFramework->nBase_member[1] < 6 && m_pFramework->nBase_member[1] != 0)
 					{
 						room_enter = true;
+						m_pFramework->enter_type = 1;
+						SendSceneInfo(3, 0);
 						SendEnterRoom();
 						//SendLobby_RoomChange(my_room_num);
 					}
@@ -317,9 +322,11 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 			if (pt.x > 97 && pt.x < 927 && pt.y>266 && pt.y < 336)
 			{
 				if (m_lobbyObjects[9]->room_name == my_room_num) {
-					if (m_pFramework->nBase_member[2]< 6)
+					if (m_pFramework->nBase_member[2]< 6 && m_pFramework->nBase_member[2] != 0)
 					{
 						room_enter = true;
+						m_pFramework->enter_type = 1;
+						SendSceneInfo(3, 0);
 						SendEnterRoom();
 						//SendLobby_RoomChange(my_room_num);
 					}
@@ -328,9 +335,11 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 			if (pt.x > 97 && pt.x < 927 && pt.y>363 && pt.y < 425)
 			{
 				if (m_lobbyObjects[10]->room_name == my_room_num) {
-					if (m_pFramework->nBase_member[3] < 6)
+					if (m_pFramework->nBase_member[3] < 6 && m_pFramework->nBase_member[3] != 0)
 					{
 						room_enter = true;
+						m_pFramework->enter_type = 1;
+						SendSceneInfo(3, 0);
 						SendEnterRoom();
 						//SendLobby_RoomChange(my_room_num);
 					}
@@ -339,9 +348,11 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 			if (pt.x > 97 && pt.x < 927 && pt.y>459 && pt.y < 522)
 			{
 				if (m_lobbyObjects[11]->room_name == my_room_num) {
-					if (m_pFramework->nBase_member[4] < 6)
+					if (m_pFramework->nBase_member[4] < 6 && m_pFramework->nBase_member[4] != 0)
 					{
 						room_enter = true;
+						m_pFramework->enter_type = 1;
+						SendSceneInfo(3,  0);
 						SendEnterRoom();
 						//SendLobby_RoomChange(my_room_num);
 					}
@@ -350,77 +361,18 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 			if (pt.x > 97 && pt.x < 927 && pt.y>555 && pt.y < 616)
 			{
 				if (m_lobbyObjects[12]->room_name == my_room_num) {
-					if (m_pFramework->nBase_member[5] < 6)
+					if (m_pFramework->nBase_member[5] < 6 && m_pFramework->nBase_member[5] != 0)
 					{
 						room_enter = true;
+						m_pFramework->enter_type = 1;
+						SendSceneInfo(3,  0);
 						SendEnterRoom();
 						//SendLobby_RoomChange(my_room_num);
 					}
 				}
 			}
 		}
-		/*if (list_num == 2) {
-			if (pt.x > 97 && pt.x < 927 && pt.y>80 && pt.y < 144)
-			{
-				if (m_lobbyObjects[13]->room_name == my_room_num) {
-					if (m_lobbyObjects[13]->n_member < 6)
-					{
-						SendEnterRoom();
-						m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
-					}
-				}
-			}
-			if (pt.x > 97 && pt.x < 927 && pt.y>175 && pt.y < 235)
-			{
-				if (m_lobbyObjects[14]->room_name == my_room_num) {
-					if (m_lobbyObjects[14]->n_member < 6)
-					{
-						SendEnterRoom();
-						m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
-					}
-				}
-			}
-			if (pt.x > 97 && pt.x < 927 && pt.y>266 && pt.y < 336)
-			{
-				if (m_lobbyObjects[15]->room_name == my_room_num) {
-					if (m_lobbyObjects[15]->n_member < 6)
-					{
-						SendEnterRoom();
-						m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
-					}
-				}
-			}
-			if (pt.x > 97 && pt.x < 927 && pt.y>363 && pt.y < 425)
-			{
-				if (m_lobbyObjects[16]->room_name == my_room_num) {
-					if (m_lobbyObjects[16]->n_member < 6)
-					{
-						SendEnterRoom();
-						m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
-					}
-				}
-			}
-			if (pt.x > 97 && pt.x < 927 && pt.y>459 && pt.y < 522)
-			{
-				if (m_lobbyObjects[17]->room_name == my_room_num) {
-					if (m_lobbyObjects[17]->n_member < 6)
-					{
-						SendEnterRoom();
-						m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
-					}
-				}
-			}
-			if (pt.x > 97 && pt.x < 927 && pt.y>555 && pt.y < 616)
-			{
-				if (m_lobbyObjects[18]->room_name == my_room_num) {
-					if (m_lobbyObjects[18]->n_member < 6)
-					{
-						SendEnterRoom();
-						m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
-					}
-				}
-			}
-		}*/
+		
 		
 		break;
 	case WM_RBUTTONDOWN:
@@ -451,7 +403,6 @@ bool LobbyScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 void LobbyScene::AnimateObjects(float fTimeElapsed)
 {
-	
 	//좌측 화살표
 	//if (pt.x > 380 && pt.x < 445 && pt.y>650 && pt.y < 680)
 	//	left_active = true;
@@ -886,8 +837,10 @@ void LobbyScene::SendEnterRoom()
 	roomPacket->size = sizeof(CSPacket_RoomEnter);
 	//roomPacket->player_num = m_lobbyObjects[6 + my_room_num]->n_member;
 	//roomPacket->room_num = my_room_num;   // 룸넘에서 마이 룸넘으로 교체
-	roomPacket->room_num = m_pFramework->nBase_room[m_pFramework->room_num - 1];
-	roomPacket->player_num = m_pFramework->nBase_member[m_pFramework->room_num - 1];
+	//roomPacket->room_num = m_pFramework->nBase_room[m_pFramework->room_num - 1];
+	roomPacket->room_num = my_room_num;
+	//roomPacket->player_num = m_pFramework->nBase_member[m_pFramework->room_num - 1];
+	roomPacket->player_num = m_pFramework->nBase_member[my_room_num - 1];
 	roomPacket->type = CS_Type::Room_Enter;
 	roomPacket->scene = nCurrScene;
 	roomPacket->check = room_enter;

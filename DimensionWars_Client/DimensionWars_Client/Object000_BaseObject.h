@@ -44,7 +44,7 @@ public:
 	bool							connected = false;
 	unsigned short room_name = 0;
 	unsigned short n_member = 0;  // 방에있는 인원수
-
+	unsigned short c_type = 0; // 룸에서 사용하는 캐릭터 타입
 	
 protected:
 	char directionBit = 0;

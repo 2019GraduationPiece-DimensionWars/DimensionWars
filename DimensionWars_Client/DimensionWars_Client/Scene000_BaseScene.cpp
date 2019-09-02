@@ -650,13 +650,13 @@ void BaseScene::SendAnimationInfo()
 	}
 }
 
-void BaseScene::SendSceneInfo(unsigned short scene, unsigned short id)
+void BaseScene::SendSceneInfo(unsigned short scene, unsigned short type)
 {
 	CSPacket_SceneInfo *myPacket = reinterpret_cast<CSPacket_SceneInfo*>(m_pFramework->GetSendBuf());
 	myPacket->size = sizeof(CSPacket_SceneInfo);
 	myPacket->type = CS_Type::Sceneinfo;
 	myPacket->scene = scene;
-	myPacket->id = id;
+	myPacket->c_type = type;
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
 	
 

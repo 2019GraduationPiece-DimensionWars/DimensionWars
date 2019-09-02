@@ -84,7 +84,7 @@ private:
 	void SendRoomExitPacket(unsigned short to, unsigned short obj);
 	void SendInfoScenePacket(unsigned short to, unsigned short obj);
 	void SendRotatePacket(unsigned short to, unsigned short obj, float x, float y, float z);
-
+	void SendOtherCharacterPacket(unsigned short to, unsigned short obj);
 
 	void DisConnect(unsigned short int id);
 	const unsigned short int GetNewID();
@@ -118,11 +118,14 @@ private:
 	unsigned short scene_member_num = 0;
 
 	unsigned short scene = 0;
-
+	
 	bool check;
 	int col;
 	// 회전 정보
 	float           			m_fPitch = 0.0f;
 	float           			m_fYaw = 0.0f;
 	float           			m_fRoll = 0.0f;
+
+
+	unsigned short other_ctype = 0; // 다른 플레이어 캐릭터 정보
 };

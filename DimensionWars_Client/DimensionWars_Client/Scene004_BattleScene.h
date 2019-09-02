@@ -15,6 +15,14 @@ class SlashWaveObject;
 class TextureCubeObject;
 class PortalObject;
 class TexturePortalObject;
+class Object104_DummyPlayer;
+
+enum Character_type
+{
+	Reaper=0,
+	Gamber=1,
+	Elf=2,
+};
 
 class BattleScene :
 	public BaseScene
@@ -33,9 +41,10 @@ private:
 	GrimReaperPlayer * ReaperObject[MAX_PLAYER];
 	GamblerPlayer * GamblerObject[MAX_PLAYER];
 	ElfArcherPlayer * ElfObject[MAX_PLAYER];
-	GrimReaperPlayer *prepareGrimReaper;
+	GamblerPlayer *Dummy[MAX_PLAYER];
+	/*GrimReaperPlayer *prepareGrimReaper;
 	ElfArcherPlayer *prepareElfArcher;
-	GamblerPlayer *prepareGambler;
+	GamblerPlayer *prepareGambler;*/
 
 	CardObject** card = nullptr;
 	SlashWaveObject** slashWave = nullptr;
@@ -49,6 +58,8 @@ private:
 	float obj_rot_x;
 	float obj_rot_y;
 	float obj_rot_z;
+
+	
 
 public:
 	BattleScene();
@@ -78,8 +89,5 @@ public:
 	int cmd;
 	unsigned int anime; // 애니메이션 정보
 
-	GamblerPlayer *test;
-	GrimReaperPlayer *test1;
-	ElfArcherPlayer *test2;
 };
 

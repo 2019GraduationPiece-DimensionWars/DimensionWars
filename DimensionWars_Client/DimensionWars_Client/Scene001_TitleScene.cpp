@@ -29,7 +29,7 @@ void TitleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 
 	
 	Material::PrepareShaders(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
-	m_pFramework->GetResource()->AllModelLoad(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
+	//m_pFramework->GetResource()->AllModelLoad(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 
 	BuildLightsAndMaterials();
 

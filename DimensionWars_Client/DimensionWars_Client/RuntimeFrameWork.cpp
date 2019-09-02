@@ -602,7 +602,7 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 			break;
 		case VK_SPACE:
 			//m_pCamera = m_pPlayer->GetCamera();
-			/*if (m_CurrSceneTag==BaseScene::SceneTag::Title)
+			if (m_CurrSceneTag==BaseScene::SceneTag::Title)
 			{
 				ChangeScene(BaseScene::SceneTag::Lobby);
 			}
@@ -613,16 +613,9 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 			}
 			else if (m_CurrSceneTag == BaseScene::SceneTag::Room)
 			{
-				ChangeScene(BaseScene::SceneTag::Game);
+				ChangeScene(BaseScene::SceneTag::Lobby);
 			}
-			else if (m_CurrSceneTag == BaseScene::SceneTag::Game)
-			{
-
-				//ChangeScene(BaseScene::SceneTag::Title);
-			}
-
-				ChangeScene(BaseScene::SceneTag::Title);
-			}*/
+			
 			break;
 		default:
 			break;
