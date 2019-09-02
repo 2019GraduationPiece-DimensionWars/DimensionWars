@@ -1324,7 +1324,7 @@ void ServerManager::Update(unsigned long id)
 	}
 
 	//Collision();
-
+	
 
 	if (!Collision() && objects[id].connected == true)
 		objects[id].position.y -= 9.8f; // 중력 
@@ -1362,27 +1362,27 @@ void ServerManager::Update(unsigned long id)
 		}
 	}
 
-	// 도박사 평타 
-	for (int i = Card_start; i < Card_end; ++i)
-	{
-		if (objects[i].tile_life == true)
-		{
-
-			objects[i].position = Vector3::Add(objects[i].position, objects[id].m_Look, 10.0f);
-
-			//printf("%1.f, %1.f, %1.f\n", objects[i].position.x, objects[i].position.y,objects[i].position.z);
-			if (abs(objects[i].position.z - objects[id].position.z) >= 1000)
-			{
-				objects[i].tile_life = false;
-			}
-			SendPositionPacket(id, i);
-		}
-	}
-	// 사신 검기 날리기
-	//printf("%f, %f, %f\n", objects[id].m_Look.x, objects[id].m_Look.y, objects[id].m_Look.z);
-
 	if (scene == 4)
 	{
+		// 도박사 평타 
+		for (int i = Card_start; i < Card_end; ++i)
+		{
+			if (objects[i].tile_life == true)
+			{
+				card_time += 0.01f;
+				objects[i].position = Vector3::Add(objects[i].position, objects[id].m_Look, 10.0f);
+				if (card_time>1.0f)
+				{
+					objects[i].tile_life = false;
+					card_time = 0.0f;
+				}
+				SendPositionPacket(id, i);
+			}
+		}
+		// 사신 검기 날리기
+		//printf("%f, %f, %f\n", objects[id].m_Look.x, objects[id].m_Look.y, objects[id].m_Look.z);
+
+
 		for (int i = Slash_start; i < Slash_end; ++i)
 		{
 			if (objects[i].tile_life == true)
