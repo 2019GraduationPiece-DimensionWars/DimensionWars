@@ -29,5 +29,3 @@ public:
 
 	virtual bool isCancleEnabled() override;
 };
-
-
