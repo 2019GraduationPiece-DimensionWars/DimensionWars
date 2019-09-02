@@ -174,14 +174,17 @@ void ServerManager::AcceptThread()
 			SendSlashPaket(new_id, i);
 		}*/
 
-		for (int i = 0; i < MAX_PLAYER; ++i)
+		/*for (int i = 0; i < MAX_PLAYER; ++i)
 		{
 			if (objects[i].connected == true)
 			{
 				AddTimerEvent(i);
 			}
+		}*/
+		if (objects[new_id].connected == true)
+		{
+			AddTimerEvent(new_id);
 		}
-		
 		RecvPacket(new_id);
 
 	}
@@ -1542,6 +1545,7 @@ void ServerManager::Update(unsigned long id)
 	{
 		objects[id].position = XMFLOAT3(0 + 100, 3000 + 300, 1100);
 	}
+	
 	
 	AddTimerEvent(id);
 
