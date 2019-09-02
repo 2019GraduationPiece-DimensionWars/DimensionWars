@@ -18,7 +18,7 @@ ElfArcherPlayer::ElfArcherPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommand
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->AddAnimationSet(0.0f, 40.0f * keyFrameUnit, "Idle");
 	m_pSkinnedAnimationController->AddAnimationSet(42.0f * keyFrameUnit, 72.0f * keyFrameUnit, "OnHit", ANIMATION_TYPE_ONCE);
-	m_pSkinnedAnimationController->AddAnimationSet(74.0f * keyFrameUnit, 114.0f * keyFrameUnit, "Guard");
+	m_pSkinnedAnimationController->AddAnimationSet(74.0f * keyFrameUnit, 114.0f * keyFrameUnit, "Guard", ANIMATION_TYPE_ONCE);
 	m_pSkinnedAnimationController->AddAnimationSet(116.0f * keyFrameUnit, 156.0f * keyFrameUnit, "Burf", ANIMATION_TYPE_ONCE);
 	m_pSkinnedAnimationController->AddAnimationSet(158.0f * keyFrameUnit, 176.0f * keyFrameUnit, "First Shot", ANIMATION_TYPE_ONCE);
 	m_pSkinnedAnimationController->AddAnimationSet(176.0f * keyFrameUnit, 203.0f * keyFrameUnit, "Second Shot", ANIMATION_TYPE_ONCE);
@@ -171,7 +171,27 @@ void ElfArcherPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 void ElfArcherPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 {
 	DWORD dwDirection = 0;
-	if (isCancleEnabled()) {
+	if (SecondShotTrigger) {
+		if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(First_Shot)->m_bEndTrigger)// 1타 모션이 끝나기 전까지는 2타 시행 안함
+			m_pSkinnedAnimationController->SetAnimationSet(state = Second_Shot);
+		if (state == Second_Shot) // 1타 모션이 끝나서 2타 모션이 들어왔는지 확인해야 2타 트리거 종료
+			SecondShotTrigger = false;
+	}
+	else if (ThirdShotTrigger) {
+		if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(Second_Shot)->m_bEndTrigger)// 2타 모션이 끝나기 전까지는 3타 시행 안함
+			m_pSkinnedAnimationController->SetAnimationSet(state = Third_Shot);
+		if (state == Third_Shot) // 2타 모션이 끝나서 3타 모션이 들어왔는지 확인해야 2타 트리거 종료
+			ThirdShotTrigger = false;
+	}
+	else if (isCancleEnabled()) {
+		animation_check = true;
+		if (pKeysBuffer[VK_SPACE] & 0xF0) {
+			dwDirection |= DIR_UP;
+		}
+		if (pKeysBuffer['f'] & 0xF0 || pKeysBuffer['F'] & 0xF0) {
+			dwDirection |= DIR_DOWN;
+		}
+
 		if (pKeysBuffer['w'] & 0xF0 || pKeysBuffer['W'] & 0xF0) {
 			dwDirection |= DIR_FORWARD;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
@@ -187,12 +207,6 @@ void ElfArcherPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 		if (pKeysBuffer['d'] & 0xF0 || pKeysBuffer['D'] & 0xF0) {
 			dwDirection |= DIR_RIGHT;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right);
-		}
-		if (pKeysBuffer[VK_SPACE] & 0xF0) {
-			dwDirection |= DIR_UP;
-		}
-		if (pKeysBuffer['f'] & 0xF0 || pKeysBuffer['F'] & 0xF0) {
-			dwDirection |= DIR_DOWN;
 		}
 
 		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_LEFT))
@@ -216,23 +230,21 @@ void ElfArcherPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 		}
 		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_BACKWARD)) {
-			if ((dwDirection & DIR_LEFT) && (dwDirection & DIR_RIGHT))
-				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
-			else if (dwDirection & DIR_LEFT)
+			if (dwDirection & DIR_LEFT)
 				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left);
 			else if (dwDirection & DIR_RIGHT)
 				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right);
 			else
 				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 		}
+		if (!dwDirection)
+			m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 	}
-	if (!dwDirection)
-		m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 
 	float cxDelta = 0.0f, cyDelta = 0.0f;
 	POINT ptCursorPos;
 	//if (GetCapture() == m_pFramework->GetHandle())
-	{
+	if (m_pFramework->GetActivated()) {
 		SetCursor(NULL);
 		GetCursorPos(&ptCursorPos);
 		cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
@@ -250,7 +262,7 @@ void ElfArcherPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 		}
 		if (dwDirection) Move(dwDirection, 30.0f * fTimeElapsed, true);
 	}
-	this->SetDirectionBit(dwDirection);
+	SetDirectionBit(dwDirection);
 	Update(fTimeElapsed);
 }
 
@@ -275,4 +287,119 @@ bool ElfArcherPlayer::isCancleEnabled()
 	default:	// 위 상태가 아니면 현재 모션을 캔슬 할 수 없다.
 		return false;
 	}
+}
+
+bool ElfArcherPlayer::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
+{
+	switch (nMessageID)
+	{
+	case WM_LBUTTONDOWN:
+		animation_check = true;
+		switch (state) {
+		case First_Shot:
+			SecondShotTrigger = true;
+			break;
+		case Second_Shot:
+			ThirdShotTrigger = true;
+			break;
+		default:
+			if (isCancleEnabled()) {
+				m_pSkinnedAnimationController->SetAnimationSet(state = First_Shot);
+			}
+			break;
+		}
+		::SetCapture(hWnd);
+		::GetCursorPos(&m_ptOldCursorPos);
+		break;
+	case WM_RBUTTONDOWN:
+		animation_check = true;
+		if (isCancleEnabled() && state != Guard) {
+			m_pSkinnedAnimationController->SetAnimationSet(state = Guard);
+		}
+		::SetCapture(hWnd);
+		::GetCursorPos(&m_ptOldCursorPos);
+		break;
+	case WM_LBUTTONUP:
+		animation_check = false;
+		::ReleaseCapture();
+		break;
+	case WM_RBUTTONUP:
+		animation_check = false;
+		::ReleaseCapture();
+		break;
+	case WM_MOUSEMOVE:
+		break;
+	default:
+		break;
+	}
+	return false;
+}
+
+bool ElfArcherPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
+{
+	switch (nMessageID)
+	{
+	case WM_KEYDOWN:
+		// 키보드를 누르고 있을 경우 최초 한번만 실행.
+		if ((lParam & 0x40000000) != 0x40000000) {
+			switch (wParam) {
+			case '1':
+				animation_check = true;
+				switch (state) {
+				case First_Shot:
+					SecondShotTrigger = true;
+					break;
+				case Second_Shot:
+					ThirdShotTrigger = true;
+					break;
+				default:
+					if (isCancleEnabled())
+						m_pSkinnedAnimationController->SetAnimationSet(state = First_Shot);
+					break;
+				}
+				break;
+			case '2':
+				if (isCancleEnabled()) {
+					m_pSkinnedAnimationController->SetAnimationSet(state = Guide_Shot);
+				}
+				break;
+			case '3':
+				if (isCancleEnabled()) {
+					animation_check = true;
+					m_pSkinnedAnimationController->SetAnimationSet(state = Third_Shot);
+				}
+				break;
+			case 'q': case 'Q':
+				if (isCancleEnabled()) {
+					animation_check = true;
+					m_pSkinnedAnimationController->SetAnimationSet(state = Burf);
+				}
+				break;
+			case 'e': case 'E':
+				if (isCancleEnabled()) {
+					animation_check = true;
+					m_pSkinnedAnimationController->SetAnimationSet(state = Snipe);
+				}
+				break;
+
+			case VK_SPACE:
+				if (isCancleEnabled()) {
+					animation_check = true;
+					m_pSkinnedAnimationController->SetAnimationSet(state = Jump);
+				}
+				break;
+
+			case '0':
+				ResetDir();
+				break;
+			}
+
+		}
+		break;
+	case WM_KEYUP:
+		animation_check = false;
+
+		break;
+	}
+	return false;
 }

@@ -175,14 +175,18 @@ void HierarchyMesh::LoadMeshFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsCo
 					int nUVsPerVertex = 0;
 					nReads = (unsigned int)::fread(&nTextureCoords, sizeof(int), 1, pInFile);
 					nReads = (unsigned int)::fread(&nUVsPerVertex, sizeof(int), 1, pInFile);
+					//printf("nTextureCoords : %d, nUVsPerVertex : %d, 실 정점 수 : %d\n", nTextureCoords, nUVsPerVertex, m_nVertices);
 					::ReadStringFromFile(pInFile, pstrToken);
 					if (!strcmp(pstrToken, "<UV>:")) {						
 						int texIdx = 0;
 						nReads = (unsigned int)::fread(&texIdx, sizeof(int), 1, pInFile);
+						//printf("texIdx : %d\n", texIdx);
 						if (nTextureCoords > 0) {
 							m_nType |= VERTEXT_TEXTURE_COORD0;
 							m_pxmf2TextureCoords0 = new XMFLOAT2[nTextureCoords];
 							nReads = (unsigned int)::fread(m_pxmf2TextureCoords0, sizeof(XMFLOAT2), nTextureCoords, pInFile);
+							
+							//for (int i = 0; i < nTextureCoords; ++i) printf ("[%d]번째 텍스쳐 좌표 (%.3f, %.3f)\n", i, m_pxmf2TextureCoords0[i].x, m_pxmf2TextureCoords0[i].y);
 							
 							//float temp = m_pxmf2TextureCoords0->x;
 							//m_pxmf2TextureCoords0->x = m_pxmf2TextureCoords0->y;
@@ -191,7 +195,6 @@ void HierarchyMesh::LoadMeshFromFile(ID3D12Device * pd3dDevice, ID3D12GraphicsCo
 						
 							//m_pxmf2TextureCoords0->x = 1.0f - m_pxmf2TextureCoords0->x;
 							//m_pxmf2TextureCoords0->y = 1.0f - m_pxmf2TextureCoords0->y;
-							
 							
 							m_pd3dTextureCoord0Buffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pxmf2TextureCoords0, sizeof(XMFLOAT2) * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dTextureCoord0UploadBuffer);
 
