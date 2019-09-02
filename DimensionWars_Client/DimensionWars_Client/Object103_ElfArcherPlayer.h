@@ -6,6 +6,9 @@ class AnimationController;
 class ElfArcherPlayer :
 	public BasePlayer
 {
+private:
+	bool SecondShotTrigger = false;
+	bool ThirdShotTrigger = false;
 public:
 	enum State {
 		Full = 0,
@@ -47,6 +50,9 @@ public:
 	virtual void OnCameraUpdateCallback(float fTimeElapsed);
 
 	virtual void ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed) override;
+
+	virtual bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) override;
 
 	virtual bool isCancleEnabled() override;
 };

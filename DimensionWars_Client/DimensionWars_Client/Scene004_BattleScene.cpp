@@ -149,7 +149,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		m_ppPotalObjects[i] = new TexturePortalObject(pd3dDevice, pd3dCommandList,m_pFramework->m_pGraphicsRootSignature, 30);
 	}
 
-
+	/*
 	Texture *battleImage[ui_texture];
 
 	//0
@@ -291,7 +291,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	m_battleObjects[30] = battleImageObject12;
 	m_battleObjects[30]->SetMaterial(0, battleMaterial[15]);
 	
-
+	*/
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -319,7 +319,7 @@ void BattleScene::ReleaseUploadBuffers()
 
 bool BattleScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	if (m_pPlayer) m_pPlayer->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+	if (m_pFramework->GetActivated() && m_pPlayer) m_pPlayer->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 
 	switch (nMessageID)
 	{
@@ -340,7 +340,7 @@ bool BattleScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 
 bool BattleScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	if (m_pPlayer) m_pPlayer->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+	if (m_pFramework->GetActivated() && m_pPlayer) m_pPlayer->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 
 	switch (nMessageID)
 	{
@@ -377,7 +377,7 @@ bool BattleScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 
 bool BattleScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 {
-	if (m_pPlayer) m_pPlayer->ProcessInput(pKeysBuffer, fTimeElapsed);
+	if (m_pFramework->GetActivated() && m_pPlayer) m_pPlayer->ProcessInput(pKeysBuffer, fTimeElapsed);
 	return false;
 }
 
@@ -409,6 +409,7 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 
 	// 레이더
 	
+	/*
 	//HP바
 	m_battleObjects[21]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x-25.0f, m_pPlayer->GetCamera()->GetPosition().y+17.0f, m_pPlayer->GetCamera()->GetPosition().z);
 	//SP바
@@ -416,7 +417,7 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 	
 	// 레이더
 	m_battleObjects[23]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 29.0f, m_pPlayer->GetCamera()->GetPosition().y + 13.0f, m_pPlayer->GetCamera()->GetPosition().z +350);
-	
+	*/
 	//m_battleObjects[23]->SetPosition(Vector3::Subtract(m_pPlayer->GetCamera()->GetPosition(), XMFLOAT3(-10, 0, 0)));
 	//m_battleObjects[23]->m_xmf4x4World._11 = m_pPlayer->GetCamera()->GetRightVector().x;
 	//m_battleObjects[23]->m_xmf4x4World._12 = m_pPlayer->GetCamera()->GetRightVector().y;
@@ -432,6 +433,8 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 	//m_battleObjects[23]->SetPosition(Vector3::Subtract(m_pPlayer->GetCamera()->GetPosition(), XMFLOAT3(-10, 0, 0)));
 	//m_battleObjects[23]->SetLookAt(m_pPlayer->GetPosition(), m_pPlayer->GetUpVector());
 	//printf("%1.f, %1.f, %1.f\n", m_pPlayer->GetCamera()->GetPosition().x, m_pPlayer->GetCamera()->GetPosition().y, m_pPlayer->GetCamera()->GetPosition().z);
+	
+	/*
 	// 점수표
 	m_battleObjects[24]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x, m_pPlayer->GetCamera()->GetPosition().y + 17.0f, m_pPlayer->GetCamera()->GetPosition().z);
 	// 콜론
@@ -445,7 +448,7 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 	// 빈 바
 	m_battleObjects[29]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 25.0f, m_pPlayer->GetCamera()->GetPosition().y + 17.0f, m_pPlayer->GetCamera()->GetPosition().z+0.001f);
 	m_battleObjects[30]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 25.0f, m_pPlayer->GetCamera()->GetPosition().y + 14.0f, m_pPlayer->GetCamera()->GetPosition().z+0.001f);
-	
+	*/
 	
 	/*if (m_nObjects > 5) {
 		m_battleObjects[5]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
@@ -509,7 +512,7 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 	//if (m_battleObjects) for (unsigned int i = 0; i < m_nObjects; ++i) if (m_battleObjects[i]) m_battleObjects[i]->Render(pd3dCommandList, pCamera);
 	for (int i = 0; i < 10; ++i)
 	{
-		m_battleObjects[21 + i]->Render(pd3dCommandList, pCamera);
+	//	m_battleObjects[21 + i]->Render(pd3dCommandList, pCamera);
 	}
 	
 }

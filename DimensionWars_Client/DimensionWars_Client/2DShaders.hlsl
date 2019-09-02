@@ -247,3 +247,18 @@ float4 PSTextureVertex(GS_TEXTUREVERTEX_OUTPUT input) : SV_TARGET
     float4 cColor = cTexture;
     return (cColor);
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+
+VS_TEXTURED_OUTPUT VSUITexture(VS_TEXTURED_INPUT input)
+{
+    VS_TEXTURED_OUTPUT output;
+
+    output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxProjection);
+
+    output.uv = input.uv;
+
+    return (output);
+}
