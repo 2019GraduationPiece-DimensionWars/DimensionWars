@@ -126,7 +126,8 @@ private:
 	float           			m_fYaw = 0.0f;
 	float           			m_fRoll = 0.0f;
 
-	float slash_time = 0.0f;
+	float slash_time = 0.0f; // 검기 날아가는 시간
+	float card_time = 0.0f; // 도박사 평타 날아가는 시간
 
 	unsigned short other_ctype = 0; // 다른 플레이어 캐릭터 정보
 };
