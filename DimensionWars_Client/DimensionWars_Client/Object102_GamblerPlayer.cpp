@@ -442,7 +442,7 @@ bool GamblerPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPAR
 					m_pSkinnedAnimationController->SetAnimationSet(state = Jump);
 					SendjumpDirection();
 				}
-				break;
+
 			case '0':
 				ResetDir();
 				break;

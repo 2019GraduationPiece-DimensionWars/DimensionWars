@@ -13,12 +13,12 @@ constexpr unsigned short Cube_start = 10;
 constexpr unsigned short MAX_PLAYER = 6;	// 코딩 할 때 불편하지 않도록 같은 이름을 쓰기 위함
 constexpr unsigned short Slash_start = 100; // 검기 시작
 constexpr unsigned short Card_start = 200;  // 도박사 평타 시작
-constexpr unsigned int MAX_OBJECTS = 1000;		// 총 서버가 관리할 플레이어, 투사체 등의 정보를 포함한 게임 월드의 모든 오브젝트 숫자
+constexpr unsigned int MAX_OBJECTS = 1001;		// 총 서버가 관리할 플레이어, 투사체 등의 정보를 포함한 게임 월드의 모든 오브젝트 숫자
 // 플레이어 6명, 큐브 50개, 투사체 X개 
 
 constexpr unsigned short Potal_start = 970;
 constexpr unsigned short Potal_end = 1000;
-
+constexpr unsigned int Reaper_scy = 1001;
 constexpr float WORLD_HORIZONTAL = 25000.0f; // 월드의 가로
 constexpr float WORLD_WIDTH = WORLD_HORIZONTAL;	// 코딩 할 때 불편하지 않도록 같은 이름을 쓰기 위함
 constexpr float WORLD_HEIGHT = 25000.0f;		// 월드의 세로
@@ -244,6 +244,7 @@ struct SCPacket_Animation : SCPacket_Base {
 
 struct SCPacket_Attack : SCPacket_Base {
 	unsigned char attack_type;
+	DirectX::XMFLOAT3 position;
 };
 
 struct SCPacket_ProjectTile : SCPacket_Base {

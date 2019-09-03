@@ -116,6 +116,12 @@ void BaseCamera::GenerateProjectionMatrix(float fNearPlaneDistance, float fFarPl
 	//XMMATRIX xmmtxProjection = XMMatrixPerspectiveFovLH(XMConvertToRadians(fFOVAngle), fAspectRatio, fNearPlaneDistance, fFarPlaneDistance);
 	//::XMStoreFloat4x4(&m_xmf4x4Projection, xmmtxProjection);
 }
+void BaseCamera::OrthoMatrix(float w, float h)
+{
+	m_xmf4x4Projection = Matrix4x4::OrthoLH(w,h);
+	//XMMATRIX xmmtxProjection = XMMatrixPerspectiveFovLH(XMConvertToRadians(fFOVAngle), fAspectRatio, fNearPlaneDistance, fFarPlaneDistance);
+	//::XMStoreFloat4x4(&m_xmf4x4Projection, xmmtxProjection);
+}
 
 void BaseCamera::SetViewport(int xTopLeft, int yTopLeft, int nWidth, int nHeight, float fMinZ, float fMaxZ)
 {

@@ -85,6 +85,8 @@ private:
 	void SendInfoScenePacket(unsigned short to, unsigned short obj);
 	void SendRotatePacket(unsigned short to, unsigned short obj, float x, float y, float z);
 	void SendOtherCharacterPacket(unsigned short to, unsigned short obj);
+	void SendNattackPaket(unsigned short to, unsigned short obj);
+
 
 	void DisConnect(unsigned short int id);
 	const unsigned short int GetNewID();
@@ -95,7 +97,7 @@ private:
 	void Update(float fTimeElapsed);*/
 
 	//큐브충돌
-	bool Collision();
+	void Collision();
 	bool check_f, check_b, check_r, check_l, check_u, check_d;
 
 	void AddTimerEvent(unsigned int id, TimerEvent::Command cmd = TimerEvent::Command::Update, double seconds = 0.01f);
@@ -130,4 +132,6 @@ private:
 	float card_time = 0.0f; // 도박사 평타 날아가는 시간
 
 	unsigned short other_ctype = 0; // 다른 플레이어 캐릭터 정보
+
+	bool hitcheck; // 사신 평타
 };

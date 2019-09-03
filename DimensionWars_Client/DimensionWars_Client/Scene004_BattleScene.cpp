@@ -117,6 +117,11 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	{
 		ElfArcherPlayer *pPlayer = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 		m_pPlayer = pPlayer;
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+			m_ppOtherPlayers[i] = ReaperObject[i];
+			m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
+		}
 	}
 		break;
 	}
@@ -126,9 +131,9 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	
 	for (unsigned int i = 0; i < m_nCubeObjects; ++i) {
 		if (i < 5) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 300);
-		else if (i < 10) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 400);
-		else if (i < 20) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 500);
-		else if (i < 30) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 600);
+		else if (i < 15) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 400);
+		else if (i < 35) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 500);
+		else if (i < 45) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 600);
 		else if (i < 50) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 700);
 		
 		
@@ -150,7 +155,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		m_ppPotalObjects[i] = new TexturePortalObject(pd3dDevice, pd3dCommandList,m_pFramework->m_pGraphicsRootSignature, 30);
 	}
 
-	/*
+	
 	Texture *battleImage[ui_texture];
 
 	//0
@@ -226,7 +231,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 
 	}
 
-	m_nObjects = 31; //텍스쳐 로드는 45개
+	m_nObjects = 31; //텍스쳐 로드는 45개 
 	m_battleObjects = new BaseObject*[m_nObjects];
 
 	// 1초단위 숫자 10개 
@@ -291,11 +296,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	TextureRectObject *battleImageObject12 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 22.5f, 2.5f);
 	m_battleObjects[30] = battleImageObject12;
 	m_battleObjects[30]->SetMaterial(0, battleMaterial[15]);
-<<<<<<< HEAD
 
-=======
-	
-	*/
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -364,7 +365,13 @@ bool BattleScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 				m_pPlayer = ElfObject[0];
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
 				break;
-			
+			/*case 'O':
+				m_pPlayer->GetCamera()->SetPosition(XMFLOAT3(0, 0, -10000));
+				m_pPlayer->GetCamera()->OrthoMatrix(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+				break;
+			case 'P':
+				m_pPlayer->GetCamera()->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 60.0f);
+				break;*/
 			
 
 			}
@@ -417,46 +424,46 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 
 	// 레이더
 	
-	/*
+	
 	//HP바
 	m_battleObjects[21]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x-25.0f, m_pPlayer->GetCamera()->GetPosition().y+17.0f, m_pPlayer->GetCamera()->GetPosition().z);
 	//SP바
 	m_battleObjects[22]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 25.0f, m_pPlayer->GetCamera()->GetPosition().y + 14.0f, m_pPlayer->GetCamera()->GetPosition().z );
 	
 	// 레이더
-	m_battleObjects[23]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 29.0f, m_pPlayer->GetCamera()->GetPosition().y + 13.0f, m_pPlayer->GetCamera()->GetPosition().z +350);
-	*/
-	//m_battleObjects[23]->SetPosition(Vector3::Subtract(m_pPlayer->GetCamera()->GetPosition(), XMFLOAT3(-10, 0, 0)));
-	//m_battleObjects[23]->m_xmf4x4World._11 = m_pPlayer->GetCamera()->GetRightVector().x;
-	//m_battleObjects[23]->m_xmf4x4World._12 = m_pPlayer->GetCamera()->GetRightVector().y;
-	//m_battleObjects[23]->m_xmf4x4World._13 = m_pPlayer->GetCamera()->GetRightVector().z;
+	//m_battleObjects[23]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 29.0f, m_pPlayer->GetCamera()->GetPosition().y + 13.0f, m_pPlayer->GetCamera()->GetPosition().z +350);
+	
+	//m_battleObjects[23]->SetPosition(m_pPlayer->GetCamera()->GetPosition());
+	/*m_battleObjects[23]->m_xmf4x4World._11 = m_pPlayer->GetCamera()->GetRightVector().x;
+	m_battleObjects[23]->m_xmf4x4World._12 = m_pPlayer->GetCamera()->GetRightVector().y;
+	m_battleObjects[23]->m_xmf4x4World._13 = m_pPlayer->GetCamera()->GetRightVector().z;
 
-	//m_battleObjects[23]->m_xmf4x4World._21 = m_pPlayer->GetCamera()->GetUpVector().x;
-	//m_battleObjects[23]->m_xmf4x4World._22 = m_pPlayer->GetCamera()->GetUpVector().y;
-	//m_battleObjects[23]->m_xmf4x4World._23 = m_pPlayer->GetCamera()->GetUpVector().z;
+	m_battleObjects[23]->m_xmf4x4World._21 = m_pPlayer->GetCamera()->GetUpVector().x;
+	m_battleObjects[23]->m_xmf4x4World._22 = m_pPlayer->GetCamera()->GetUpVector().y;
+	m_battleObjects[23]->m_xmf4x4World._23 = m_pPlayer->GetCamera()->GetUpVector().z;
 
-	//m_battleObjects[23]->m_xmf4x4World._31 = m_pPlayer->GetCamera()->GetLookVector().x;
-	//m_battleObjects[23]->m_xmf4x4World._32 = m_pPlayer->GetCamera()->GetLookVector().y;
-	//m_battleObjects[23]->m_xmf4x4World._33 = m_pPlayer->GetCamera()->GetLookVector().z;
+	m_battleObjects[23]->m_xmf4x4World._31 = m_pPlayer->GetCamera()->GetLookVector().x;
+	m_battleObjects[23]->m_xmf4x4World._32 = m_pPlayer->GetCamera()->GetLookVector().y;
+	m_battleObjects[23]->m_xmf4x4World._33 = m_pPlayer->GetCamera()->GetLookVector().z;*/
 	//m_battleObjects[23]->SetPosition(Vector3::Subtract(m_pPlayer->GetCamera()->GetPosition(), XMFLOAT3(-10, 0, 0)));
 	//m_battleObjects[23]->SetLookAt(m_pPlayer->GetPosition(), m_pPlayer->GetUpVector());
 	//printf("%1.f, %1.f, %1.f\n", m_pPlayer->GetCamera()->GetPosition().x, m_pPlayer->GetCamera()->GetPosition().y, m_pPlayer->GetCamera()->GetPosition().z);
 	
-	/*
-	// 점수표
+	
+	 //점수표
 	m_battleObjects[24]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x, m_pPlayer->GetCamera()->GetPosition().y + 17.0f, m_pPlayer->GetCamera()->GetPosition().z);
 	// 콜론
 	m_battleObjects[25]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x, m_pPlayer->GetCamera()->GetPosition().y + 12.0f, m_pPlayer->GetCamera()->GetPosition().z);
 	// 분
 	m_battleObjects[26]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x-3, m_pPlayer->GetCamera()->GetPosition().y + 12.0f, m_pPlayer->GetCamera()->GetPosition().z);
-	// 10초대
+	 //10초대
 	m_battleObjects[27]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x+3, m_pPlayer->GetCamera()->GetPosition().y + 12.0f, m_pPlayer->GetCamera()->GetPosition().z);
 	// 1초대
 	m_battleObjects[28]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x+6, m_pPlayer->GetCamera()->GetPosition().y + 12.0f, m_pPlayer->GetCamera()->GetPosition().z);
 	// 빈 바
 	m_battleObjects[29]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 25.0f, m_pPlayer->GetCamera()->GetPosition().y + 17.0f, m_pPlayer->GetCamera()->GetPosition().z+0.001f);
 	m_battleObjects[30]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x - 25.0f, m_pPlayer->GetCamera()->GetPosition().y + 14.0f, m_pPlayer->GetCamera()->GetPosition().z+0.001f);
-	*/
+	
 	
 	/*if (m_nObjects > 5) {
 		m_battleObjects[5]->SetPosition(m_pPlayer->GetCamera()->GetPosition().x + 100.0f, m_pPlayer->GetCamera()->GetPosition().y - 520.0f, m_pPlayer->GetCamera()->GetPosition().z + 100.0f);
@@ -522,7 +529,7 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 	//if (m_battleObjects) for (unsigned int i = 0; i < m_nObjects; ++i) if (m_battleObjects[i]) m_battleObjects[i]->Render(pd3dCommandList, pCamera);
 	for (int i = 0; i < 10; ++i)
 	{
-	//	m_battleObjects[21 + i]->Render(pd3dCommandList, pCamera);
+		m_battleObjects[21 + i]->Render(pd3dCommandList, pCamera);
 	}
 	
 }
@@ -601,11 +608,12 @@ void BattleScene::ProcessPacket(char * ptr)
 			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 			m_pPlayer->hp = my_packet->hp;
 			
-			/*if (m_pPlayer->character_type == Character_type::Reaper)
+			if (m_pPlayer->character_type == Character_type::Reaper)
 			{
 				m_pPlayer = ReaperObject[0];
 				m_pFramework->m_pPlayer = m_pPlayer;
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
+				printf("나 사신\n");
 				
 			}
 			if (m_pPlayer->character_type == Character_type::Gamber)
@@ -613,13 +621,14 @@ void BattleScene::ProcessPacket(char * ptr)
 				m_pPlayer = GamblerObject[0];
 				m_pFramework->m_pPlayer = m_pPlayer;
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
+				printf("나 도박\n");
 			}
 			if (m_pPlayer->character_type == Character_type::Elf)
 			{
 				m_pPlayer = ElfObject[0];
 				m_pFramework->m_pPlayer = m_pPlayer;
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
-			}*/
+			}
 			
 			//CSPacket_CharacterType *myTypePacket = reinterpret_cast<CSPacket_CharacterType *>(m_pFramework->GetSendBuf());
 			//myTypePacket->size = sizeof(CSPacket_CharacterType);
@@ -636,22 +645,23 @@ void BattleScene::ProcessPacket(char * ptr)
 				m_ppOtherPlayers[id]->hp = my_packet->hp;
 
 
-				//if (m_ppOtherPlayers[id]->character_type == Character_type::Reaper)
-				//{
-				//	m_ppOtherPlayers[id] = ReaperObject[1];
-				//	//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
-
-				//}
-				//if (m_ppOtherPlayers[id]->character_type == Character_type::Gamber)
-				//{
-				//	m_ppOtherPlayers[id] = GamblerObject[1];
-				//	//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
-				//}
-				//if (m_ppOtherPlayers[id]->character_type == Character_type::Elf)
-				//{
-				//	m_ppOtherPlayers[id] = ElfObject[1];
-				//	//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
-				//}
+				if (m_ppOtherPlayers[id]->character_type == Character_type::Reaper)
+				{
+					m_ppOtherPlayers[id] = ReaperObject[1];
+					//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
+					printf("너 사신\n");
+				}
+				if (m_ppOtherPlayers[id]->character_type == Character_type::Gamber)
+				{
+					m_ppOtherPlayers[id] = GamblerObject[1];
+					//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
+					printf("너 도박\n");
+				}
+				if (m_ppOtherPlayers[id]->character_type == Character_type::Elf)
+				{
+					m_ppOtherPlayers[id] = ElfObject[1];
+					//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
+				}
 				
 			}
 
@@ -715,6 +725,7 @@ void BattleScene::ProcessPacket(char * ptr)
 			m_pPlayer->SetUp(my_packet->m_Up);
 			m_pPlayer->SetLook(my_packet->m_Look);
 			
+			//slashWave[0]->Rotate(&slashWave[0]->GetUp(),obj_rot_y);
 			//m_battleObjects[21]->SetLookAt(XMFLOAT3(0,0,0), my_packet->m_Up);
 			//m_battleObjects[21]->Rotate(0,my_packet->x,0);
 			//m_pPlayer->GetCamera()->SetLookAt(my_packet->m_Look);
@@ -842,6 +853,12 @@ void BattleScene::ProcessPacket(char * ptr)
 				m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(ElfArcher::OnHit);
 			}
 		}
+		break;
+	}
+	case SC_Type::Attack:
+	{
+		SCPacket_Attack *my_packet = reinterpret_cast<SCPacket_Attack *>(ptr);
+		//m_pFramework->GetResource()->GetGrimReaperModel()->m_pModelRootObject->FindFrame("Cylinder002")->SetPosition(my_packet->position);
 		break;
 	}
 	case SC_Type::CreateRoom:

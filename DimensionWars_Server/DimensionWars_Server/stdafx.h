@@ -393,7 +393,7 @@ struct SOCKETINFO
 	XMFLOAT3 m_Right;
 	XMFLOAT3 m_Up;
 	XMFLOAT3 m_Look;
-	float hp = 100;
+	float hp = 1000;
 
 	// 투사체 정보
 	bool tile_life = false;

@@ -280,6 +280,7 @@ bool GrimReaperPlayer::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPAR
 	{
 	case WM_LBUTTONDOWN:
 		animation_check = true;
+		SendNomarlAttack();
 		switch (state) {
 		case First_Attack:
 			SecondAttackTrigger = true;
@@ -414,3 +415,12 @@ void GrimReaperPlayer::SendSlash()
 	//m_pFramework->GetResource()->GetGrimReaperModel()->m_pModelRootObject->FindFrame("Cylinder002");
 }
 
+void GrimReaperPlayer::SendNomarlAttack()
+{
+	CSPacket_Attack *myPacket = reinterpret_cast<CSPacket_Attack*>(m_pFramework->GetSendBuf());
+	myPacket->size = sizeof(CSPacket_Attack);
+	myPacket->type = CS_Type::Attack;
+	myPacket->attack_type = GrimReaper::First_Attack;
+	myPacket->position = GetPosition();
+	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
+}

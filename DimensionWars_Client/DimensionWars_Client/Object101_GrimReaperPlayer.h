@@ -48,4 +48,5 @@ public:
 
 	virtual bool isCancleEnabled() override;
 	virtual void SendSlash();
+	virtual void SendNomarlAttack();
 };
