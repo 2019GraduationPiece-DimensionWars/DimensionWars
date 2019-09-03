@@ -16,6 +16,7 @@ class TextureCubeObject;
 class PortalObject;
 class TexturePortalObject;
 class Object104_DummyPlayer;
+class ArrowObject;
 
 enum Character_type
 {
@@ -48,12 +49,13 @@ private:
 
 	CardObject** card = nullptr;
 	SlashWaveObject** slashWave = nullptr;
-	
+	ArrowObject ** m_arrow = nullptr;
 	SkinnedFrameObject** arrow = nullptr;
 	bool cube_build = false;
 	bool portal_build = false;
 	bool card_build = false;
 	bool slash_build = false;
+	bool arrow_build = false;
 
 	float obj_rot_x;
 	float obj_rot_y;

@@ -258,9 +258,10 @@ void ElfArcherPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 		{
 			//if (pKeysBuffer[VK_RBUTTON] & 0xF0) Rotate(cyDelta, 0.0f, -cxDelta);
 			// else
-			Rotate(cyDelta, cxDelta, 0.0f);
+			//Rotate(cyDelta, cxDelta, 0.0f);
+			SendRotate(cyDelta, cxDelta, 0.0f);
 		}
-		if (dwDirection) Move(dwDirection, 30.0f * fTimeElapsed, true);
+		//if (dwDirection) Move(dwDirection, 30.0f * fTimeElapsed, true);
 	}
 	SetDirectionBit(dwDirection);
 	Update(fTimeElapsed);
@@ -295,6 +296,7 @@ bool ElfArcherPlayer::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARA
 	{
 	case WM_LBUTTONDOWN:
 		animation_check = true;
+		SendArrow();
 		switch (state) {
 		case First_Shot:
 			SecondShotTrigger = true;
@@ -402,4 +404,16 @@ bool ElfArcherPlayer::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WP
 		break;
 	}
 	return false;
+}
+
+
+void ElfArcherPlayer::SendArrow()
+{
+	CSPacket_Attack *myPacket = reinterpret_cast<CSPacket_Attack*>(m_pFramework->GetSendBuf());
+	myPacket->size = sizeof(CSPacket_Attack);
+	myPacket->type = CS_Type::Attack;
+	myPacket->attack_type = ElfArcher::First_Shot;
+	myPacket->position = GetPosition();
+	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
+	//m_pFramework->GetResource()->GetGrimReaperModel()->m_pModelRootObject->FindFrame("Cylinder002");
 }
