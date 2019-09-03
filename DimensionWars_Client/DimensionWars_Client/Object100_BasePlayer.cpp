@@ -163,9 +163,11 @@ void BasePlayer::Update(float fTimeElapsed)
 	if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
 
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
-	if (nCurrentCameraMode == THIRD_PERSON_CAMERA) m_pCamera->Update(m_xmf3Position, fTimeElapsed);
+
+	XMFLOAT3 lookTargetPivot = { m_xmf3Position.x, m_xmf3Position.y + 200.0f, m_xmf3Position.z };
+	if (nCurrentCameraMode == THIRD_PERSON_CAMERA) m_pCamera->Update(lookTargetPivot, fTimeElapsed);
 	if (m_pCameraUpdatedContext) OnCameraUpdateCallback(fTimeElapsed);
-	if (nCurrentCameraMode == THIRD_PERSON_CAMERA) m_pCamera->SetLookAt(m_xmf3Position);
+	if (nCurrentCameraMode == THIRD_PERSON_CAMERA) m_pCamera->SetLookAt(lookTargetPivot);
 
 	m_pCamera->RegenerateViewMatrix();
 

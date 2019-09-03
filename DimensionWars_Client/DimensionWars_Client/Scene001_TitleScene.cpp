@@ -14,6 +14,9 @@
 #include "ResourceManager.h"
 #include "Object102_GamblerPlayer.h"
 #include "Object104_DummyPlayer.h"
+#include "Shader009_UIShader.h"
+#include "Object013_ScreenTextureObject.h"
+
 TitleScene::TitleScene(SceneTag tag, RuntimeFrameWork * pFramework) : BaseScene(tag, pFramework)
 {
 }
@@ -48,7 +51,8 @@ void TitleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	Texture * titleImage = new Texture(1, RESOURCE_TEXTURE2D, 0);
 	titleImage->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Titleimage.dds", 0);
 
-	TextureRectangleShader *pTextureShader = new TextureRectangleShader();
+	//TextureRectangleShader *pTextureShader = new TextureRectangleShader();
+	UIShader *pTextureShader = new UIShader();
 	pTextureShader->CreateShader(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 	pTextureShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
@@ -60,19 +64,16 @@ void TitleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	titleMaterial[0]->SetShader(pTextureShader);
 
 	
-	
-	TextureRectObject *titleImageObject = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 680, 480);
+	// 512 x 382
+	ScreenTextureObject *titleImageObject = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -1.0f, 1.0f, 1.0f, -1.0f);
 	m_titleObjects[0] = titleImageObject;
 	// 카메라를 위해 생성  렌더하지 않음
 	m_titleObjects[0]->SetMaterial(0, titleMaterial[0]);
-	m_titleObjects[0]->SetPosition(0, -25, 0);
+	m_titleObjects[0]->SetPosition(0, -25.0f, 0);
 	
 	
 	
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	
-	
-
 }
 
 void TitleScene::ReleaseObjects()

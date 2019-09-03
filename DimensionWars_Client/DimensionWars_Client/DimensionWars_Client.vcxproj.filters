@@ -237,6 +237,15 @@
     <ClInclude Include="Object104_DummyPlayer.h">
       <Filter>Object\PlayerObject</Filter>
     </ClInclude>
+    <ClInclude Include="Shader009_UIShader.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh008_ScreenTextureMesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Object013_ScreenTextureObject.h">
+      <Filter>Object\TextureObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -403,6 +412,15 @@
     </ClCompile>
     <ClCompile Include="Object104_DummyPlayer.cpp">
       <Filter>Object\PlayerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader009_UIShader.cpp">
+      <Filter>Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh008_ScreenTextureMesh.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Object013_ScreenTextureObject.cpp">
+      <Filter>Object\TextureObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

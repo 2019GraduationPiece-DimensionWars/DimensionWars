@@ -84,9 +84,7 @@ void RoomScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLis
 
 	
 	for (int i = 0; i < room_texture; ++i)
-	{
 		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, roomImage[i], 15, true);
-	}
 
 
 	//Material *roomMaterial[room_texture];
@@ -232,7 +230,8 @@ void RoomScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLis
 
 	for (int i = 0; i < m_nObjects3; ++i)
 	{
-		m_roomObjects[i]->Rotate(8, 0, 0);
+		m_roomObjects[i]->Rotate(-8, 0, 0);
+		//m_roomObjects[i]->SetPosition(m_roomObjects[i]->GetPosition().x, m_roomObjects[i]->GetPosition().y + 200.0f, m_roomObjects[i]->GetPosition().z);
 	}
 
 }

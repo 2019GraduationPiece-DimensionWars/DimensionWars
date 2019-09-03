@@ -228,7 +228,8 @@ void LobbyScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	
 	for (int i = 0; i < m_nObjects2; ++i)
 	{
-		m_lobbyObjects[i]->Rotate(8, 0, 0);
+		m_lobbyObjects[i]->Rotate(-8, 0, 0);
+		//m_lobbyObjects[i]->SetPosition(m_lobbyObjects[i]->GetPosition().x, m_lobbyObjects[i]->GetPosition().y + 200.0f, m_lobbyObjects[i]->GetPosition().z);
 	}
 	
 	

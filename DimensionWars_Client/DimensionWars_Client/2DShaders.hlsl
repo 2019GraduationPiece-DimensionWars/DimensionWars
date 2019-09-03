@@ -256,8 +256,9 @@ VS_TEXTURED_OUTPUT VSUITexture(VS_TEXTURED_INPUT input)
 {
     VS_TEXTURED_OUTPUT output;
 
-    output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxProjection);
-
+    output.position = float4(input.position, 1.0f);
+    // output.position = float4(input.position, 1.0f);
+    // output.position.z = -10.0f;
     output.uv = input.uv;
 
     return (output);
