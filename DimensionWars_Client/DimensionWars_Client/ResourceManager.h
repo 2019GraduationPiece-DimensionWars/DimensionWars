@@ -36,7 +36,7 @@ public:
 
 	SkinnedFrameObject* GetSlashWaveObject(unsigned int index = 0) const;
 	SkinnedFrameObject* GetCardObject(unsigned int index = 0) const;
-	SkinnedFrameObject* GetArrowObject(unsigned int index = 0) const;
+	SkinnedFrameObject* GetArrowbject(unsigned int index = 0) const;
 	SkinnedFrameObject* GetPortalObject(unsigned int index = 0) const;
 };
 

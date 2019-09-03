@@ -246,9 +246,6 @@
     <ClInclude Include="Object013_ScreenTextureObject.h">
       <Filter>Object\TextureObject</Filter>
     </ClInclude>
-    <ClInclude Include="Object013_ArrowObject.h">
-      <Filter>Object</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -424,9 +421,6 @@
     </ClCompile>
     <ClCompile Include="Object013_ScreenTextureObject.cpp">
       <Filter>Object\TextureObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Object013_ArrowObject.cpp">
-      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

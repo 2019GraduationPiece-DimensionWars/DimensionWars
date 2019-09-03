@@ -18,12 +18,8 @@
 #include "Texture.h"
 #include "Shader005_TextureRectangleShader.h"
 #include "Object104_DummyPlayer.h"
-
-#include "Object013_ArrowObject.h"
-
 #include "Shader009_UIShader.h"
 #include "Object013_ScreenTextureObject.h"
-
 
 
 BattleScene::BattleScene()
@@ -77,29 +73,26 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	//	m_ppOtherPlayers[i] = Dummy[i];
 	//	m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
 	//}
-	//
-	//for (int i = 0; i < MAX_PLAYER; ++i)
-	//{
-	//	ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-	//	ReaperObject[i]->SetPosition(XMFLOAT3(-100000, 1000000, 10000));
-	////	ReaperObject[i]->SetChild(m_pFramework->GetResource()->GetGrimReaperModel()->m_pModelRootObject, true);
-	//}
-	//for (int i = 0; i < MAX_PLAYER; ++i)
-	//{
-	//	GamblerObject[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-	//	GamblerObject[i]->SetPosition(XMFLOAT3(-100000, 1000000, 10000));
-	//	//GamblerObject[i]->SetChild(m_pFramework->GetResource()->GetGamblerModel()->m_pModelRootObject, true);
-	//}
-	//for (int i = 0; i < MAX_PLAYER; ++i)
-	//{
-	//	ElfObject[i] = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-	//	//ElfObject[i]->SetChild(m_pFramework->GetResource()->GetElfArcherModel()->m_pModelRootObject, true);
-	//	ElfObject[i]->SetPosition(XMFLOAT3(-100000, 1000000, 10000));
-	//}
+	
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	//	ReaperObject[i]->SetChild(m_pFramework->GetResource()->GetGrimReaperModel()->m_pModelRootObject, true);
+	}
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		GamblerObject[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+		//GamblerObject[i]->SetChild(m_pFramework->GetResource()->GetGamblerModel()->m_pModelRootObject, true);
+	}
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		ElfObject[i] = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+		//ElfObject[i]->SetChild(m_pFramework->GetResource()->GetElfArcherModel()->m_pModelRootObject, true);
+	}
 
 	cmd = 0;
-	printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
-	scanf_s("%d", &cmd);
+	//printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
+	//scanf_s("%d", &cmd);
 	switch (cmd) {
 	case 0: 
 	{
@@ -154,13 +147,6 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		slashWave[i] = new SlashWaveObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 		
 	}
-
-	m_arrow = new ArrowObject*[Arrow_end - Arrow_start];
-	for (unsigned int i = 0; i < Arrow_end - Arrow_start; ++i) {
-		m_arrow[i] = new ArrowObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-
-	}
-
 	
 	card = new CardObject*[Card_end - Card_start];
 	for (unsigned int i = 0; i < Card_end - Card_start; ++i) {
@@ -515,10 +501,6 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 			card[i]->Render(pd3dCommandList, pCamera);
 	}
 
-	for (unsigned int i = 0; i < Arrow_end - Arrow_start; ++i)
-		if (m_arrow && m_arrow[i])
-			m_arrow[i]->Render(pd3dCommandList, pCamera);
-
 	for (unsigned int i = 0; i < Potal_end - Potal_start; ++i) {
 		if (m_ppPotalObjects && m_ppPotalObjects[i]) {
 			m_ppPotalObjects[i]->Render(pd3dCommandList, pCamera);
@@ -552,28 +534,20 @@ void BattleScene::BuildCube()
 		}
 		cube_build = false;
 	}
-	if (slash_build)
+	if (card_build)
 	{
 		for (unsigned int i = 0; i < Slash_end - Slash_start; ++i)
 			if (slashWave && slashWave[i])
 				slashWave[i]->SetPosition(10000, 10000, 10000);
-		slash_build = false;
+		card_build = false;
 	}
-	if (card_build)
+	if (slash_build)
 	{
 		for (unsigned int i = 0; i < Card_end - Card_start; ++i)
 			if (card && card[i])
 				card[i]->SetPosition(10000, 10000, 10000);
-		card_build = false;
+		slash_build = false;
 	}
-	if (arrow_build)
-	{
-		for (unsigned int i = 0; i < Arrow_end - Arrow_start; ++i)
-			if (m_arrow && m_arrow[i])
-				m_arrow[i]->SetPosition(10000, 10000, 10000);
-		arrow_build = false;
-	}
-
 	if(portal_build)
 	{
 		for (unsigned int i = 0; i < Potal_end - Potal_start; ++i)
@@ -614,34 +588,40 @@ void BattleScene::ProcessPacket(char * ptr)
 		}
 	
 		if (id == m_pFramework->myid) {
-
+			
 			m_pPlayer->SetVisible(true);
-			m_pPlayer->character_type = my_packet->character_type;
+			m_pPlayer->character_type=my_packet->character_type;
 			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 			m_pPlayer->hp = my_packet->hp;
-			m_pPlayer->sp = my_packet->sp;
-
-			/*if (m_pPlayer->character_type == Character_type::Reaper)
+			
+			if (m_pPlayer->character_type == Character_type::Reaper)
 			{
 				m_pPlayer = ReaperObject[0];
 				m_pFramework->m_pPlayer = m_pPlayer;
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
-
-
+				printf("나 사신\n");
+				
 			}
 			if (m_pPlayer->character_type == Character_type::Gamber)
 			{
 				m_pPlayer = GamblerObject[0];
 				m_pFramework->m_pPlayer = m_pPlayer;
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
+				printf("나 도박\n");
 			}
 			if (m_pPlayer->character_type == Character_type::Elf)
 			{
 				m_pPlayer = ElfObject[0];
 				m_pFramework->m_pPlayer = m_pPlayer;
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
-			}*/
-
+			}
+			
+			//CSPacket_CharacterType *myTypePacket = reinterpret_cast<CSPacket_CharacterType *>(m_pFramework->GetSendBuf());
+			//myTypePacket->size = sizeof(CSPacket_CharacterType);
+			//// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
+			//myTypePacket->character_type = m_pPlayer->character_type;
+			//myTypePacket->type = CS_Type::Character_Info;
+			//m_pFramework->SendPacket(reinterpret_cast<char *>(myTypePacket));
 		}
 		else if (id < MAX_PLAYER) {
 			if (m_ppOtherPlayers[id]) {
@@ -649,28 +629,25 @@ void BattleScene::ProcessPacket(char * ptr)
 				m_ppOtherPlayers[id]->character_type = my_packet->character_type;
 				m_ppOtherPlayers[id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 				m_ppOtherPlayers[id]->hp = my_packet->hp;
-				m_ppOtherPlayers[id]->sp = my_packet->sp;
-				
-				//if (m_ppOtherPlayers[id]->character_type == Character_type::Reaper)
-				//{
-				//	m_ppOtherPlayers[id] = ReaperObject[1];
-				//	//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
-				//	
-				//}
-				//if (m_ppOtherPlayers[id]->character_type == Character_type::Gamber)
-				//{
-				//	m_ppOtherPlayers[id] = GamblerObject[1];
-				//	printf("도박\n");
-				//	
-				//	//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
-				//	
-				//}
-				//if (m_ppOtherPlayers[id]->character_type == Character_type::Elf)
-				//{
-				//	m_ppOtherPlayers[id] = ElfObject[1];
-				//	printf("엘프\n");
-				//	//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
-				//}
+
+
+				if (m_ppOtherPlayers[id]->character_type == Character_type::Reaper)
+				{
+					m_ppOtherPlayers[id] = ReaperObject[1];
+					//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
+					printf("너 사신\n");
+				}
+				if (m_ppOtherPlayers[id]->character_type == Character_type::Gamber)
+				{
+					m_ppOtherPlayers[id] = GamblerObject[1];
+					//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
+					printf("너 도박\n");
+				}
+				if (m_ppOtherPlayers[id]->character_type == Character_type::Elf)
+				{
+					m_ppOtherPlayers[id] = ElfObject[1];
+					//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
+				}
 				
 			}
 
@@ -700,14 +677,6 @@ void BattleScene::ProcessPacket(char * ptr)
 			// 그려주시고 위치 설정
 			if (card && card[other_id - Card_start]) {
 				card[other_id - Card_start]->SetPosition(my_packet->position);
-				//printf("도박사 평타 받은 후  : %1.f, %1.f, %1.f\n", card[other_id - Card_start]->GetPosition().x, card[other_id - Card_start]->GetPosition().y, card[other_id - Card_start]->GetPosition().z);
-			}
-		}
-		else if (other_id >= Arrow_start&&other_id<Arrow_end) {
-			//printf("도박사 평타 : %1.f, %1.f, %1.f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
-			// 그려주시고 위치 설정
-			if (m_arrow && m_arrow[other_id - Arrow_start]) {
-				card[other_id - Arrow_start]->SetPosition(my_packet->position);
 				//printf("도박사 평타 받은 후  : %1.f, %1.f, %1.f\n", card[other_id - Card_start]->GetPosition().x, card[other_id - Card_start]->GetPosition().y, card[other_id - Card_start]->GetPosition().z);
 			}
 		}
@@ -796,12 +765,8 @@ void BattleScene::ProcessPacket(char * ptr)
 		anime = my_packet->animation_state;
 
 		if (other_id < MAX_PLAYER) {
-			if (m_ppOtherPlayers[other_id]->isCancleEnabled())
-			{
-				m_ppOtherPlayers[other_id]->animation_check = true;
-				m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(anime);
-			}
-
+			m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(anime);
+			//printf("서버한테 받음 : %d\n", anime);
 		}
 
 		break;
@@ -849,14 +814,6 @@ void BattleScene::ProcessPacket(char * ptr)
 			my_packet->position = m_pPlayer[m_pFramework->myid].GetPosition();
 			slash_build = my_packet->build_projecttile;
 		}
-		if (my_packet->projectTile_type == ProjectTile::Arrow)
-		{
-			//printf("slash (%.1f, %.1f, %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
-			unsigned short arrow_id = my_packet->id - Arrow_start;
-			m_pFramework->arrowPos[arrow_id] = my_packet->position;
-			my_packet->position = m_pPlayer[m_pFramework->myid].GetPosition();
-			arrow_build = my_packet->build_projecttile;
-		}
 		break;
 	}
 
@@ -888,12 +845,6 @@ void BattleScene::ProcessPacket(char * ptr)
 	{
 		SCPacket_Attack *my_packet = reinterpret_cast<SCPacket_Attack *>(ptr);
 		//m_pFramework->GetResource()->GetGrimReaperModel()->m_pModelRootObject->FindFrame("Cylinder002")->SetPosition(my_packet->position);
-		break;
-	}
-	case SC_Type::GameTime:
-	{
-		SCPacket_GameTime *packet = reinterpret_cast<SCPacket_GameTime*>(ptr);
-		//printf("%d\n", packet->time);
 		break;
 	}
 	case SC_Type::CreateRoom:

@@ -55,5 +55,4 @@ public:
 	virtual bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) override;
 
 	virtual bool isCancleEnabled() override;
-	virtual void SendArrow();
 };

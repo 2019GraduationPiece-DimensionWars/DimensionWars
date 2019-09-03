@@ -287,7 +287,7 @@ SkinnedFrameObject * ResourceManager::GetCardObject(unsigned int index) const
 	return CardModel[index]->m_pModelRootObject;
 }
 
-SkinnedFrameObject * ResourceManager::GetArrowObject(unsigned int index) const
+SkinnedFrameObject * ResourceManager::GetArrowbject(unsigned int index) const
 {
 	return ArrowModel[index]->m_pModelRootObject;
 }
