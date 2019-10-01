@@ -123,6 +123,7 @@ public:
 
 	XMFLOAT3 cardPos[Card_end - Card_start];
 	XMFLOAT3 slashWavePos[Slash_end - Slash_start];
+	XMFLOAT3 arrowPos[Arrow_end - Arrow_start];
 	ID3D12RootSignature			*m_pGraphicsRootSignature = nullptr;
 	void SetGraphicsRootSignature(ID3D12GraphicsCommandList *pd3dCommandList) { pd3dCommandList->SetGraphicsRootSignature(m_pGraphicsRootSignature); }
 	unsigned short nBase_room[6] = { 0, 1, 2, 3, 4, 5 };

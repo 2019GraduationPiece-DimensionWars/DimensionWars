@@ -36,7 +36,7 @@ private:
 	std::mutex					timerQueue_Lock;
 	SOCKETINFO							objects[MAX_OBJECTS];	// client, 투사체, 큐브 장애물 등에 다 ID를 등록 후 클라이언트에 뿌려줘야 하므로 Objects라고 명명
 	float fDistance = 9.8f;
-
+	std::mutex test;
 	XMFLOAT3					m_xmf3Velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	XMFLOAT3     				m_xmf3Gravity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	float           			m_fMaxVelocityXZ = 0.0f;
@@ -79,14 +79,13 @@ private:
 	void SendPotalInfoPacket(unsigned short to, unsigned short obj);
 	void SendRoomPacket(unsigned short to, unsigned short obj);
 	void SendRoomEnterPacket(unsigned short to, unsigned short obj);
-	void SendChagne_L_RPacket(unsigned short to, unsigned short obj);
-	void SendChagne_R_LPacket(unsigned short to, unsigned short obj);
 	void SendRoomExitPacket(unsigned short to, unsigned short obj);
 	void SendInfoScenePacket(unsigned short to, unsigned short obj);
 	void SendRotatePacket(unsigned short to, unsigned short obj, float x, float y, float z);
 	void SendOtherCharacterPacket(unsigned short to, unsigned short obj);
 	void SendNattackPaket(unsigned short to, unsigned short obj);
-
+	void SendGameTimePaket(unsigned short to);
+	void SendArrowPaket(unsigned short to, unsigned short obj);
 
 	void DisConnect(unsigned short int id);
 	const unsigned short int GetNewID();
@@ -101,12 +100,11 @@ private:
 	bool check_f, check_b, check_r, check_l, check_u, check_d;
 
 	void AddTimerEvent(unsigned int id, TimerEvent::Command cmd = TimerEvent::Command::Update, double seconds = 0.01f);
-	void Update(unsigned long id);
-	void Update2(unsigned long id);
+	void Update(unsigned short int id);
 	int character_type = 99;
 	int card_num = 0;
 	int slash_num = 0;
-
+	int arrow_num = 0;
 	bool jump_check = false;
 
 	int center_cube_distance = 1500;
@@ -130,8 +128,11 @@ private:
 
 	float slash_time = 0.0f; // 검기 날아가는 시간
 	float card_time = 0.0f; // 도박사 평타 날아가는 시간
-
+	float arrow_time = 0.0f;
 	unsigned short other_ctype = 0; // 다른 플레이어 캐릭터 정보
 
 	bool hitcheck; // 사신 평타
+	float Game_Timer = 0;
+	float timecnt = 0;
+	unsigned short update_check = 0;
 };

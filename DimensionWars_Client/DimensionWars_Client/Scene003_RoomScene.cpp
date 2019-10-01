@@ -9,6 +9,8 @@
 #include "ResourceManager.h"
 #include "Object104_DummyPlayer.h"
 #include "Scene004_BattleScene.h"
+#include "Object013_ScreenTextureObject.h"
+#include "Shader009_UIShader.h"
 RoomScene::RoomScene()
 {
 }
@@ -78,7 +80,7 @@ void RoomScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLis
 	
 	
 
-	TextureRectangleShader *pTextureShader = new TextureRectangleShader();
+	UIShader *pTextureShader = new UIShader();
 	pTextureShader->CreateShader(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 	pTextureShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
@@ -99,141 +101,102 @@ void RoomScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLis
 	
 
 	// 룸배경
-	TextureRectObject *roomImageObject = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 600, 450);
+	ScreenTextureObject *roomImageObject = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature,-1.0f,1.0f,1.0f,-1.0f);
 	m_roomObjects[0] = roomImageObject;
 	m_roomObjects[0]->SetMaterial(0, roomMaterial[0]);
-	m_roomObjects[0]->SetPosition(0, 0, 8);
 	// 내 캐릭터 선택배경
-	TextureRectObject *roomImageObject1 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 90, 180);
+	ScreenTextureObject *roomImageObject1 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.9f,0.5f,-0.6f,-0.1f);
 	m_roomObjects[1] = roomImageObject1;
 	m_roomObjects[1]->SetMaterial(0, roomMaterial[1]);
-	m_roomObjects[1]->SetPosition(-230, 60, 6);
 	// 상대 캐릭터 배경
-	TextureRectObject *roomImageObject2 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 450, 300);
+	ScreenTextureObject *roomImageObject2 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.5f, 0.8f, 0.9f, -0.5f);
 	m_roomObjects[2] = roomImageObject2;
 	m_roomObjects[2]->SetMaterial(0, roomMaterial[2]);
-	m_roomObjects[2]->SetPosition(55, 55, 6);
 	// 왼쪽 비활성
-	TextureRectObject *roomImageObject3 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 30, 20);
+	ScreenTextureObject *roomImageObject3 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.9f, -0.2f, -0.8f, -0.3f);
 	m_roomObjects[3] = roomImageObject3;
 	m_roomObjects[3]->SetMaterial(0, roomMaterial[3]);
-	m_roomObjects[3]->SetPosition(-260, -55, -2);
 	// 오른쪽 비활성
-	TextureRectObject *roomImageObject4 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 30, 20);
+	ScreenTextureObject *roomImageObject4 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.7f, -0.2f, -0.6f, -0.3f);
 	m_roomObjects[4] = roomImageObject4;
 	m_roomObjects[4]->SetMaterial(0, roomMaterial[4]);
-	m_roomObjects[4]->SetPosition(-206, -55, -2);
 	// 왼쪽 활성 
-	TextureRectObject *roomImageObject5 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 30, 20);
+	ScreenTextureObject *roomImageObject5 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.9f, -0.2f, -0.8f, -0.3f);
 	m_roomObjects[5] = roomImageObject5;
 	m_roomObjects[5]->SetMaterial(0, roomMaterial[5]);
-	m_roomObjects[5]->SetPosition(-260, -55, -2);
 	// 오른쪽 활성
-	TextureRectObject *roomImageObject6 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 30, 20);
+	ScreenTextureObject *roomImageObject6 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.7f, -0.2f, -0.6f, -0.3f);
 	m_roomObjects[6] = roomImageObject6;
 	m_roomObjects[6]->SetMaterial(0, roomMaterial[6]);
-	m_roomObjects[6]->SetPosition(-206, -55, -2);
 	// 방 나가기
-	TextureRectObject *roomImageObject7 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 80, 40);
+	ScreenTextureObject *roomImageObject7 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.9f, -0.75f, -0.7f, -0.95f);
 	m_roomObjects[7] = roomImageObject7;
 	m_roomObjects[7]->SetMaterial(0, roomMaterial[7]);
-	m_roomObjects[7]->SetPosition(-240, -190, -25);
 	// 게임시작
-	TextureRectObject *roomImageObject8 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 80, 40);
+	ScreenTextureObject *roomImageObject8 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.7f, -0.75f, 0.9f, -0.95f);
 	m_roomObjects[8] = roomImageObject8;
 	m_roomObjects[8]->SetMaterial(0, roomMaterial[8]);
-	m_roomObjects[8]->SetPosition(240, -190, -25);
 	//빈 플레이어
-	TextureRectObject *roomImageObject9 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 130, 130);
+	ScreenTextureObject *roomImageObject9 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.45f, 0.75f, -0.05f, 0.1f);
 	m_roomObjects[9] = roomImageObject9;
 	m_roomObjects[9]->SetMaterial(0, roomMaterial[12]);
-	m_roomObjects[9]->SetPosition(-80, 100, 5);
-
-	TextureRectObject *roomImageObject10 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 130, 130);
+	
+	ScreenTextureObject *roomImageObject10 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.0f, 0.75f, 0.4f, 0.1f);
 	m_roomObjects[10] = roomImageObject10;
 	m_roomObjects[10]->SetMaterial(0, roomMaterial[12]);
-	m_roomObjects[10]->SetPosition(60, 100, 5);
 
-	TextureRectObject *roomImageObject11 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 130, 130);
+	ScreenTextureObject *roomImageObject11 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.45f, 0.75f, 0.85f, 0.1f);
 	m_roomObjects[11] = roomImageObject11;
 	m_roomObjects[11]->SetMaterial(0, roomMaterial[12]);
-	m_roomObjects[11]->SetPosition(200, 100, 5);
 
-	TextureRectObject *roomImageObject12 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 130, 130);
+	ScreenTextureObject *roomImageObject12 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.45f, 0.1f, -0.05f, -0.55f);
 	m_roomObjects[12] = roomImageObject12;
 	m_roomObjects[12]->SetMaterial(0, roomMaterial[12]);
-	m_roomObjects[12]->SetPosition(-80, -20, -10);
 
-	TextureRectObject *roomImageObject13 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 130, 130);
+	ScreenTextureObject *roomImageObject13 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.0f, 0.1f, 0.4f, -0.55f);
 	m_roomObjects[13] = roomImageObject13;
 	m_roomObjects[13]->SetMaterial(0, roomMaterial[12]);
-	m_roomObjects[13]->SetPosition(60, -20, -10);
 
-	TextureRectObject *roomImageObject14 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 130, 130);
+	ScreenTextureObject *roomImageObject14 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.45f, 0.1f, 0.85f, -0.55f);
 	m_roomObjects[14] = roomImageObject14;
 	m_roomObjects[14]->SetMaterial(0, roomMaterial[12]);
-	m_roomObjects[14]->SetPosition(200, -20, -10);
 	// 내캐릭터 변경
-	TextureRectObject *roomImageObject15 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 80, 80);
+	ScreenTextureObject *roomImageObject15 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.89f, 0.4f, -0.61f, -0.1f);
 	m_roomObjects[15] = roomImageObject15;
 	m_roomObjects[15]->SetMaterial(0, roomMaterial[9]);
-	m_roomObjects[15]->SetPosition(-223, 49, -7);
 
-	TextureRectObject *roomImageObject16 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 80, 80);
+	ScreenTextureObject *roomImageObject16 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.9f, 0.5f, -0.6f, -0.1f);
 	m_roomObjects[16] = roomImageObject16;
 	m_roomObjects[16]->SetMaterial(0, roomMaterial[10]);
-	m_roomObjects[16]->SetPosition(-223, 49, -7);
 
-	TextureRectObject *roomImageObject17 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 80, 80);
+	ScreenTextureObject *roomImageObject17 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.9f, 0.5f, -0.6f, -0.1f);
 	m_roomObjects[17] = roomImageObject17;
 	m_roomObjects[17]->SetMaterial(0, roomMaterial[11]);
-	m_roomObjects[17]->SetPosition(-223, 49, -7);
 	// 내 캐릭터 좌측 상단 방 생성해서 입장할 때
-	TextureRectObject *roomImageObject18 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 130, 130);
+	ScreenTextureObject *roomImageObject18 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.45f, 0.75f, -0.05f, 0.1f);
 	m_roomObjects[18] = roomImageObject18;
 	m_roomObjects[18]->SetMaterial(0, roomMaterial[9]);
-	m_roomObjects[18]->SetPosition(-80, 1000, 5);
 
-	TextureRectObject *roomImageObject19 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 130, 130);
+	ScreenTextureObject *roomImageObject19 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.0f, 0.75f, 0.4f, 0.1f);
 	m_roomObjects[19] = roomImageObject19;
 	m_roomObjects[19]->SetMaterial(0, roomMaterial[9]);
-	m_roomObjects[19]->SetPosition(-80, 1000, 5);
-
-	TextureRectObject *roomImageObject20 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 130, 130);
+	
+	ScreenTextureObject *roomImageObject20 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.45f, 0.75f, 0.85f, 0.1f);
 	m_roomObjects[20] = roomImageObject20;
 	m_roomObjects[20]->SetMaterial(0, roomMaterial[9]);
-	m_roomObjects[20]->SetPosition(-80, 1000, 5);
-
-	TextureRectObject *roomImageObject21 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 130, 130);
+	
+	ScreenTextureObject *roomImageObject21 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.45f, 0.1f, -0.05f, -0.55f);
 	m_roomObjects[21] = roomImageObject21;
 	m_roomObjects[21]->SetMaterial(0, roomMaterial[9]);
-	m_roomObjects[21]->SetPosition(-80, 1000, 5);
-
-	TextureRectObject *roomImageObject22 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 130, 130);
+	
+	ScreenTextureObject *roomImageObject22 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.0f, 0.1f, 0.4f, -0.55f);
 	m_roomObjects[22] = roomImageObject22;
 	m_roomObjects[22]->SetMaterial(0, roomMaterial[9]);
-	m_roomObjects[22]->SetPosition(-80, 1000, 5);
-
-	TextureRectObject *roomImageObject23 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 130, 130);
+	
+	ScreenTextureObject *roomImageObject23 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.45f, 0.1f, 0.85f, -0.55f);
 	m_roomObjects[23] = roomImageObject23;
 	m_roomObjects[23]->SetMaterial(0, roomMaterial[9]);
-	m_roomObjects[23]->SetPosition(-80, 1000, 5);
 	
-	
-
-	
-
-	
-
-
-	
-
-	for (int i = 0; i < m_nObjects3; ++i)
-	{
-		m_roomObjects[i]->Rotate(-8, 0, 0);
-		//m_roomObjects[i]->SetPosition(m_roomObjects[i]->GetPosition().x, m_roomObjects[i]->GetPosition().y + 200.0f, m_roomObjects[i]->GetPosition().z);
-	}
-
 }
 
 void RoomScene::ReleaseObjects()
@@ -256,17 +219,16 @@ bool RoomScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 	switch (nMessageID)
 	{
 	case WM_LBUTTONDOWN:
+		printf("%d, %d\n", pt.x, pt.y);
 		//나가기
-		if (pt.x > 55 && pt.x < 180 && pt.y>666 && pt.y < 726)
+		if (pt.x > 55 && pt.x < 150 && pt.y>674 && pt.y < 744)
 		{
 			room_exit = true;
 			SendRoomExit();
-			//SendRomm_LobbyChange();
-			//SendSceneChange();
-			//m_pFramework->ChangeScene(BaseScene::SceneTag::Lobby);
+			m_pFramework->ChangeScene(BaseScene::SceneTag::Lobby);
 		}
 		// 입장
-		if (pt.x > 841 && pt.x < 966 && pt.y>666 && pt.y < 726)
+		if (pt.x > 874 && pt.x < 969 && pt.y>674 && pt.y < 744)
 		{
 			SendSceneInfo(4,c_type);
 			
@@ -282,7 +244,7 @@ bool RoomScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 			
 		}
 		//좌측 화살표
-		if (pt.x > 69 && pt.x < 111 && pt.y>460 && pt.y < 485)
+		if (pt.x > 55 && pt.x < 100 && pt.y>465 && pt.y < 490)
 		{
 			--c_type;
 			if (c_type >2)
@@ -293,7 +255,7 @@ bool RoomScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 		}
 			
 		//우측 화살표
-		if (pt.x > 154 && pt.x < 197 && pt.y>460 && pt.y < 485)
+		if (pt.x > 155 && pt.x < 200 && pt.y>465 && pt.y < 490)
 		{
 			++c_type;
 			if (c_type > 2)
@@ -387,26 +349,36 @@ void RoomScene::AnimateObjects(float fTimeElapsed)
 	if (c_type == Character_type::Reaper)
 	{
 		m_roomObjects[15]->SetMaterial(0, roomMaterial[9]);
-		m_roomObjects[18 + m_pFramework->myid]->SetMaterial(0, roomMaterial[9]);
 	}
 	if (c_type == Character_type::Gamber)
 	{
 		m_roomObjects[15]->SetMaterial(0, roomMaterial[10]);
-		m_roomObjects[18 + m_pFramework->myid]->SetMaterial(0, roomMaterial[10]);
 	}
 	if (c_type == Character_type::Elf)
 	{
 		m_roomObjects[15]->SetMaterial(0, roomMaterial[11]);
-		m_roomObjects[18 + m_pFramework->myid]->SetMaterial(0, roomMaterial[11]);
 	}
 
 	// 내가 방생성해서 들어갔을때
 	if (m_pFramework->enter_type == 0)
 	{
-		m_roomObjects[18+ m_pFramework->myid]->SetPosition(-80,100,5);
+		
+		if (c_type == Character_type::Reaper)
+		{
+			m_roomObjects[18]->SetMaterial(0, roomMaterial[9]);
+		}
+		if (c_type == Character_type::Gamber)
+		{
+			m_roomObjects[18]->SetMaterial(0, roomMaterial[10]);
+		}
+		if (c_type == Character_type::Elf)
+		{
+			m_roomObjects[18]->SetMaterial(0, roomMaterial[11]);
+		}
+		
 		if (m_pFramework->nBase_member[0] == 2)
 		{
-			if (m_ppOtherPlayers[other_player[0]]->character_type == Character_type::Reaper)
+			/*if (m_ppOtherPlayers[other_player[0]]->character_type == Character_type::Reaper)
 			{
 				m_roomObjects[18+other_player[0]]->SetMaterial(0, roomMaterial[9]);
 			}
@@ -418,7 +390,7 @@ void RoomScene::AnimateObjects(float fTimeElapsed)
 			{
 				m_roomObjects[18 + other_player[0]]->SetMaterial(0, roomMaterial[11]);
 			}
-			m_roomObjects[18 + other_player[0]]->SetPosition(60,100,5);
+			m_roomObjects[18 + other_player[0]]->SetPosition(60,100,5);*/
 		}
 		if (m_pFramework->nBase_member[0] == 3)
 		{
@@ -453,23 +425,49 @@ void RoomScene::AnimateObjects(float fTimeElapsed)
 	}
 	if (m_pFramework->enter_type == 1)
 	{
-		m_roomObjects[18+ other_player[1]]->SetPosition(-80, 100, 5);
+		/*if (m_ppOtherPlayers[other_player[0]]->character_type == Character_type::Reaper)
+		{
+			m_roomObjects[18]->SetMaterial(0, roomMaterial[9]);
+		}
+		if (m_ppOtherPlayers[other_player[0]]->character_type == Character_type::Gamber)
+		{
+			m_roomObjects[18]->SetMaterial(0, roomMaterial[10]);
+		}
+		if (m_ppOtherPlayers[other_player[0]]->character_type == Character_type::Elf)
+		{
+			m_roomObjects[18]->SetMaterial(0, roomMaterial[11]);
+		}*/
+
 		if (m_pFramework->nBase_member[0] == 2 && m_pFramework->select_space[0] == 0)
 		{
-			m_roomObjects[18 + m_pFramework->myid]->SetPosition(60, 100, 5);
-			m_pFramework->select_space[1] = 1;
-			m_pFramework->select_space[2] = 1;
-			m_pFramework->select_space[3] = 1;
-			m_pFramework->select_space[4] = 1;
+			if (c_type == Character_type::Reaper)
+			{
+				m_roomObjects[19]->SetMaterial(0, roomMaterial[9]);
+			}
+			if (c_type == Character_type::Gamber)
+			{
+				m_roomObjects[19]->SetMaterial(0, roomMaterial[10]);
+			}
+			if (c_type == Character_type::Elf)
+			{
+				m_roomObjects[19]->SetMaterial(0, roomMaterial[11]);
+			}
 			
 		}
 		if (m_pFramework->nBase_member[0] == 3 && m_pFramework->select_space[1] == 0)
 		{
-			m_roomObjects[18 + m_pFramework->myid]->SetPosition(200, 100, 5);
-			m_pFramework->select_space[0] = 1;
-			m_pFramework->select_space[2] = 1;
-			m_pFramework->select_space[3] = 1;
-			m_pFramework->select_space[4] = 1;
+			if (c_type == Character_type::Reaper)
+			{
+				m_roomObjects[20]->SetMaterial(0, roomMaterial[9]);
+			}
+			if (c_type == Character_type::Gamber)
+			{
+				m_roomObjects[20]->SetMaterial(0, roomMaterial[10]);
+			}
+			if (c_type == Character_type::Elf)
+			{
+				m_roomObjects[20]->SetMaterial(0, roomMaterial[11]);
+			}
 			
 		}
 		if (m_pFramework->nBase_member[0] == 4 && m_pFramework->select_space[2] == 0)
@@ -515,18 +513,11 @@ void RoomScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera *
 
 	if (m_roomObjects)
 	{
-		m_roomObjects[0]->Render(pd3dCommandList, pCamera);
-		m_roomObjects[1]->Render(pd3dCommandList, pCamera);
-		m_roomObjects[2]->Render(pd3dCommandList, pCamera);
 		m_roomObjects[7]->Render(pd3dCommandList, pCamera);
 		m_roomObjects[8]->Render(pd3dCommandList, pCamera);
 
 		// 내캐릭 셀렉
 		
-
-
-		
-
 		m_roomObjects[15]->Render(pd3dCommandList, pCamera);
 
 		/*if (c_type == Character_type::Reaper)
@@ -559,7 +550,9 @@ void RoomScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera *
 		{
 			m_roomObjects[i + 9]->Render(pd3dCommandList, pCamera);
 		}
-
+		m_roomObjects[1]->Render(pd3dCommandList, pCamera);
+		m_roomObjects[2]->Render(pd3dCommandList, pCamera);
+		m_roomObjects[0]->Render(pd3dCommandList, pCamera);
 	}
 }
 
@@ -657,7 +650,7 @@ void RoomScene::ProcessPacket(char * ptr)
 		if (room_exit == true)
 		{
 			//SendRomm_LobbyChange();
-			m_pFramework->ChangeScene(BaseScene::SceneTag::Lobby);
+			//m_pFramework->ChangeScene(BaseScene::SceneTag::Lobby);
 			
 			room_exit = false;
 		}

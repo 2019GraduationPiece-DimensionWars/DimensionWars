@@ -9,6 +9,9 @@
 #include "Shader005_TextureRectangleShader.h"
 #include "Object104_DummyPlayer.h"
 #include "Shader007_TerrainShader.h"
+#include "Object013_ScreenTextureObject.h"
+#include "Shader009_UIShader.h"
+
 
 LobbyScene::LobbyScene()
 {
@@ -78,7 +81,7 @@ void LobbyScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	lobbyImage[13]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Lobby/n_member6.dds", 0);
 	
 
-	TextureRectangleShader *pTextureShader = new TextureRectangleShader();
+	UIShader *pTextureShader = new UIShader();
 	pTextureShader->CreateShader(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 	pTextureShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
@@ -99,138 +102,106 @@ void LobbyScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	}
 	
 
-	
+	// 현재 화살표 안씀
 	
 	
 	// 로비배경
-	TextureRectObject *lobbyImageObject = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 600, 450);
+	ScreenTextureObject *lobbyImageObject = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -1.0f, 1.0f, 1.0f,-1.0f);
 	m_lobbyObjects[0] = lobbyImageObject;
 	m_lobbyObjects[0]->SetMaterial(0, lobbyMaterial[0]);
-	m_lobbyObjects[0]->SetPosition(0, 0, 2);
+	//m_lobbyObjects[0]->SetPosition(0, 0, 0);
 	// 방 배경
-	TextureRectObject *lobbyImageObject1 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 550, 350);
+	ScreenTextureObject *lobbyImageObject1 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature,-0.9f,0.9f,0.9f,-0.7f);
 	m_lobbyObjects[1] = lobbyImageObject1;
 	m_lobbyObjects[1]->SetMaterial(0, lobbyMaterial[1]);
-	m_lobbyObjects[1]->SetPosition(0, 25, 1);
+	//m_lobbyObjects[1]->SetPosition(0, 25, 1);
 	// 왼쪽 비활성
-	TextureRectObject *lobbyImageObject2 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature,  40, 20);
+	ScreenTextureObject *lobbyImageObject2 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature,-1.0f,1.0f,1.0f,-1.0f);
 	m_lobbyObjects[2] = lobbyImageObject2;
 	m_lobbyObjects[2]->SetMaterial(0, lobbyMaterial[2]);
-	m_lobbyObjects[2]->SetPosition(-60, -170, -22);
+	//m_lobbyObjects[2]->SetPosition(-60, -170, -22);
 	// 오른쪽 비활성
-	TextureRectObject *lobbyImageObject3 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature,  40, 20);
+	ScreenTextureObject *lobbyImageObject3 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature,  40, 20);
 	m_lobbyObjects[3] = lobbyImageObject3;
 	m_lobbyObjects[3]->SetMaterial(0, lobbyMaterial[3]);
 	m_lobbyObjects[3]->SetPosition(60, -170, -22);
 	// 왼쪽 활성
-	TextureRectObject *lobbyImageObject4 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature,  40, 20);
+	ScreenTextureObject *lobbyImageObject4 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature,  40, 20);
 	m_lobbyObjects[4] = lobbyImageObject4;
 	m_lobbyObjects[4]->SetMaterial(0, lobbyMaterial[4]);
 	m_lobbyObjects[4]->SetPosition(-60, -170, -22);
 	// 오른쪽 활성
-	TextureRectObject *lobbyImageObject5 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 40, 20);
+	ScreenTextureObject *lobbyImageObject5 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 40, 20);
 	m_lobbyObjects[5] = lobbyImageObject5;
 	m_lobbyObjects[5]->SetMaterial(0, lobbyMaterial[5]);
 	m_lobbyObjects[5]->SetPosition(60, -170, -22);
 	
 	// 방 생성
-	TextureRectObject *lobbyImageObject6 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 80, 40);
+	ScreenTextureObject *lobbyImageObject6 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.7f, -0.75f, 0.9f, -0.95f);
 	m_lobbyObjects[6] = lobbyImageObject6;
 	m_lobbyObjects[6]->SetMaterial(0, lobbyMaterial[6]);
-	m_lobbyObjects[6]->SetPosition(230, -190, -25);
+	//m_lobbyObjects[6]->SetPosition(230, -190, -25);
 
 	// 방 목록
-	for (int i = 7; i < 19; ++i)
+	for (int i = 0; i < 12; ++i)
 	{
-		TextureRectObject *lobbyImageObject7 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 450, 40);
-		m_lobbyObjects[i] = lobbyImageObject7;
-		m_lobbyObjects[i]->SetMaterial(0, lobbyMaterial[7]);
+		ScreenTextureObject *lobbyImageObject7 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.8f, 0.8f - 0.25f*i, 0.8f, 0.6f - 0.25f*i);
+		m_lobbyObjects[i+7] = lobbyImageObject7;
+		m_lobbyObjects[i+7]->SetMaterial(0, lobbyMaterial[7]);
 		//m_lobbyObjects[i]->SetPosition(0, 150, -25);
 	}
 
-	for (int i = 0; i < 6; ++i)
-	{
-		m_lobbyObjects[7+i]->SetPosition(0, 150 - 50 * i, -25 - 8 * i);
-	}
-	for (int i = 0; i < 6; ++i)
-	{
-		m_lobbyObjects[13 + i]->SetPosition(0, 150 - 50 * i, -25 - 8 * i);
-	}
-	
 	// 방에 입장한 플레이어 수 
 	for (int i = 19; i < 25; ++i)
 	{
-		TextureRectObject *lobbyImageObject8 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 60, 30);
+		ScreenTextureObject *lobbyImageObject8 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.65f, 0.8f, 0.75f, 0.6f);
 		m_lobbyObjects[i] = lobbyImageObject8;
 		m_lobbyObjects[i]->SetMaterial(0, lobbyMaterial[i - 11]);
 	}
 
 	for (int i = 25; i < 31; ++i)
 	{
-		TextureRectObject *lobbyImageObject8 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 60, 30);
+		ScreenTextureObject *lobbyImageObject8 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.65f, 0.55f, 0.75f, 0.35f);
 		m_lobbyObjects[i] = lobbyImageObject8;
 		m_lobbyObjects[i]->SetMaterial(0, lobbyMaterial[i - 17]);
 	}
 
 	for (int i = 31; i < 37; ++i)
 	{
-		TextureRectObject *lobbyImageObject8 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 60, 30);
+		ScreenTextureObject *lobbyImageObject8 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.65f, 0.3f, 0.75f, 0.1f);
 		m_lobbyObjects[i] = lobbyImageObject8;
 		m_lobbyObjects[i]->SetMaterial(0, lobbyMaterial[i - 23]);
 	}
 
 	for (int i = 37; i < 43; ++i)
 	{
-		TextureRectObject *lobbyImageObject8 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 60, 30);
+		ScreenTextureObject *lobbyImageObject8 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.65f, 0.05f, 0.75f, -0.15f);
 		m_lobbyObjects[i] = lobbyImageObject8;
 		m_lobbyObjects[i]->SetMaterial(0, lobbyMaterial[i - 29]);
 	}
 
 	for (int i = 43; i < 49; ++i)
 	{
-		TextureRectObject *lobbyImageObject8 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 60, 30);
+		ScreenTextureObject *lobbyImageObject8 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.65f, -0.2f, 0.75f, -0.4f);
 		m_lobbyObjects[i] = lobbyImageObject8;
 		m_lobbyObjects[i]->SetMaterial(0, lobbyMaterial[i - 35]);
 	}
 
 	for (int i = 49; i < 55; ++i)
 	{
-		TextureRectObject *lobbyImageObject8 = new TextureRectObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 60, 30);
+		ScreenTextureObject *lobbyImageObject8 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.65f, -0.45f, 0.75f, -0.65f);
 		m_lobbyObjects[i] = lobbyImageObject8;
 		m_lobbyObjects[i]->SetMaterial(0, lobbyMaterial[i - 41]);
 	}
 
-	for (int i = 0; i < 6; ++i)
-	{
-		m_lobbyObjects[19 + i]->SetPosition(195, 148, -34);
-	}
-	for (int i = 0; i < 6; ++i)
-	{
-		m_lobbyObjects[25 + i]->SetPosition(195, 98, -42);
-	}
-	for (int i = 0; i < 6; ++i)
-	{
-		m_lobbyObjects[31 + i]->SetPosition(195, 48, -50);
-	}
-	for (int i = 0; i < 6; ++i)
-	{
-		m_lobbyObjects[37 + i]->SetPosition(195, 2, -58);
-	}
-	for (int i = 0; i < 6; ++i)
-	{
-		m_lobbyObjects[43 + i]->SetPosition(195, -48, -66);
-	}
-	for (int i = 0; i < 6; ++i)
-	{
-		m_lobbyObjects[49 + i]->SetPosition(195, -98, -74);
-	}
 	
 	
-	for (int i = 0; i < m_nObjects2; ++i)
-	{
-		m_lobbyObjects[i]->Rotate(-8, 0, 0);
-		//m_lobbyObjects[i]->SetPosition(m_lobbyObjects[i]->GetPosition().x, m_lobbyObjects[i]->GetPosition().y + 200.0f, m_lobbyObjects[i]->GetPosition().z);
-	}
+	
+	//for (int i = 0; i < m_nObjects2; ++i)
+	//{
+	//	m_lobbyObjects[i]->Rotate(-8, 0, 0);
+	//	//m_lobbyObjects[i]->SetPosition(m_lobbyObjects[i]->GetPosition().x, m_lobbyObjects[i]->GetPosition().y + 200.0f, m_lobbyObjects[i]->GetPosition().z);
+	//}
 	
 	
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
@@ -270,7 +241,7 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 		//		list_num = 2;
 		//}
 		// 방 생성
-		if (pt.x > 824 && pt.x < 950 && pt.y>665 && pt.y < 725)
+		if (pt.x > 872 && pt.x < 972 && pt.y>673 && pt.y < 743)
 		{
 			//room_num += 1;
 			if (m_pFramework->room_num > 6)
@@ -292,22 +263,22 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 		}
 		// 방 리스트 클릭
 		if (list_num == 1) {
-			if (pt.x > 97 && pt.x < 927 && pt.y>80 && pt.y < 144)
+			if (pt.x > 106 && pt.x < 906 && pt.y>80 && pt.y < 140)
 			{
 				if (m_lobbyObjects[7]->room_name == my_room_num) {
 					if (m_pFramework->nBase_member[0] < 6&& m_pFramework->nBase_member[0]!=0)
 					{
+						
 						room_enter = true;
 						SendEnterRoom();
 						SendSceneInfo(3,0);
 						m_pFramework->enter_type = 1;
 						//SendLobby_RoomChange(my_room_num);
-						//m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
 					}
 					
 				}
 			}
-			if (pt.x > 97 && pt.x < 927 && pt.y>175 && pt.y < 235)
+			if (pt.x > 106 && pt.x < 906 && pt.y>177 && pt.y < 237)
 			{
 				if (m_lobbyObjects[8]->room_name == my_room_num) {
 					if (m_pFramework->nBase_member[1] < 6 && m_pFramework->nBase_member[1] != 0)
@@ -320,7 +291,7 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 					}
 				}
 			}
-			if (pt.x > 97 && pt.x < 927 && pt.y>266 && pt.y < 336)
+			if (pt.x > 106 && pt.x < 906 && pt.y>273 && pt.y < 333)
 			{
 				if (m_lobbyObjects[9]->room_name == my_room_num) {
 					if (m_pFramework->nBase_member[2]< 6 && m_pFramework->nBase_member[2] != 0)
@@ -333,7 +304,7 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 					}
 				}
 			}
-			if (pt.x > 97 && pt.x < 927 && pt.y>363 && pt.y < 425)
+			if (pt.x > 106 && pt.x < 906 && pt.y>368 && pt.y < 428)
 			{
 				if (m_lobbyObjects[10]->room_name == my_room_num) {
 					if (m_pFramework->nBase_member[3] < 6 && m_pFramework->nBase_member[3] != 0)
@@ -346,7 +317,7 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 					}
 				}
 			}
-			if (pt.x > 97 && pt.x < 927 && pt.y>459 && pt.y < 522)
+			if (pt.x > 106 && pt.x < 906 && pt.y>463 && pt.y < 523)
 			{
 				if (m_lobbyObjects[11]->room_name == my_room_num) {
 					if (m_pFramework->nBase_member[4] < 6 && m_pFramework->nBase_member[4] != 0)
@@ -359,7 +330,7 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 					}
 				}
 			}
-			if (pt.x > 97 && pt.x < 927 && pt.y>555 && pt.y < 616)
+			if (pt.x > 106 && pt.x < 906 && pt.y>561 && pt.y < 621)
 			{
 				if (m_lobbyObjects[12]->room_name == my_room_num) {
 					if (m_pFramework->nBase_member[5] < 6 && m_pFramework->nBase_member[5] != 0)
@@ -415,17 +386,17 @@ void LobbyScene::AnimateObjects(float fTimeElapsed)
 	//else
 	//	right_active = false;
 	// 방 생성
-	if (pt.x > 824 && pt.x < 950 && pt.y>665 && pt.y < 725)
-		m_lobbyObjects[6]->SetPosition(230, -180, -25);
+	if (pt.x > 872 && pt.x < 972 && pt.y>673 && pt.y < 743)
+		m_lobbyObjects[6]->SetPosition(0.5f,0.5f,0);
 	
 	else
-		m_lobbyObjects[6]->SetPosition(230, -190, -25);
+		m_lobbyObjects[6]->SetPosition(0.1f,0.1f,0);
 
 	// 방 목록
 	for (int i = 0; i < 2; ++i)
 	{
 		if (list_num == i+1) {
-			if (pt.x > 97 && pt.x < 927 && pt.y>80 && pt.y < 144)
+			if (pt.x > 106 && pt.x < 906 && pt.y>80 && pt.y < 140)
 			{
 				my_room_num = 1;
 				m_lobbyObjects[7+6*i]->SetPosition(0, 160, -25);
@@ -443,7 +414,7 @@ void LobbyScene::AnimateObjects(float fTimeElapsed)
 				}
 			}
 			//2R
-			if (pt.x > 97 && pt.x < 927 && pt.y>175 && pt.y < 235)
+			if (pt.x > 106 && pt.x < 906 && pt.y>177 && pt.y < 237)
 			{
 				my_room_num = 2;
 				m_lobbyObjects[8 + 6 * i]->SetPosition(0, 110, -33);
@@ -461,7 +432,7 @@ void LobbyScene::AnimateObjects(float fTimeElapsed)
 				}
 			}
 			//3R
-			if (pt.x > 97 && pt.x < 927 && pt.y>266 && pt.y < 336)
+			if (pt.x > 106 && pt.x < 906 && pt.y>273 && pt.y < 333)
 			{
 				my_room_num = 3;
 				m_lobbyObjects[9 + 6 * i]->SetPosition(0, 60, -41);
@@ -479,7 +450,7 @@ void LobbyScene::AnimateObjects(float fTimeElapsed)
 				}
 			}
 			//4R
-			if (pt.x > 97 && pt.x < 927 && pt.y>363 && pt.y < 425)
+			if (pt.x > 106 && pt.x < 906 && pt.y>368 && pt.y < 428)
 			{
 				my_room_num = 4;
 				m_lobbyObjects[10 + 6 * i]->SetPosition(0, 10, -49);
@@ -497,7 +468,7 @@ void LobbyScene::AnimateObjects(float fTimeElapsed)
 				}
 			}
 			//5R
-			if (pt.x > 97 && pt.x < 927 && pt.y>459 && pt.y < 522)
+			if (pt.x > 106 && pt.x < 906 && pt.y>463 && pt.y < 523)
 			{
 				my_room_num = 5;
 				m_lobbyObjects[11 + 6 * i]->SetPosition(0, -40, -57);
@@ -515,7 +486,7 @@ void LobbyScene::AnimateObjects(float fTimeElapsed)
 				}
 			}
 			//6R
-			if (pt.x > 97 && pt.x < 927 && pt.y>555 && pt.y < 616)
+			if (pt.x > 106 && pt.x < 906 && pt.y>561 && pt.y < 621)
 			{
 				my_room_num = 6;
 				m_lobbyObjects[12 + 6 * i]->SetPosition(0, -90, -65);
@@ -548,10 +519,9 @@ void LobbyScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 	pCamera->UpdateShaderVariables(pd3dCommandList);
 
 	//if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
-
+	//printf("%d\n", m_pFramework->nBase_member[0]);
 	if (m_lobbyObjects) {
-		m_lobbyObjects[0]->Render(pd3dCommandList, pCamera); //로비 배경
-		m_lobbyObjects[1]->Render(pd3dCommandList, pCamera); // 방 목록 배경
+		
 		m_lobbyObjects[6]->Render(pd3dCommandList, pCamera); // 방 생성 
 		
 		// 화살표
@@ -576,19 +546,7 @@ void LobbyScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 
 
 		if (list_num == 1) {
-			if (m_pFramework->nBase_room[0] == 1)
-				m_lobbyObjects[7]->Render(pd3dCommandList, pCamera);
-			if (m_pFramework->nBase_room[1]== 2)
-				m_lobbyObjects[8]->Render(pd3dCommandList, pCamera);
-			if (m_pFramework->nBase_room[2] == 3)
-				m_lobbyObjects[9]->Render(pd3dCommandList, pCamera);
-			if (m_pFramework->nBase_room[3] == 4)
-				m_lobbyObjects[10]->Render(pd3dCommandList, pCamera);
-			if (m_pFramework->nBase_room[4] == 5)
-				m_lobbyObjects[11]->Render(pd3dCommandList, pCamera);
-			if (m_pFramework->nBase_room[5] == 6)
-				m_lobbyObjects[12]->Render(pd3dCommandList, pCamera);
-
+			
 			// 방에 입장한 인원 
 			for (int i = 0; i < 6; ++i)
 			{
@@ -622,6 +580,18 @@ void LobbyScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 					m_lobbyObjects[49 + i]->Render(pd3dCommandList, pCamera);
 				}
 			}
+			if (m_pFramework->nBase_room[0] == 1)
+				m_lobbyObjects[7]->Render(pd3dCommandList, pCamera);
+			if (m_pFramework->nBase_room[1] == 2)
+				m_lobbyObjects[8]->Render(pd3dCommandList, pCamera);
+			if (m_pFramework->nBase_room[2] == 3)
+				m_lobbyObjects[9]->Render(pd3dCommandList, pCamera);
+			if (m_pFramework->nBase_room[3] == 4)
+				m_lobbyObjects[10]->Render(pd3dCommandList, pCamera);
+			if (m_pFramework->nBase_room[4] == 5)
+				m_lobbyObjects[11]->Render(pd3dCommandList, pCamera);
+			if (m_pFramework->nBase_room[5] == 6)
+				m_lobbyObjects[12]->Render(pd3dCommandList, pCamera);
 
 		}
 
@@ -644,8 +614,8 @@ void LobbyScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 
 
 		
-
-
+		m_lobbyObjects[1]->Render(pd3dCommandList, pCamera); // 방 목록 배경
+		m_lobbyObjects[0]->Render(pd3dCommandList, pCamera); //로비 배경
 	}
 }
 
@@ -686,7 +656,7 @@ void LobbyScene::ProcessPacket(char * ptr)
 	}
 	case SC_Type::EnterRoom:
 	{
-
+		
 		SCPacket_EnterRoom *packet = reinterpret_cast<SCPacket_EnterRoom*>(ptr);
 		m_pFramework->room_num = packet->room_num;
 	//	m_lobbyObjects[id_room_num + 6]->n_member = packet->player_num;
@@ -699,6 +669,7 @@ void LobbyScene::ProcessPacket(char * ptr)
 			room_enter = false;
 		}
 		//printf("입장후 %d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_member[m_pFramework->room_num - 1]);
+		printf("%d\n", packet->player_num);
 		break;
 	}
 	case SC_Type::ExitRoom:

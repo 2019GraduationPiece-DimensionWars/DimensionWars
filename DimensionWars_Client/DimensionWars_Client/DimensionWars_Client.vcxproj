@@ -162,6 +162,7 @@
     <ClInclude Include="Object008_HeightmapTerrain.h" />
     <ClInclude Include="Object009_ProjectileObject.h" />
     <ClInclude Include="Object012_PortalObject.h" />
+    <ClInclude Include="Object013_ArrowObject.h" />
     <ClInclude Include="Object013_ScreenTextureObject.h" />
     <ClInclude Include="Object102_GamblerPlayer.h" />
     <ClInclude Include="Material.h" />
@@ -224,6 +225,7 @@
     <ClCompile Include="Object008_HeightmapTerrain.cpp" />
     <ClCompile Include="Object009_ProjectileObject.cpp" />
     <ClCompile Include="Object012_PortalObject.cpp" />
+    <ClCompile Include="Object013_ArrowObject.cpp" />
     <ClCompile Include="Object013_ScreenTextureObject.cpp" />
     <ClCompile Include="Object102_GamblerPlayer.cpp" />
     <ClCompile Include="Material.cpp" />
