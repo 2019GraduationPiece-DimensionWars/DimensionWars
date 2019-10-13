@@ -100,14 +100,20 @@ void ServerManager::AcceptThread()
 		}
 
 		unsigned short new_id = GetNewID();
-		update_check += 1;
-		
+	
+		//update_check += 1;
+		user += 1;
+		if (user > 1)
+		{
+			update_check += 1;
+		}
 		// 클라이언트 구조체 초기화
 		// memset(&clients[new_id], 0x00, sizeof(struct SOCKETINFO)); // viewlist같은 컨테이너객체는 0으로 초기화해서는 안된다.
 		objects[new_id].socket = clientSocket;
 		objects[new_id].over.dataBuffer.len = BUFSIZE;
 		objects[new_id].over.dataBuffer.buf = objects[clientSocket].over.messageBuffer;
 		objects[new_id].over.type = OVER_EX::Type::RECV;
+		
 		std::random_device rd;
 		std::default_random_engine dre(rd());
 		std::uniform_real_distribution<> startPos(0.0, 0.0);
@@ -251,9 +257,13 @@ void ServerManager::WorkerThread()
 		break;
 		case OVER_EX::Type::EVENT:
 		{
+			
 			TimerEvent* pEvent = reinterpret_cast<TimerEvent*>(lpover_ex->messageBuffer);
 			if (pEvent->command == TimerEvent::Command::Update) {
-				Update(key);
+				//if (user > 1)
+				//{
+					Update(key);
+				//}
 			}
 			
 			delete lpover_ex;
@@ -671,6 +681,16 @@ void ServerManager::SendGameTimePaket(unsigned short to)
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
+void ServerManager::SendGameStart(unsigned short to, unsigned short obj)
+{
+	SCPacket_ReadyGame packet;// obj가 움직였다고 to 소켓에다 보내줘야 한다.
+	packet.id = obj;
+	packet.size = sizeof(packet);
+	packet.type = SC_Type::ReadyGame;
+	packet.ready_state = 1;
+	SendPacket(to, reinterpret_cast<char *>(&packet));
+}
+
 void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 {
 	
@@ -727,7 +747,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 				//xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, +fDistance * 2);
 
 				if (character_type == 0)
-					xmf3Shift = Vector3::Add(xmf3Shift, objects[id].m_Up, +fDistance * 2);
+					xmf3Shift = Vector3::Add(xmf3Shift, objects[id].m_Up, +fDistance * 3);
 				else 
 				{
 					//jump_check == true;
@@ -807,7 +827,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	case CS_Type::Attack:
 	{
 		CSPacket_Attack *packet = reinterpret_cast<CSPacket_Attack*>(buf);
-		objects[id].character_info = 0;
+		//objects[id].character_info = 0;
 		if (objects[id].character_info == 2)
 		{
 			if (packet->attack_type == ElfArcher::First_Shot)
@@ -894,10 +914,14 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		if (member_num <= 0)
 		{
 			member_num = 0;
-
+			room_num = packet->room_num - 1;
 		}
 		
-		room_num = packet->room_num;
+		
+		if (room_num <= 0)
+		{
+			room_num = 0;
+		}
 		
 		objects[id].change_check = packet->check;
 		for (int i = 0; i < MAX_PLAYER; ++i) {
@@ -944,6 +968,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 
 		if (scene == 4)
 		{
+			
 			SendPutPlayerPacket(id, id); // 나 자신에게 미리 알려준다.
 
 			for (int i = 0; i < MAX_PLAYER; ++i) {
@@ -996,10 +1021,35 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 				SendArrowPaket(id, i);
 			}
 			SendNattackPaket(id, Reaper_scy-1);// 사신 낫 
+			
+			
+			
+
 		}
 		break;
 	}
 
+	case CS_Type::GameReady:
+	{
+		CSPacket_GameReady *packet = reinterpret_cast<CSPacket_GameReady*>(buf);
+		if (packet->ready_state == 0)
+			++ready_count;
+		else
+			--ready_count;
+
+		if (ready_count==2|| ready_count == 4|| ready_count == 6)
+		{
+			for (int i = 0; i < MAX_PLAYER; ++i) {
+				if (objects[i].connected == true) {
+					SendGameStart(i, id);
+				}
+			}
+		}
+		
+		
+
+		break;
+	}
 	default:
 		serverPrint("Unknown Packet Type Error\n");
 		while (true);
@@ -1252,6 +1302,7 @@ void ServerManager::Collision()
 		{
 			if (objects[j].connected)
 			{
+				
 				if (objects[i].colbox.Intersects(objects[j].colbox)) {
 					objects[j].col_check = true;
 					//printf("충돌!\n");
@@ -1280,17 +1331,17 @@ void ServerManager::AddTimerEvent(unsigned int id, TimerEvent::Command cmd, doub
 void ServerManager::Update(unsigned short int id)
 {
 	
-	//if (scene == 4&&update_check==1)
-	//{
-	//	
-	//	Game_Timer += 0.01f;
-	//	if (Game_Timer >= 1.0f)
-	//	{
-	//		timecnt += 1.0f;
-	//		Game_Timer = 0;
-	//		//SendGameTimePaket(id);
-	//	}
-	//}
+	/*if (scene == 4)
+	{
+		
+		Game_Timer += 0.01f;
+		if (Game_Timer >= 1.0f)
+		{
+			timecnt += 1.0f;
+			Game_Timer = 0;
+			SendGameTimePaket(id);
+		}
+	}*/
 	
 	objects[id].col_check = false;
 	Collision();

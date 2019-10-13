@@ -86,6 +86,8 @@ private:
 	void SendNattackPaket(unsigned short to, unsigned short obj);
 	void SendGameTimePaket(unsigned short to);
 	void SendArrowPaket(unsigned short to, unsigned short obj);
+	void SendGameStart(unsigned short to, unsigned short obj);
+
 
 	void DisConnect(unsigned short int id);
 	const unsigned short int GetNewID();
@@ -134,5 +136,9 @@ private:
 	bool hitcheck; // 사신 평타
 	float Game_Timer = 0;
 	float timecnt = 0;
-	unsigned short update_check = 0;
+
+	int user = 0;  // 서버에 접속한 플레이어 수
+	int update_check = 0; // 타이머 버그 임시방편 해결 변수
+	unsigned short ready_count = 0;
+	
 };

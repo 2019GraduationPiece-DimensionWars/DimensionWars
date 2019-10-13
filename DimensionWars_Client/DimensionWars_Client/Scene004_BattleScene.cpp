@@ -607,7 +607,7 @@ void BattleScene::ProcessPacket(char * ptr)
 #endif
 		SCPacket_PutPlayer *my_packet = reinterpret_cast<SCPacket_PutPlayer *>(ptr);
 		unsigned int id = my_packet->id;
-		//printf("%d\n", id);
+		printf("%d\n", id);
 		if (first_time) {
 			first_time = false;
 			m_pFramework->myid = id;

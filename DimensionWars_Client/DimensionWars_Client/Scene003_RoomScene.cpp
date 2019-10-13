@@ -22,7 +22,7 @@ RoomScene::~RoomScene()
 
 void RoomScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList)
 {
-	m_nObjects3 = 24; 
+	m_nObjects3 = 19; 
 	m_roomObjects = new BaseObject*[m_nObjects3];
 	//
 	nCurrScene = 2;
@@ -74,6 +74,9 @@ void RoomScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLis
 
 	roomImage[12] = new Texture(1, RESOURCE_TEXTURE2D, 0);
 	roomImage[12]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Room/Void_select.dds", 0);
+
+	roomImage[13] = new Texture(1, RESOURCE_TEXTURE2D, 0);
+	roomImage[13]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Room/Start_not.dds", 0);
 
 
 
@@ -165,37 +168,17 @@ void RoomScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLis
 	m_roomObjects[15] = roomImageObject15;
 	m_roomObjects[15]->SetMaterial(0, roomMaterial[9]);
 
-	ScreenTextureObject *roomImageObject16 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.9f, 0.5f, -0.6f, -0.1f);
+	ScreenTextureObject *roomImageObject16 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.89f, 0.4f, -0.61f, -0.1f);
 	m_roomObjects[16] = roomImageObject16;
 	m_roomObjects[16]->SetMaterial(0, roomMaterial[10]);
 
-	ScreenTextureObject *roomImageObject17 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.9f, 0.5f, -0.6f, -0.1f);
+	ScreenTextureObject *roomImageObject17 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.89f, 0.4f, -0.61f, -0.1f);
 	m_roomObjects[17] = roomImageObject17;
 	m_roomObjects[17]->SetMaterial(0, roomMaterial[11]);
-	// 내 캐릭터 좌측 상단 방 생성해서 입장할 때
-	ScreenTextureObject *roomImageObject18 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.45f, 0.75f, -0.05f, 0.1f);
+	// 비활성 게임시작 버튼
+	ScreenTextureObject *roomImageObject18 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.7f, -0.75f, 0.9f, -0.95f);
 	m_roomObjects[18] = roomImageObject18;
-	m_roomObjects[18]->SetMaterial(0, roomMaterial[9]);
-
-	ScreenTextureObject *roomImageObject19 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.0f, 0.75f, 0.4f, 0.1f);
-	m_roomObjects[19] = roomImageObject19;
-	m_roomObjects[19]->SetMaterial(0, roomMaterial[9]);
-	
-	ScreenTextureObject *roomImageObject20 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.45f, 0.75f, 0.85f, 0.1f);
-	m_roomObjects[20] = roomImageObject20;
-	m_roomObjects[20]->SetMaterial(0, roomMaterial[9]);
-	
-	ScreenTextureObject *roomImageObject21 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.45f, 0.1f, -0.05f, -0.55f);
-	m_roomObjects[21] = roomImageObject21;
-	m_roomObjects[21]->SetMaterial(0, roomMaterial[9]);
-	
-	ScreenTextureObject *roomImageObject22 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.0f, 0.1f, 0.4f, -0.55f);
-	m_roomObjects[22] = roomImageObject22;
-	m_roomObjects[22]->SetMaterial(0, roomMaterial[9]);
-	
-	ScreenTextureObject *roomImageObject23 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0.45f, 0.1f, 0.85f, -0.55f);
-	m_roomObjects[23] = roomImageObject23;
-	m_roomObjects[23]->SetMaterial(0, roomMaterial[9]);
+	m_roomObjects[18]->SetMaterial(0, roomMaterial[13]);
 	
 }
 
@@ -219,7 +202,6 @@ bool RoomScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 	switch (nMessageID)
 	{
 	case WM_LBUTTONDOWN:
-		printf("%d, %d\n", pt.x, pt.y);
 		//나가기
 		if (pt.x > 55 && pt.x < 150 && pt.y>674 && pt.y < 744)
 		{
@@ -230,8 +212,16 @@ bool RoomScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 		// 입장
 		if (pt.x > 874 && pt.x < 969 && pt.y>674 && pt.y < 744)
 		{
-			SendSceneInfo(4,c_type);
-			
+			//SendReady();
+			if (ready == 0)
+			{
+				ready = 1;
+			}
+			else if (ready == 1)
+			{
+				ready = 0;
+			}
+			SendSceneInfo(4, c_type);
 			//m_pFramework->m_pCommandList->Reset(m_pFramework->m_pCommandAllocator, NULL);
 			//m_pFramework->resourceMgr = new ResourceManager();
 			////m_pPlayer = m_pFramework->arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
@@ -240,29 +230,33 @@ bool RoomScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 			//m_pCamera = m_pPlayer->GetCamera();
 			//m_pFramework->m_pCommandList->Close();
 			//m_pFramework->BuildObjects2();
+
 			m_pFramework->ChangeScene(BaseScene::SceneTag::Game);
 			
 		}
-		//좌측 화살표
-		if (pt.x > 55 && pt.x < 100 && pt.y>465 && pt.y < 490)
+		if (ready == 0)
 		{
-			--c_type;
-			if (c_type >2)
+			//좌측 화살표
+			if (pt.x > 55 && pt.x < 100 && pt.y>465 && pt.y < 490)
 			{
-				c_type = 2;
+				--c_type;
+				if (c_type > 2)
+				{
+					c_type = 2;
+				}
+				SendOtherCharacter();
 			}
-			SendOtherCharacter();
-		}
-			
-		//우측 화살표
-		if (pt.x > 155 && pt.x < 200 && pt.y>465 && pt.y < 490)
-		{
-			++c_type;
-			if (c_type > 2)
+
+			//우측 화살표
+			if (pt.x > 155 && pt.x < 200 && pt.y>465 && pt.y < 490)
 			{
-				c_type = 0;
+				++c_type;
+				if (c_type > 2)
+				{
+					c_type = 0;
+				}
+				SendOtherCharacter();
 			}
-			SendOtherCharacter();
 		}
 		break;
 	case WM_RBUTTONDOWN:
@@ -283,32 +277,7 @@ bool RoomScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 
 bool RoomScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	//switch (nMessageID)
-	//{
-	//case WM_KEYDOWN:
-	//	// 키보드를 누르고 있을 경우 최초 한번만 실행.
-	//	 
-	//	switch (wParam) {
-	//	case 'W':
-	//		++y;
-	//		break;
-	//	case 'S':
-	//		--y;
-	//		break;
-	//	case 'A':
-	//		--x;
-	//		break;
-	//	case 'D':
-	//		++x;
-	//		break;
-	//	}
-
-
-	//	break;
-	//case WM_KEYUP:
-
-	//	break;
-	//}
+	
 	return false;
 }
 
@@ -341,72 +310,63 @@ void RoomScene::AnimateObjects(float fTimeElapsed)
 		m_roomObjects[8]->SetPosition(240, -190, -25);
 	
 	
-	
-	
-	
-	
-
-	if (c_type == Character_type::Reaper)
-	{
-		m_roomObjects[15]->SetMaterial(0, roomMaterial[9]);
-	}
-	if (c_type == Character_type::Gamber)
-	{
-		m_roomObjects[15]->SetMaterial(0, roomMaterial[10]);
-	}
-	if (c_type == Character_type::Elf)
-	{
-		m_roomObjects[15]->SetMaterial(0, roomMaterial[11]);
-	}
-
 	// 내가 방생성해서 들어갔을때
 	if (m_pFramework->enter_type == 0)
 	{
 		
 		if (c_type == Character_type::Reaper)
 		{
-			m_roomObjects[18]->SetMaterial(0, roomMaterial[9]);
+			m_roomObjects[9]->SetMaterial(0, roomMaterial[9]);
 		}
 		if (c_type == Character_type::Gamber)
 		{
-			m_roomObjects[18]->SetMaterial(0, roomMaterial[10]);
+			m_roomObjects[9]->SetMaterial(0, roomMaterial[10]);
 		}
 		if (c_type == Character_type::Elf)
 		{
-			m_roomObjects[18]->SetMaterial(0, roomMaterial[11]);
+			m_roomObjects[9]->SetMaterial(0, roomMaterial[11]);
 		}
 		
-		if (m_pFramework->nBase_member[0] == 2)
+		if (m_pFramework->nBase_member[0] < 1)
 		{
-			/*if (m_ppOtherPlayers[other_player[0]]->character_type == Character_type::Reaper)
-			{
-				m_roomObjects[18+other_player[0]]->SetMaterial(0, roomMaterial[9]);
-			}
-			if (m_ppOtherPlayers[other_player[0]]->character_type == Character_type::Gamber)
-			{
-				m_roomObjects[18 + other_player[0]]->SetMaterial(0, roomMaterial[10]);
-			}
-			if (m_ppOtherPlayers[other_player[0]]->character_type == Character_type::Elf)
-			{
-				m_roomObjects[18 + other_player[0]]->SetMaterial(0, roomMaterial[11]);
-			}
-			m_roomObjects[18 + other_player[0]]->SetPosition(60,100,5);*/
+			m_roomObjects[9]->SetMaterial(0, roomMaterial[12]);
 		}
-		if (m_pFramework->nBase_member[0] == 3)
+		if (m_pFramework->nBase_member[0] < 2)
+		{
+			m_roomObjects[10]->SetMaterial(0, roomMaterial[12]);
+		}
+
+		if (m_pFramework->nBase_member[0] >= 2)
+		{
+			if (m_ppOtherPlayers[other_id]->character_type == Character_type::Reaper)
+			{
+				m_roomObjects[10]->SetMaterial(0, roomMaterial[9]);
+			}
+			if (m_ppOtherPlayers[other_id]->character_type == Character_type::Gamber)
+			{
+				m_roomObjects[10]->SetMaterial(0, roomMaterial[10]);
+			}
+			if (m_ppOtherPlayers[other_id]->character_type == Character_type::Elf)
+			{
+				m_roomObjects[10]->SetMaterial(0, roomMaterial[11]);
+			}
+			
+		}
+		if (m_pFramework->nBase_member[0] >= 3)
 		{
 			if (m_ppOtherPlayers[other_player[1]]->character_type == Character_type::Reaper)
 			{
-				m_roomObjects[18 + other_player[1]]->SetMaterial(0, roomMaterial[9]);
+				m_roomObjects[11]->SetMaterial(0, roomMaterial[9]);
 			}
 			if (m_ppOtherPlayers[other_player[1]]->character_type == Character_type::Gamber)
 			{
-				m_roomObjects[18 + other_player[1]]->SetMaterial(0, roomMaterial[10]);
+				m_roomObjects[11]->SetMaterial(0, roomMaterial[10]);
 			}
 			if (m_ppOtherPlayers[other_player[1]]->character_type == Character_type::Elf)
 			{
-				m_roomObjects[18 + other_player[1]]->SetMaterial(0, roomMaterial[11]);
+				m_roomObjects[11]->SetMaterial(0, roomMaterial[11]);
 			}
-			m_roomObjects[18 + other_player[1]]->SetPosition(200, 100, 5);
+			
 		}
 		if (m_pFramework->nBase_member[0] == 4)
 		{
@@ -423,34 +383,46 @@ void RoomScene::AnimateObjects(float fTimeElapsed)
 		
 		
 	}
+	// 생성된 방에 들어 갔을 때
 	if (m_pFramework->enter_type == 1)
 	{
-		/*if (m_ppOtherPlayers[other_player[0]]->character_type == Character_type::Reaper)
+
+
+		if (m_ppOtherPlayers[other_id]->character_type == Character_type::Reaper)
 		{
-			m_roomObjects[18]->SetMaterial(0, roomMaterial[9]);
+			m_roomObjects[9]->SetMaterial(0, roomMaterial[9]);
 		}
-		if (m_ppOtherPlayers[other_player[0]]->character_type == Character_type::Gamber)
+		if (m_ppOtherPlayers[other_id]->character_type == Character_type::Gamber)
 		{
-			m_roomObjects[18]->SetMaterial(0, roomMaterial[10]);
+			m_roomObjects[9]->SetMaterial(0, roomMaterial[10]);
 		}
-		if (m_ppOtherPlayers[other_player[0]]->character_type == Character_type::Elf)
+		if (m_ppOtherPlayers[other_id]->character_type == Character_type::Elf)
 		{
-			m_roomObjects[18]->SetMaterial(0, roomMaterial[11]);
-		}*/
+			m_roomObjects[9]->SetMaterial(0, roomMaterial[11]);
+		}
+
+		if (m_pFramework->nBase_member[0] < 1)
+		{
+			m_roomObjects[10]->SetMaterial(0, roomMaterial[12]);
+		}
+		if (m_pFramework->nBase_member[0] < 2)
+		{
+			m_roomObjects[9]->SetMaterial(0, roomMaterial[12]);
+		}
 
 		if (m_pFramework->nBase_member[0] == 2 && m_pFramework->select_space[0] == 0)
 		{
 			if (c_type == Character_type::Reaper)
 			{
-				m_roomObjects[19]->SetMaterial(0, roomMaterial[9]);
+				m_roomObjects[10]->SetMaterial(0, roomMaterial[9]);
 			}
 			if (c_type == Character_type::Gamber)
 			{
-				m_roomObjects[19]->SetMaterial(0, roomMaterial[10]);
+				m_roomObjects[10]->SetMaterial(0, roomMaterial[10]);
 			}
 			if (c_type == Character_type::Elf)
 			{
-				m_roomObjects[19]->SetMaterial(0, roomMaterial[11]);
+				m_roomObjects[10]->SetMaterial(0, roomMaterial[11]);
 			}
 			
 		}
@@ -458,21 +430,21 @@ void RoomScene::AnimateObjects(float fTimeElapsed)
 		{
 			if (c_type == Character_type::Reaper)
 			{
-				m_roomObjects[20]->SetMaterial(0, roomMaterial[9]);
+				m_roomObjects[11]->SetMaterial(0, roomMaterial[9]);
 			}
 			if (c_type == Character_type::Gamber)
 			{
-				m_roomObjects[20]->SetMaterial(0, roomMaterial[10]);
+				m_roomObjects[11]->SetMaterial(0, roomMaterial[10]);
 			}
 			if (c_type == Character_type::Elf)
 			{
-				m_roomObjects[20]->SetMaterial(0, roomMaterial[11]);
+				m_roomObjects[11]->SetMaterial(0, roomMaterial[11]);
 			}
 			
 		}
 		if (m_pFramework->nBase_member[0] == 4 && m_pFramework->select_space[2] == 0)
 		{
-			m_roomObjects[18 + m_pFramework->myid]->SetPosition(-80, -20, -10);
+			//m_roomObjects[18 + m_pFramework->myid]->SetPosition(-80, -20, -10);
 			m_pFramework->select_space[0] = 1;
 			m_pFramework->select_space[1] = 1;
 			m_pFramework->select_space[3] = 1;
@@ -481,7 +453,7 @@ void RoomScene::AnimateObjects(float fTimeElapsed)
 		}
 		if (m_pFramework->nBase_member[0] == 5 && m_pFramework->select_space[3] == 0)
 		{
-			m_roomObjects[18 + m_pFramework->myid]->SetPosition(60, -20, -10);
+			//m_roomObjects[18 + m_pFramework->myid]->SetPosition(60, -20, -10);
 			m_pFramework->select_space[0] = 1;
 			m_pFramework->select_space[1] = 1;
 			m_pFramework->select_space[2] = 1;
@@ -490,7 +462,7 @@ void RoomScene::AnimateObjects(float fTimeElapsed)
 		}
 		if (m_pFramework->nBase_member[0] == 6 && m_pFramework->select_space[4] == 0)
 		{
-			m_roomObjects[18 + m_pFramework->myid]->SetPosition(200, -20, -10);
+			//m_roomObjects[18 + m_pFramework->myid]->SetPosition(200, -20, -10);
 			m_pFramework->select_space[0] = 1;
 			m_pFramework->select_space[1] = 1;
 			m_pFramework->select_space[2] = 1;
@@ -514,11 +486,25 @@ void RoomScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera *
 	if (m_roomObjects)
 	{
 		m_roomObjects[7]->Render(pd3dCommandList, pCamera);
-		m_roomObjects[8]->Render(pd3dCommandList, pCamera);
+		if (ready == 0)
+			m_roomObjects[18]->Render(pd3dCommandList, pCamera);
+		else
+			m_roomObjects[8]->Render(pd3dCommandList, pCamera);
 
 		// 내캐릭 셀렉
 		
-		m_roomObjects[15]->Render(pd3dCommandList, pCamera);
+		if (c_type == Character_type::Reaper)
+		{
+			m_roomObjects[15]->Render(pd3dCommandList, pCamera);
+		}
+		if (c_type == Character_type::Gamber)
+		{
+			m_roomObjects[16]->Render(pd3dCommandList, pCamera);
+		}
+		if (c_type == Character_type::Elf)
+		{
+			m_roomObjects[17]->Render(pd3dCommandList, pCamera);
+		}
 
 		/*if (c_type == Character_type::Reaper)
 			m_roomObjects[18]->Render(pd3dCommandList, pCamera);
@@ -527,11 +513,7 @@ void RoomScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera *
 		if (c_type == Character_type::Elf)
 			m_roomObjects[20]->Render(pd3dCommandList, pCamera);*/
 
-		// 플레이어들 
-		for (int i = 18; i < 24; ++i)
-		{
-			m_roomObjects[i]->Render(pd3dCommandList, pCamera);
-		}
+		
 
 
 
@@ -578,8 +560,8 @@ void RoomScene::ProcessPacket(char * ptr)
 				m_ppOtherPlayers[other_id]->n_member = other_id;
 				m_ppOtherPlayers[other_id]->connected = true;
 				m_ppOtherPlayers[other_id]->character_type = my_packet->character_type;
-				m_roomObjects[18 + other_id]->c_type = my_packet->character_type;
-				other_player[other_id] = other_id;
+				
+				//other_player[other_id] = other_id;
 			}
 
 		}
@@ -590,7 +572,7 @@ void RoomScene::ProcessPacket(char * ptr)
 	{
 		SCPacket_PutPlayer *my_packet = reinterpret_cast<SCPacket_PutPlayer *>(ptr);
 		other_id = my_packet->id;
-		printf("%d\n", other_id);
+		//printf("%d\n", other_id);
 		if (first_time) {
 			first_time = false;
 			//m_pFramework->myid = other_id;
@@ -600,14 +582,13 @@ void RoomScene::ProcessPacket(char * ptr)
 		}
 		else if (other_id < MAX_PLAYER&& other_id != m_pFramework->myid) {
 			if (m_ppOtherPlayers[other_id]) {
+				
 				m_ppOtherPlayers[other_id]->n_member = other_id;
 				m_ppOtherPlayers[other_id]->connected = true;
 				m_ppOtherPlayers[other_id]->character_type = my_packet->character_type;
-				//other_player[other_id] = other_id;
-				m_roomObjects[18 + other_id]->SetPosition(0, 0, 0);
-				m_roomObjects[18 + other_id]->c_type = my_packet->character_type;
-				other_player[cnt] = other_id;
-				++cnt;
+				m_roomObjects[9 + other_id]->c_type = my_packet->character_type;
+				
+				
 			}
 
 		}
@@ -638,8 +619,8 @@ void RoomScene::ProcessPacket(char * ptr)
 		m_pFramework->room_num = packet->room_num;
 		if (packet->player_num == 0)
 		{
-			m_pFramework->nBase_room[m_pFramework->room_num - 1] = 0;  // 룸번호
-			m_pFramework->nBase_member[m_pFramework->room_num - 1] = packet->player_num; // 룸에 있는 인원
+			m_pFramework->nBase_room[m_pFramework->room_num] = 0;  // 룸번호
+			m_pFramework->nBase_member[m_pFramework->room_num ] = packet->player_num; // 룸에 있는 인원
 		}
 		else 
 		{
@@ -654,24 +635,6 @@ void RoomScene::ProcessPacket(char * ptr)
 			
 			room_exit = false;
 		}
-		break;
-	}
-	// 로비에서 보낸것을 룸에서 받고 처리
-	case SC_Type::ChangeScene_L_R:
-	{
-		SCPacket_ChangeScene_L_R *packet = reinterpret_cast<SCPacket_ChangeScene_L_R*>(ptr);
-		//room_num = packet->room_num;
-		//m_pFramework->nBase_room[room_num - 1] = packet->room_num;  // 룸번호와
-		//m_pFramework->nBase_member[room_num - 1] = packet->player_num; // 룸 에있는 인원
-		break;
-	}
-	
-	case SC_Type::ChangeScene_R_L:
-	{
-		SCPacket_ChangeScene_R_L *packet = reinterpret_cast<SCPacket_ChangeScene_R_L*>(ptr);
-		//room_num = packet->room_num;
-		//m_pFramework->nBase_room[room_num - 1] = packet->room_num;
-		//m_pFramework->nBase_member[room_num - 1] = packet->player_num;
 		break;
 	}
 	
@@ -714,6 +677,20 @@ void RoomScene::ProcessPacket(char * ptr)
 	{
 		SCPacket_Hit *my_packet = reinterpret_cast<SCPacket_Hit *>(ptr);
 		
+		break;
+	}
+
+	case SC_Type::ReadyGame:
+	{
+		
+		SCPacket_ReadyGame *my_packet = reinterpret_cast<SCPacket_ReadyGame *>(ptr);
+		if (my_packet->ready_state == 1)
+		{
+			SendSceneInfo(4, c_type);
+			m_pFramework->ChangeScene(BaseScene::SceneTag::Game);
+			
+		}
+
 		break;
 	}
 
@@ -761,6 +738,18 @@ void RoomScene::SendOtherCharacter()
 	myPacket->size = sizeof(CSPacket_CharacterType);
 	myPacket->type = CS_Type::Character_Info;
 	myPacket->character_type = c_type;
+	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
+
+	//printf("%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_room[m_pFramework->room_num - 1]);
+
+}
+
+void RoomScene::SendReady()
+{
+	CSPacket_GameReady *myPacket = reinterpret_cast<CSPacket_GameReady*>(m_pFramework->GetSendBuf());
+	myPacket->size = sizeof(CSPacket_GameReady);
+	myPacket->type = CS_Type::GameReady;
+	myPacket->ready_state = ready;
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
 
 	//printf("%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_room[m_pFramework->room_num - 1]);

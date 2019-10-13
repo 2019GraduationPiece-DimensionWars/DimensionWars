@@ -669,7 +669,7 @@ void LobbyScene::ProcessPacket(char * ptr)
 			room_enter = false;
 		}
 		//printf("입장후 %d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_member[m_pFramework->room_num - 1]);
-		printf("%d\n", packet->player_num);
+		//printf("%d\n", packet->player_num);
 		break;
 	}
 	case SC_Type::ExitRoom:
@@ -678,61 +678,23 @@ void LobbyScene::ProcessPacket(char * ptr)
 		m_pFramework->room_num = packet->room_num;
 		if (packet->player_num == 0)
 		{
-			m_pFramework->nBase_room[m_pFramework->room_num - 1] = 0;  // 룸번호
-			m_pFramework->nBase_member[m_pFramework->room_num - 1] = packet->player_num;
+			m_pFramework->nBase_room[m_pFramework->room_num] = 0;  // 룸번호
+			m_pFramework->nBase_member[m_pFramework->room_num] = packet->player_num;
 		}
 		else
 		{
 			m_pFramework->nBase_room[m_pFramework->room_num - 1] = packet->room_num;  // 룸번호
 			m_pFramework->nBase_member[m_pFramework->room_num - 1] = packet->player_num; // 룸에 있는 인원
 		}
+		printf("%d\n", m_pFramework->room_num);
 //		printf("%d, %d, %d\n", room_num, m_pFramework->nBase_room[room_num - 1], m_pFramework->nBase_member[room_num - 1]);
 		break;
 	}
-	case SC_Type::ChangeScene_R_L:
-	{
-		SCPacket_ChangeScene_R_L *packet = reinterpret_cast<SCPacket_ChangeScene_R_L*>(ptr);
-		m_pFramework->room_num = packet->room_num;
-		m_pFramework->nBase_room[m_pFramework->room_num - 1] = packet->room_num - 1;
-		m_pFramework->nBase_member[m_pFramework->room_num - 1] = packet->player_num;
-		//printf("룸에서받은거%d, %d, %d\n", room_num, m_pFramework->nBase_room[room_num - 1], m_pFramework->nBase_member[room_num - 1]);
-		break;
-	}
-	case SC_Type::ChangeScene_L_R:
-	{
-		SCPacket_ChangeScene_L_R *packet = reinterpret_cast<SCPacket_ChangeScene_L_R*>(ptr);
-		m_pFramework->room_num = packet->room_num;
-		m_pFramework->nBase_room[m_pFramework->room_num - 1] = packet->room_num;  // 룸번호와
-		m_pFramework->nBase_member[m_pFramework->room_num - 1] = packet->player_num; // 룸 에있는 인원
-		break;
-	}
+	
 	case SC_Type::PutPlayer:
 	{
 		SCPacket_PutPlayer *my_packet = reinterpret_cast<SCPacket_PutPlayer *>(ptr);
-		//unsigned int id = my_packet->id;
-		//if (first_time) {
-		//	first_time = false;
-		//	myid = id;
-		//}
-		//if (id == myid) {
-		//	m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
-		//	m_pPlayer->hp = my_packet->hp;
-
-		//	//CSPacket_CharacterType *myTypePacket = reinterpret_cast<CSPacket_CharacterType *>(m_pFramework->GetSendBuf());
-		//	//myTypePacket->size = sizeof(CSPacket_CharacterType);
-		//	//// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
-		//	////myTypePacket->character_type = cmd;
-		//	//myTypePacket->type = CS_Type::Character_Info;
-		//	//m_pFramework->SendPacket(reinterpret_cast<char *>(myTypePacket));
-		//}
-		//else if (id < MAX_PLAYER) {
-		//	if (m_ppOtherPlayers[id]) {
-		//		m_ppOtherPlayers[id]->connected = true;
-		//		m_ppOtherPlayers[id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
-		//		m_ppOtherPlayers[id]->hp = my_packet->hp;
-		//	}
-
-		//}
+	
 
 		break;
 	}
@@ -799,7 +761,7 @@ void LobbyScene::SendRoomCreate()
 	roomPacket->check = room_enter;
 	m_pFramework->SendPacket(reinterpret_cast<char *>(roomPacket));
 	
-	//printf("생성전 룸정보%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_room[m_pFramework->room_num - 1]);
+	//printf("생성전 룸정보%d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num]);
 }
 
 

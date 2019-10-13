@@ -177,6 +177,7 @@ namespace SC
 		Rotate=19,
 		Chracter_type=20,
 		GameTime=21,
+		ReadyGame=22,
 	};
 }
 using SC_Type = SC::ServerToClientSocketType;	// 약자 형태로 사용할 것이다.
@@ -198,6 +199,7 @@ namespace CS
 		Sceneinfo =12,
 		Rotate=13,
 		GameTimer=14,
+		GameReady=15,
 	};
 }
 using CS_Type = CS::ClientToServerSocketType;	// 약자 형태로 사용할 것이다.
@@ -322,6 +324,10 @@ struct SCPacket_GameTime : SCPacket_Base {
 	unsigned short time;
 };
 
+struct SCPacket_ReadyGame : SCPacket_Base {
+	unsigned short ready_state;
+};
+
 struct CSPacket_Base {
 	char size;
 	char type;
@@ -404,6 +410,10 @@ struct CSPacket_Rotate : SCPacket_Base {
 
 struct CSPacket_GameTimer : SCPacket_Base {
 	unsigned short time;
+};
+
+struct CSPacket_GameReady : SCPacket_Base {
+	unsigned short ready_state;
 };
 
 

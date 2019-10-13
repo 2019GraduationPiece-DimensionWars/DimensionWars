@@ -2,7 +2,7 @@
 #include "Scene000_BaseScene.h"
 #include "Object008_HeightmapTerrain.h"
 
-constexpr unsigned short room_texture = 13;
+constexpr unsigned short room_texture = 14;
 class BaseCamera;
 class Object104_DummyPlayer;
 class RoomScene :
@@ -32,6 +32,7 @@ public:
 	void SendRomm_LobbyChange();
 	void SendRoomExit();
 	void SendOtherCharacter();
+	void SendReady();
 
 private:
 	bool left_act = false;
@@ -51,6 +52,6 @@ private:
 	Material *roomMaterial[room_texture];
 
 	int cnt = 0;
-
+	unsigned short ready = 0;
 };
 
