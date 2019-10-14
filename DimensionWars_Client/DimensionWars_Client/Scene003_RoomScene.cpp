@@ -25,7 +25,7 @@ void RoomScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLis
 	m_nObjects3 = 19; 
 	m_roomObjects = new BaseObject*[m_nObjects3];
 	//
-	nCurrScene = 2;
+	//nCurrScene = 2;
 
 	Object104_DummyPlayer *pPlayer = new Object104_DummyPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 	m_pPlayer = pPlayer;
@@ -686,8 +686,9 @@ void RoomScene::ProcessPacket(char * ptr)
 		SCPacket_ReadyGame *my_packet = reinterpret_cast<SCPacket_ReadyGame *>(ptr);
 		if (my_packet->ready_state == 1)
 		{
-			SendSceneInfo(4, c_type);
+			
 			m_pFramework->ChangeScene(BaseScene::SceneTag::Game);
+			
 			
 		}
 

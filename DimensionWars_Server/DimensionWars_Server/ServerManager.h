@@ -86,7 +86,7 @@ private:
 	void SendNattackPaket(unsigned short to, unsigned short obj);
 	void SendGameTimePaket(unsigned short to);
 	void SendArrowPaket(unsigned short to, unsigned short obj);
-	void SendGameStart(unsigned short to, unsigned short obj);
+	void SendGameStart(unsigned short to);
 
 
 	void DisConnect(unsigned short int id);

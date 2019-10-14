@@ -260,10 +260,10 @@ void ServerManager::WorkerThread()
 			
 			TimerEvent* pEvent = reinterpret_cast<TimerEvent*>(lpover_ex->messageBuffer);
 			if (pEvent->command == TimerEvent::Command::Update) {
-				//if (user > 1)
-				//{
+				if (user > 1)
+				{
 					Update(key);
-				//}
+				}
 			}
 			
 			delete lpover_ex;
@@ -681,10 +681,10 @@ void ServerManager::SendGameTimePaket(unsigned short to)
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
-void ServerManager::SendGameStart(unsigned short to, unsigned short obj)
+void ServerManager::SendGameStart(unsigned short to)
 {
 	SCPacket_ReadyGame packet;// obj가 움직였다고 to 소켓에다 보내줘야 한다.
-	packet.id = obj;
+	packet.id = to;
 	packet.size = sizeof(packet);
 	packet.type = SC_Type::ReadyGame;
 	packet.ready_state = 1;
@@ -941,6 +941,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		character_type = packet->c_type;
 		//unsigned short id = packet->id;
 		
+		//룸
 		if (scene == 3)
 		{
 			//SendOtherCharacterPacket(id, id); // 나 자신에게 미리 알려준다.
@@ -965,7 +966,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 				}
 			}
 		}
-
+		// 배틀 
 		if (scene == 4)
 		{
 			
@@ -1037,11 +1038,13 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		else
 			--ready_count;
 
-		if (ready_count==2|| ready_count == 4|| ready_count == 6)
+		if (ready_count==1|| ready_count == 4|| ready_count == 6)
 		{
-			for (int i = 0; i < MAX_PLAYER; ++i) {
-				if (objects[i].connected == true) {
-					SendGameStart(i, id);
+			for (int i = 0; i < MAX_PLAYER; ++i)
+			{
+				if (objects[i].connected)
+				{
+					SendGameStart(i);
 				}
 			}
 		}

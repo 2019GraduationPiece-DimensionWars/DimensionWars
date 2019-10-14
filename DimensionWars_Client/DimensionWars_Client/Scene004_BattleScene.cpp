@@ -68,15 +68,15 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 
 	m_pSkyBox = new SkyBox(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature);
 	
-	//GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-	//m_pPlayer = pPlayer;
+	GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	m_pPlayer = pPlayer;
 
-	//for (int i = 0; i < MAX_PLAYER; ++i)
-	//{
-	//	Dummy[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-	//	m_ppOtherPlayers[i] = Dummy[i];
-	//	m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
-	//}
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		Dummy[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+		m_ppOtherPlayers[i] = Dummy[i];
+		m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
+	}
 	
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
@@ -94,47 +94,47 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	{
 		ElfObject[i] = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 		//ElfObject[i]->SetChild(m_pFramework->GetResource()->GetElfArcherModel()->m_pModelRootObject, true);
-		ElfObject[i]->SetPosition(XMFLOAT3(-100000, 1000000, 10000));
+		ElfObject[i]->SetPosition(XMFLOAT3(15500,0,0));
 	}
 
-	cmd = 0;
-	//printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
-	//scanf_s("%d", &cmd);
-	switch (cmd) {
-	case 0: 
-	{
-		GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-		m_pPlayer = pPlayer;
-		for (int i = 0; i < MAX_PLAYER; ++i) {
-			GamblerObject[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-			m_ppOtherPlayers[i] = GamblerObject[i];
-			m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
-		}
-	}
-		break;
-	case 1:
-	{
-		GamblerPlayer *pPlayer = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-		m_pPlayer = pPlayer;
-		for (int i = 0; i < MAX_PLAYER; ++i) {
-			ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-			m_ppOtherPlayers[i] = ReaperObject[i];
-			m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
-		}
-	}
-		break;
-	default:
-	{
-		ElfArcherPlayer *pPlayer = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-		m_pPlayer = pPlayer;
-		for (int i = 0; i < MAX_PLAYER; ++i) {
-			ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-			m_ppOtherPlayers[i] = ReaperObject[i];
-			m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
-		}
-	}
-		break;
-	}
+	//cmd = 0;
+	////printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
+	////scanf_s("%d", &cmd);
+	//switch (cmd) {
+	//case 0: 
+	//{
+	//	GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	//	m_pPlayer = pPlayer;
+	//	for (int i = 0; i < MAX_PLAYER; ++i) {
+	//		GamblerObject[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	//		m_ppOtherPlayers[i] = ElfObject[i];
+	//		m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
+	//	}
+	//}
+	//	break;
+	//case 1:
+	//{
+	//	GamblerPlayer *pPlayer = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	//	m_pPlayer = pPlayer;
+	//	for (int i = 0; i < MAX_PLAYER; ++i) {
+	//		ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	//		m_ppOtherPlayers[i] = ReaperObject[i];
+	//		m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
+	//	}
+	//}
+	//	break;
+	//default:
+	//{
+	//	ElfArcherPlayer *pPlayer = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	//	m_pPlayer = pPlayer;
+	//	for (int i = 0; i < MAX_PLAYER; ++i) {
+	//		ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	//		m_ppOtherPlayers[i] = ReaperObject[i];
+	//		m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
+	//	}
+	//}
+	//	break;
+	//}
 	
 	m_nCubeObjects = 50;
 	m_ppCubeObjects = new TextureCubeObject*[m_nCubeObjects];
@@ -371,6 +371,7 @@ bool BattleScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 				m_pPlayer = ElfObject[0];
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
 				break;
+			
 			/*case 'O':
 				m_pPlayer->GetCamera()->SetPosition(XMFLOAT3(0, 0, -10000));
 				m_pPlayer->GetCamera()->OrthoMatrix(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
@@ -400,6 +401,8 @@ bool BattleScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 void BattleScene::AnimateObjects(float fTimeElapsed)
 {
+
+	
 	if (m_pFramework->GetActivated()) {
 		SendMoveDirection();
 		SendAnimationInfo();
@@ -498,9 +501,10 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
 	
 	for (int i = 0; i < MAX_PLAYER; ++i)
-		if (m_ppOtherPlayers[i]->connected) 
+		if (m_ppOtherPlayers[i]->connected)
+		{
 			m_ppOtherPlayers[i]->Render(pd3dCommandList, pCamera);
-
+		}
 
 	for (unsigned int i = 0; i < m_nCubeObjects; ++i)
 		if (m_ppCubeObjects && m_ppCubeObjects[i])
@@ -617,60 +621,58 @@ void BattleScene::ProcessPacket(char * ptr)
 
 			m_pPlayer->SetVisible(true);
 			m_pPlayer->character_type = my_packet->character_type;
-			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
-			m_pPlayer->hp = my_packet->hp;
-			m_pPlayer->sp = my_packet->sp;
+			
 
-			/*if (m_pPlayer->character_type == Character_type::Reaper)
+			if (m_pPlayer->character_type == Character_type::Reaper)
 			{
-				m_pPlayer = ReaperObject[0];
+				m_pPlayer = ReaperObject[1];
 				m_pFramework->m_pPlayer = m_pPlayer;
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
-
-
 			}
 			if (m_pPlayer->character_type == Character_type::Gamber)
 			{
-				m_pPlayer = GamblerObject[0];
+				m_pPlayer = GamblerObject[1];
 				m_pFramework->m_pPlayer = m_pPlayer;
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
 			}
 			if (m_pPlayer->character_type == Character_type::Elf)
 			{
-				m_pPlayer = ElfObject[0];
+				m_pPlayer = ElfObject[1];
 				m_pFramework->m_pPlayer = m_pPlayer;
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
-			}*/
-
+			}
+			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
+			m_pPlayer->hp = my_packet->hp;
+			m_pPlayer->sp = my_packet->sp;
 		}
 		else if (id < MAX_PLAYER) {
 			if (m_ppOtherPlayers[id]) {
+				m_ppOtherPlayers[id]->character_type = my_packet->character_type;			
+				if (m_ppOtherPlayers[id]->character_type == Character_type::Reaper)
+				{
+					m_ppOtherPlayers[id] = ReaperObject[0];
+					//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
+					
+				}
+				if (m_ppOtherPlayers[id]->character_type == Character_type::Gamber)
+				{
+					m_ppOtherPlayers[id] = GamblerObject[0];
+					
+					
+					//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
+					
+				}
+				if (m_ppOtherPlayers[id]->character_type == Character_type::Elf)
+				{
+					m_ppOtherPlayers[id] = ElfObject[0];
+					
+					//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
+				}
 				m_ppOtherPlayers[id]->connected = true;
-				m_ppOtherPlayers[id]->character_type = my_packet->character_type;
 				m_ppOtherPlayers[id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 				m_ppOtherPlayers[id]->hp = my_packet->hp;
 				m_ppOtherPlayers[id]->sp = my_packet->sp;
-				
-				//if (m_ppOtherPlayers[id]->character_type == Character_type::Reaper)
-				//{
-				//	m_ppOtherPlayers[id] = ReaperObject[1];
-				//	//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
-				//	
-				//}
-				//if (m_ppOtherPlayers[id]->character_type == Character_type::Gamber)
-				//{
-				//	m_ppOtherPlayers[id] = GamblerObject[1];
-				//	printf("도박\n");
-				//	
-				//	//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
-				//	
-				//}
-				//if (m_ppOtherPlayers[id]->character_type == Character_type::Elf)
-				//{
-				//	m_ppOtherPlayers[id] = ElfObject[1];
-				//	printf("엘프\n");
-				//	//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
-				//}
+
 				
 			}
 
@@ -693,6 +695,7 @@ void BattleScene::ProcessPacket(char * ptr)
 		else if (other_id < MAX_PLAYER) {
 			//m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(anime);
 			m_ppOtherPlayers[other_id]->SetPosition(my_packet->position);
+			
 //#ifdef USE_CONSOLE_WINDOW
 		}
 		else if (other_id>=Card_start&&other_id<Card_end) {

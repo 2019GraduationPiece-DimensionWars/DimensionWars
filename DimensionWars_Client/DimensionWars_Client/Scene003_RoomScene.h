@@ -53,5 +53,7 @@ private:
 
 	int cnt = 0;
 	unsigned short ready = 0;
+	unsigned short change_battle = 0;
+
 };
 
