@@ -28,7 +28,7 @@ D3D12_RASTERIZER_DESC BaseShader::CreateRasterizerState()
 {
 	D3D12_RASTERIZER_DESC rasterizerDesc;
 	::ZeroMemory(&rasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
-	//	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
+	//	rasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 #ifdef _WITH_LEFT_HAND_COORDINATES
