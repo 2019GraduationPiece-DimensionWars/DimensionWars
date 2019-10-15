@@ -15,7 +15,7 @@
 #include "Object102_GamblerPlayer.h"
 #include "Object104_DummyPlayer.h"
 #include "Shader009_UIShader.h"
-#include "Object013_ScreenTextureObject.h"
+#include "Object014_ScreenTextureObject.h"
 
 TitleScene::TitleScene(SceneTag tag, RuntimeFrameWork * pFramework) : BaseScene(tag, pFramework)
 {
@@ -44,7 +44,7 @@ void TitleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	//
 
 	
-	Object104_DummyPlayer *pPlayer = new Object104_DummyPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	DummyPlayer *pPlayer = new DummyPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 	m_pPlayer = pPlayer;
 
 
@@ -130,9 +130,7 @@ bool TitleScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 
 void TitleScene::AnimateObjects(float fTimeElapsed)
 {
-	//printf("%f, %f, %f\n", m_pPlayer->GetLookVector().x, m_pPlayer->GetLookVector().y, m_pPlayer->GetLookVector().z);
-
-
+	//ConsolePrint("%f, %f, %f\n", m_pPlayer->GetLookVector().x, m_pPlayer->GetLookVector().y, m_pPlayer->GetLookVector().z);
 }
 
 void TitleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera * pCamera)

@@ -512,19 +512,15 @@ void BaseScene::ProcessPacket(char * ptr)
 //	{
 //	case SC_Type::LoginOK:
 //	{
-//		//printf("login\n");
+//		//ConsolePrint("login\n");
 //		SCPacket_LoginOK *packet = reinterpret_cast<SCPacket_LoginOK *>(ptr);
 //		myid = packet->id;
-//#ifdef USE_CONSOLE_WINDOW
-//		printf("LOGIN\n");
-//#endif
+//		ConsolePrint("LOGIN\n");
 //		break;
 //	}
 //	case SC_Type::PutPlayer:
 //	{
-//#ifdef USE_CONSOLE_WINDOW
-//		printf("Put Player\n");
-//#endif
+//		ConsolePrint("Put Player\n");
 //		SCPacket_PutPlayer *my_packet = reinterpret_cast<SCPacket_PutPlayer *>(ptr);
 //		unsigned int id = my_packet->id;
 //		if (first_time) {
@@ -534,19 +530,15 @@ void BaseScene::ProcessPacket(char * ptr)
 //		if (id == myid) {
 //			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 //			//m_pPlayer->SetVisible(true);
-//#ifdef USE_CONSOLE_WINDOW
-//			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
-//#endif
+//			//ConsolePrint("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 //		}
 //		else if (id != MAX_USER) {
 //			//if (!m_ppOtherPlayers[id]) {
-//			printf("그려주세요");
+//			ConsolePrint("그려주세요");
 //			//m_ppOtherPlayers[id] = new BasePlayer;
 //			//}
 //			//m_ppOtherPlayers[id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
-//#ifdef USE_CONSOLE_WINDOW
-//			//printf("Put Player [%d]  (%.1f, %.1f %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
-//#endif
+//			//ConsolePrint("Put Player [%d]  (%.1f, %.1f %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
 //		}
 //
 //		break;
@@ -556,15 +548,13 @@ void BaseScene::ProcessPacket(char * ptr)
 //		SCPacket_Position *my_packet = reinterpret_cast<SCPacket_Position *>(ptr);
 //		unsigned short other_id = my_packet->id;
 //		if (other_id == myid) {
-//			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
+//			//ConsolePrint("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 //			m_pPlayer->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
 //		}
 //		else if (other_id != MAX_USER) {
-//			printf("그려주세요");
+//			ConsolePrint("그려주세요");
 //			m_ppOtherPlayers[other_id]->SetPosition((XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z)));
-//#ifdef USE_CONSOLE_WINDOW
-//			//printf("other [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
-//#endif
+//			//ConsolePrint("other [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 //		}
 //
 //
@@ -572,9 +562,7 @@ void BaseScene::ProcessPacket(char * ptr)
 //	}
 //	case SC_Type::RemovePlayer:
 //	{
-//#ifdef USE_CONSOLE_WINDOW
-//		printf("Remove\n");
-//#endif
+//		ConsolePrint("Remove\n");
 //		SCPacket_RemovePlayer *my_packet = reinterpret_cast<SCPacket_RemovePlayer *>(ptr);
 //		unsigned int other_id = my_packet->id;
 //		//if (other_id == myid) m_pPlayer->SetVisible(false);
@@ -583,9 +571,7 @@ void BaseScene::ProcessPacket(char * ptr)
 //		m_ppOtherPlayers[other_id]->SetVisible(false);
 //		delete m_ppOtherPlayers[other_id];
 //		m_ppOtherPlayers[other_id] = nullptr;
-//		#ifdef USE_CONSOLE_WINDOW
-//		printf("Player [%d] Remove from Screen\n", my_packet->id);
-//		#endif
+//		ConsolePrint("Player [%d] Remove from Screen\n", my_packet->id);
 //		}
 //		}
 //		else {
@@ -606,15 +592,13 @@ void BaseScene::ProcessPacket(char * ptr)
 //		m_pFramework->cubePos[id] = XMFLOAT3(my_packet->position.x, my_packet->position.y, my_packet->position.z);
 //		m_pFramework->cubeRot[id] = XMFLOAT3(my_packet->rotate.x, my_packet->rotate.y, my_packet->rotate.z);
 //
-//		//#ifdef USE_CONSOLE_WINDOW
-//		//		// printf("MAPINFO Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", id, m_pFramework->cubeSize[id], m_pFramework->cubePos[id].x, m_pFramework->cubePos[id].y, m_pFramework->cubePos[id].z, m_pFramework->cubeRot[id].x, m_pFramework->cubeRot[id].y, m_pFramework->cubeRot[id].z);
-//		//#endif
+//		// ConsolePrint("MAPINFO Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", id, m_pFramework->cubeSize[id], m_pFramework->cubePos[id].x, m_pFramework->cubePos[id].y, m_pFramework->cubePos[id].z, m_pFramework->cubeRot[id].x, m_pFramework->cubeRot[id].y, m_pFramework->cubeRot[id].z);
 //		break;
 //	}
 //	default:
-//		//#ifdef USE_CONSOLE_WINDOW
-//		//		//printf("Unknown PACKET type [%d]\n", ptr[1]);
-//		//#endif
+//		
+//		//ConsolePrint("Unknown PACKET type [%d]\n", ptr[1]);
+//		
 //		break;
 //	}
 }
@@ -633,7 +617,7 @@ void BaseScene::SendMoveDirection()
 		//myMovePacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
 		myMovePacket->type = CS_Type::Move;
 		m_pFramework->SendPacket(reinterpret_cast<char *>(myMovePacket));
-		//printf("보냄\n");
+		//ConsolePrint("보냄\n");
 	}
 	
 }
@@ -646,7 +630,7 @@ void BaseScene::SendAnimationInfo()
 		myPacket->type = CS_Type::Animation;
 		myPacket->animation_state = m_pPlayer->m_pSkinnedAnimationController->m_pAnimationTracks->GetAnimationSet();
 		m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
-		//printf("서버한테 보냄 : %d\n", myPacket->animation_state);
+		//ConsolePrint("서버한테 보냄 : %d\n", myPacket->animation_state);
 	}
 }
 

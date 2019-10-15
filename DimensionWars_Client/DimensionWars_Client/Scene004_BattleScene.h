@@ -15,7 +15,7 @@ class SlashWaveObject;
 class TextureCubeObject;
 class PortalObject;
 class TexturePortalObject;
-class Object104_DummyPlayer;
+class DummyPlayer;
 class ArrowObject;
 
 enum Character_type
@@ -32,6 +32,7 @@ private:
 	SkyBox * m_pSkyBox = nullptr;
 	TextureCubeObject ** m_ppCubeObjects = nullptr;  // ∫Ø∞Ê«‘
 	TexturePortalObject ** m_ppPotalObjects = nullptr;
+	//PortalObject ** m_ppPotalObjects = nullptr;
 	unsigned int m_nCubeObjects = 0;
 	HeightMapTerrain * m_pTerrain = nullptr;
 
@@ -49,8 +50,9 @@ private:
 
 	CardObject** card = nullptr;
 	SlashWaveObject** slashWave = nullptr;
-	ArrowObject ** m_arrow = nullptr;
-	SkinnedFrameObject** arrow = nullptr;
+	ArrowObject ** arrow = nullptr;
+	//SkinnedFrameObject** arrow = nullptr;
+
 	bool cube_build = false;
 	bool portal_build = false;
 	bool card_build = false;

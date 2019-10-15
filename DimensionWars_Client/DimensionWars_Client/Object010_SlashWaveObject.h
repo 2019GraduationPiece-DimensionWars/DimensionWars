@@ -5,7 +5,7 @@ class SlashWaveObject :
 	public ProjectileObject
 {
 public:
-	SlashWaveObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, RuntimeFrameWork * pFramework);
+	SlashWaveObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, RuntimeFrameWork * pFramework, unsigned int index = 0);
 	virtual ~SlashWaveObject();
 };
 

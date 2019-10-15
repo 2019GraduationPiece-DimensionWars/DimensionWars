@@ -9,7 +9,7 @@
 #include "ResourceManager.h"
 #include "Object104_DummyPlayer.h"
 #include "Scene004_BattleScene.h"
-#include "Object013_ScreenTextureObject.h"
+#include "Object014_ScreenTextureObject.h"
 #include "Shader009_UIShader.h"
 RoomScene::RoomScene()
 {
@@ -27,10 +27,10 @@ void RoomScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLis
 	//
 	//nCurrScene = 2;
 
-	Object104_DummyPlayer *pPlayer = new Object104_DummyPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	DummyPlayer *pPlayer = new DummyPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 	m_pPlayer = pPlayer;
 	for (int i = 0; i < MAX_PLAYER; ++i) {
-		DummyObject[i] = new Object104_DummyPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+		DummyObject[i] = new DummyPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 		m_ppOtherPlayers[i] = DummyObject[i];
 		m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
 	}
@@ -189,7 +189,7 @@ void RoomScene::ReleaseObjects()
 void RoomScene::ReleaseUploadBuffers()
 {
 	if (m_roomObjects) {
-		for (int i = 0; i < m_nObjects3; ++i) {
+		for (unsigned int i = 0; i < m_nObjects3; ++i) {
 			m_roomObjects[i]->ReleaseUploadBuffers();
 		}
 	}
@@ -572,7 +572,7 @@ void RoomScene::ProcessPacket(char * ptr)
 	{
 		SCPacket_PutPlayer *my_packet = reinterpret_cast<SCPacket_PutPlayer *>(ptr);
 		other_id = my_packet->id;
-		//printf("%d\n", other_id);
+		//ConsolePrint("%d\n", other_id);
 		if (first_time) {
 			first_time = false;
 			//m_pFramework->myid = other_id;
@@ -696,9 +696,7 @@ void RoomScene::ProcessPacket(char * ptr)
 	}
 
 	default:
-#ifdef USE_CONSOLE_WINDOW
-		printf("룸Unknown PACKET type [%d]\n", ptr[1]);
-#endif
+		ConsolePrint("Room Scene - Unknown PACKET type [%d]\n", ptr[1]);
 		break;
 	}
 }
@@ -713,7 +711,7 @@ void RoomScene::SendRomm_LobbyChange()
 	myPacket->scene = BaseScene::SceneTag::Room;
 	myPacket->check = room_exit;
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
-	//printf("룸에서 보낼때%d, %d, %d\n", room_num, m_pFramework->nBase_room[room_num - 1], m_pFramework->nBase_room[room_num - 1]);
+	//ConsolePrint("룸에서 보낼 때 %d, %d, %d\n", room_num, m_pFramework->nBase_room[room_num - 1], m_pFramework->nBase_room[room_num - 1]);
 
 }
 
@@ -728,8 +726,7 @@ void RoomScene::SendRoomExit()
 	myPacket->check = room_exit;
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
 	
-	//printf("%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_room[m_pFramework->room_num - 1]);
-
+	//ConsolePrint("%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_room[m_pFramework->room_num - 1]);
 }
 
 
@@ -741,8 +738,7 @@ void RoomScene::SendOtherCharacter()
 	myPacket->character_type = c_type;
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
 
-	//printf("%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_room[m_pFramework->room_num - 1]);
-
+	//ConsolePrint("%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_room[m_pFramework->room_num - 1]);
 }
 
 void RoomScene::SendReady()
@@ -753,6 +749,5 @@ void RoomScene::SendReady()
 	myPacket->ready_state = ready;
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
 
-	//printf("%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_room[m_pFramework->room_num - 1]);
-
+	//ConsolePrint("%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_room[m_pFramework->room_num - 1]);
 }

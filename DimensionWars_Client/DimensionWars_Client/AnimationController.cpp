@@ -167,7 +167,7 @@ void AnimationSet::SetPosition(float fTrackPosition)
 		break;
 	
 	}
-	//printf("%s : TrackPos : %.1f / NowPos : %.1f / m_fPosition : %.1f / (%.1f ~ %.1f) / Length: %.1f\n", m_pstrAnimationSetName, fTrackPosition, fNowPosition, m_fPosition, m_fStartTime, m_fEndTime, m_fLength);
+	//ConsolePrint("%s : TrackPos : %.1f / NowPos : %.1f / m_fPosition : %.1f / (%.1f ~ %.1f) / Length: %.1f\n", m_pstrAnimationSetName, fTrackPosition, fNowPosition, m_fPosition, m_fStartTime, m_fEndTime, m_fLength);
 
 	m_fOldPosition = fNowPosition;
 

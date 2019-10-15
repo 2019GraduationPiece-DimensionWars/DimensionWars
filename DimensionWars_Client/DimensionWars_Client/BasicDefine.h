@@ -53,3 +53,7 @@
 #define ANIMATION_CALLBACK_EPSILON	0.015f
 
 constexpr float keyFrameUnit = 1.0f / 30.0f;
+
+
+//constexpr unsigned char nArrows = 7;
+//constexpr unsigned char nCards = 5;

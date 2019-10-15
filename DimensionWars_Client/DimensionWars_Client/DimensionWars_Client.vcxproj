@@ -163,7 +163,7 @@
     <ClInclude Include="Object009_ProjectileObject.h" />
     <ClInclude Include="Object012_PortalObject.h" />
     <ClInclude Include="Object013_ArrowObject.h" />
-    <ClInclude Include="Object013_ScreenTextureObject.h" />
+    <ClInclude Include="Object014_ScreenTextureObject.h" />
     <ClInclude Include="Object102_GamblerPlayer.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh000_BaseMesh.h" />
@@ -226,7 +226,7 @@
     <ClCompile Include="Object009_ProjectileObject.cpp" />
     <ClCompile Include="Object012_PortalObject.cpp" />
     <ClCompile Include="Object013_ArrowObject.cpp" />
-    <ClCompile Include="Object013_ScreenTextureObject.cpp" />
+    <ClCompile Include="Object014_ScreenTextureObject.cpp" />
     <ClCompile Include="Object102_GamblerPlayer.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh000_BaseMesh.cpp" />

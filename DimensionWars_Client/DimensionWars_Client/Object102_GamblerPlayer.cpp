@@ -7,14 +7,14 @@
 #include "Object008_HeightmapTerrain.h"
 
 
-GamblerPlayer::GamblerPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, RuntimeFrameWork * pFramework)
+GamblerPlayer::GamblerPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, RuntimeFrameWork * pFramework, unsigned int index)
 {
 	m_pFramework = pFramework;
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	SetChild(m_pFramework->GetResource()->GetGamblerModel()->m_pModelRootObject, true);
+	SetChild(m_pFramework->GetResource()->GetGamblerModel(index)->m_pModelRootObject, true);
 
-	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, m_pFramework->GetResource()->GetGamblerModel());
+	m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, m_pFramework->GetResource()->GetGamblerModel(index));
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->AddAnimationSet(0.0f, 40.0f * keyFrameUnit, "Idle");
 	m_pSkinnedAnimationController->AddAnimationSet(42.0f * keyFrameUnit, 62.0f * keyFrameUnit, "OnHit", ANIMATION_TYPE_ONCE);
@@ -126,7 +126,7 @@ BaseCamera * GamblerPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapse
 		SetMaxVelocityY(400.0f);
 		m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.25f);
-		m_pCamera->SetOffset(XMFLOAT3(0.0f, 250.0f, -350.0f));
+		m_pCamera->SetOffset(XMFLOAT3(0.0f, 150.0f, -350.0f));
 		m_pCamera->SetPosition(Vector3::Add(m_xmf3Position, m_pCamera->GetOffset()));
 		m_pCamera->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 60.0f);
 		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
@@ -190,7 +190,7 @@ void GamblerPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 
 void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 {
-	DWORD dwDirection = 0;
+	char direction = 0;
 
 	if (isCancleEnabled()) {
 		// 점프, 추락 처리
@@ -206,93 +206,93 @@ void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 		//}
 		animation_check = true;
 		if (pKeysBuffer['w'] & 0xF0 || pKeysBuffer['W'] & 0xF0) {
-			dwDirection |= DIR_FORWARD;
+			direction |= DIR_FORWARD;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
 		}
 		if (pKeysBuffer['s'] & 0xF0 || pKeysBuffer['S'] & 0xF0) {
-			dwDirection |= DIR_BACKWARD;
+			direction |= DIR_BACKWARD;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Backward);
 		}
 		if (pKeysBuffer['a'] & 0xF0 || pKeysBuffer['A'] & 0xF0) {
-			dwDirection |= DIR_LEFT;
+			direction |= DIR_LEFT;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left);
 		}
 		if (pKeysBuffer['d'] & 0xF0 || pKeysBuffer['D'] & 0xF0) {
-			dwDirection |= DIR_RIGHT;
+			direction |= DIR_RIGHT;
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right);
 		}
 
-		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_LEFT))
+		if ((direction & DIR_FORWARD) && (direction & DIR_LEFT))
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left_Forward);
-		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_RIGHT))
+		if ((direction & DIR_FORWARD) && (direction & DIR_RIGHT))
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right_Forward);
-		if ((dwDirection & DIR_BACKWARD) && (dwDirection & DIR_LEFT))
+		if ((direction & DIR_BACKWARD) && (direction & DIR_LEFT))
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left_Backward);
-		if ((dwDirection & DIR_BACKWARD) && (dwDirection & DIR_RIGHT))
+		if ((direction & DIR_BACKWARD) && (direction & DIR_RIGHT))
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right_Backward);
 
-		if ((dwDirection & DIR_LEFT) && (dwDirection & DIR_RIGHT)) {
-			if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_BACKWARD))
+		if ((direction & DIR_LEFT) && (direction & DIR_RIGHT)) {
+			if ((direction & DIR_FORWARD) && (direction & DIR_BACKWARD))
 				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
-			else if (dwDirection & DIR_FORWARD)
+			else if (direction & DIR_FORWARD)
 				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward);
-			else if (dwDirection & DIR_BACKWARD)
+			else if (direction & DIR_BACKWARD)
 				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Backward);
 			else
 				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 
 		}
-		if ((dwDirection & DIR_FORWARD) && (dwDirection & DIR_BACKWARD)) {
-			if (dwDirection & DIR_LEFT)
+		if ((direction & DIR_FORWARD) && (direction & DIR_BACKWARD)) {
+			if (direction & DIR_LEFT)
 				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left);
-			else if (dwDirection & DIR_RIGHT)
+			else if (direction & DIR_RIGHT)
 				m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right);
 			else
 				m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 		}
-		if (!dwDirection)
+		if (!direction)
 			m_pSkinnedAnimationController->SetAnimationSet(state = Idle);
 
 
 
 	}
 	if (isShot1) {
-		dwDirection = 0;
+		direction = 0;
 		switch (state) {
 		case Idle:
 			m_pSkinnedAnimationController->SetAnimationSet(state = Idle_Attack);
 			break;
 		case Move_Forward:
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Forward_Attack1);
-			dwDirection |= DIR_FORWARD;
+			direction |= DIR_FORWARD;
 			break;
 		case Move_Left_Forward:
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left_Forward_Attack1);
-			dwDirection |= (DIR_LEFT | DIR_FORWARD);
+			direction |= (DIR_LEFT | DIR_FORWARD);
 			break;
 		case Move_Right_Forward:
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right_Forward_Attack1);
-			dwDirection |= (DIR_RIGHT | DIR_FORWARD);
+			direction |= (DIR_RIGHT | DIR_FORWARD);
 			break;
 		case Move_Backward:
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Backward_Attack1);
-			dwDirection |= DIR_BACKWARD;
+			direction |= DIR_BACKWARD;
 			break;
 		case Move_Left_Backward:
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left_Backward_Attack1);
-			dwDirection |= (DIR_LEFT | DIR_BACKWARD);
+			direction |= (DIR_LEFT | DIR_BACKWARD);
 			break;
 		case Move_Right_Backward:
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right_Backward_Attack1);
-			dwDirection |= (DIR_RIGHT | DIR_BACKWARD);
+			direction |= (DIR_RIGHT | DIR_BACKWARD);
 			break;
 		case Move_Left:
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Left_Attack1);
-			dwDirection |= DIR_LEFT;
+			direction |= DIR_LEFT;
 			break;
 		case Move_Right:
 			m_pSkinnedAnimationController->SetAnimationSet(state = Move_Right_Attack1);
-			dwDirection |= DIR_RIGHT;
+			direction |= DIR_RIGHT;
 			break;
 		case Jump:
 			m_pSkinnedAnimationController->SetAnimationSet(state = Jump_Attack);
@@ -304,31 +304,31 @@ void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 	}
 	switch (state) {
 	case Idle_Attack:
-		dwDirection = 0;
+		direction = 0;
 		break;
 	case Move_Forward_Attack1:
-		dwDirection |= DIR_FORWARD;
+		direction |= DIR_FORWARD;
 		break;
 	case Move_Left_Forward_Attack1:
-		dwDirection |= (DIR_LEFT | DIR_FORWARD);
+		direction |= (DIR_LEFT | DIR_FORWARD);
 		break;
 	case Move_Right_Forward_Attack1:
-		dwDirection |= (DIR_RIGHT | DIR_FORWARD);
+		direction |= (DIR_RIGHT | DIR_FORWARD);
 		break;
 	case Move_Backward_Attack1:
-		dwDirection |= DIR_BACKWARD;
+		direction |= DIR_BACKWARD;
 		break;
 	case Move_Left_Backward_Attack1:
-		dwDirection |= (DIR_LEFT | DIR_BACKWARD);
+		direction |= (DIR_LEFT | DIR_BACKWARD);
 		break;
 	case Move_Right_Backward_Attack1:
-		dwDirection |= (DIR_RIGHT | DIR_BACKWARD);
+		direction |= (DIR_RIGHT | DIR_BACKWARD);
 		break;
 	case Move_Left_Attack1:
-		dwDirection |= DIR_LEFT;
+		direction |= DIR_LEFT;
 		break;
 	case Move_Right_Attack1:
-		dwDirection |= DIR_RIGHT;
+		direction |= DIR_RIGHT;
 		break;
 	}
 
@@ -345,21 +345,21 @@ void GamblerPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 		m_ptOldCursorPos = ptCursorPos;
 	}
 
-	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f)) {
+	if ((direction != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f)) {
 		if (cxDelta || cyDelta)
 		{
 			if (pKeysBuffer[VK_RBUTTON] & 0xF0)
 				Rotate(cyDelta, 0.0f, -cxDelta);
 			else
 			{
-				//printf("%f, %f\n", cyDelta, cxDelta);
+				//ConsolePrint("%f, %f\n", cyDelta, cxDelta);
 				SendRotate(cyDelta, cxDelta, 0.0f);
 				//Rotate(cyDelta, cxDelta, 0.0f);
 			}
 		}
 		//if (dwDirection) Move(dwDirection, 300.0f * fTimeElapsed, true);
 	}
-	SetDirectionBit(dwDirection);
+	SetDirectionBit(direction);
 	Update(fTimeElapsed);
 }
 
@@ -494,19 +494,19 @@ void GamblerPlayer::SendCard()
 	myPacket->attack_type = Gambler::Idle_Attack;
 	myPacket->position = GetPosition();
 	m_pFramework->SendPacket(reinterpret_cast<char *>(myPacket));
-	//printf("%d\n", myAnimationPacket->animation_state);
+	//ConsolePrint("%d\n", myAnimationPacket->animation_state);
 
 }
 
 void GamblerPlayer::SendjumpDirection()
 {
-	DWORD dwDirection = 0;
-	dwDirection |= DIR_UP;
+	char direction = 0;
+	direction |= DIR_UP;
 
 	CSPacket_Move *myMovePacket = reinterpret_cast<CSPacket_Move *>(m_pFramework->GetSendBuf());
 	myMovePacket->size = sizeof(CSPacket_Move);
 	// 클라이언트가 어느 방향으로 갈 지 키입력 정보를 저장한 비트를 서버로 보내기
-	myMovePacket->dir = dwDirection;
+	myMovePacket->dir = direction;
 	myMovePacket->m_Look = GetLookVector();
 	myMovePacket->m_Right = GetRightVector();
 	myMovePacket->m_Up = GetUpVector();

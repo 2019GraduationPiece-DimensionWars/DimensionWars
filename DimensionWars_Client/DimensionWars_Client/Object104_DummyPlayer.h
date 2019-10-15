@@ -6,15 +6,15 @@
 
 class AnimationController;
 
-class Object104_DummyPlayer :
+class DummyPlayer :
 	public BasePlayer
 {
 public:
 	
 	
 
-	Object104_DummyPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, RuntimeFrameWork * pFramework);
-	virtual ~Object104_DummyPlayer();
+	DummyPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, RuntimeFrameWork * pFramework);
+	virtual ~DummyPlayer();
 
 
 	virtual void OnPrepareRender();

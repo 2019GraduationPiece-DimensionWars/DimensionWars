@@ -164,7 +164,7 @@ void BasePlayer::Update(float fTimeElapsed)
 
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
 
-	XMFLOAT3 lookTargetPivot = { m_xmf3Position.x, m_xmf3Position.y + 200.0f, m_xmf3Position.z };
+	XMFLOAT3 lookTargetPivot = { m_xmf3Position.x, m_xmf3Position.y + 100.0f, m_xmf3Position.z };
 	if (nCurrentCameraMode == THIRD_PERSON_CAMERA) m_pCamera->Update(lookTargetPivot, fTimeElapsed);
 	if (m_pCameraUpdatedContext) OnCameraUpdateCallback(fTimeElapsed);
 	if (nCurrentCameraMode == THIRD_PERSON_CAMERA) m_pCamera->SetLookAt(lookTargetPivot);
@@ -255,7 +255,7 @@ void BasePlayer::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 
 void BasePlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 {
-	DWORD dwDirection = 0;
+	char dwDirection = 0;
 	if (pKeysBuffer[VK_UP] & 0xF0) dwDirection |= DIR_FORWARD;
 	if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
 	if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;

@@ -1,28 +1,31 @@
 #include "stdafx.h"
 #include "RuntimeFrameWork.h"
+#include "Texture.h"
+#include "Material.h"
+#include "ResourceManager.h"
+#include "AnimationController.h"	// 로드모델 때문
+
 #include "Scene004_BattleScene.h"
+
+#include "Camera000_BaseCamera.h"
+
 #include "Object003_SkyBox.h"
+#include "Object006_TextureRectObject.h"
+#include "Object007_DiffuseCubeObject.h"
+#include "Object008_HeightmapTerrain.h"
+#include "Object010_SlashWaveObject.h"
+#include "Object011_CardObject.h"
+#include "Object012_PortalObject.h"
+#include "Object013_ArrowObject.h"
+#include "Object014_ScreenTextureObject.h"
 #include "Object101_GrimReaperPlayer.h"
 #include "Object102_GamblerPlayer.h"
 #include "Object103_ElfArcherPlayer.h"
-#include "Camera000_BaseCamera.h"
-#include "Material.h"
-#include "Object007_DiffuseCubeObject.h"
-#include "Object008_HeightmapTerrain.h"
-#include "ResourceManager.h"
-#include "AnimationController.h"	// 로드모델 때문
-#include "Object010_SlashWaveObject.h"
-#include "Object011_CardObject.h"
-#include "Object006_TextureRectObject.h"
-#include "Object012_PortalObject.h"
-#include "Texture.h"
-#include "Shader005_TextureRectangleShader.h"
 #include "Object104_DummyPlayer.h"
 
-#include "Object013_ArrowObject.h"
-
+#include "Shader005_TextureRectangleShader.h"
 #include "Shader009_UIShader.h"
-#include "Object013_ScreenTextureObject.h"
+
 
 
 
@@ -71,34 +74,33 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	GrimReaperPlayer *pPlayer = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 	m_pPlayer = pPlayer;
 
-	for (int i = 0; i < MAX_PLAYER; ++i)
-	{
-		Dummy[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	for (int i = 0; i < MAX_PLAYER; ++i){
+		Dummy[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework, i);
 		m_ppOtherPlayers[i] = Dummy[i];
 		m_ppOtherPlayers[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));// 위치 초기화를 하긴 해야되니까 절대 안 그려질 곳에다 짱박아두자.
 	}
 	
+	for (int i = 0; i < MAX_PLAYER; ++i){
+		ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework, i);
+		ReaperObject[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));
+		// ReaperObject[i]->SetChild(m_pFramework->GetResource()->GetGrimReaperModel(i)->m_pModelRootObject, true);
+	}
+
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
-		ReaperObject[i] = new GrimReaperPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-		ReaperObject[i]->SetPosition(XMFLOAT3(-100000, 1000000, 10000));
-	//	ReaperObject[i]->SetChild(m_pFramework->GetResource()->GetGrimReaperModel()->m_pModelRootObject, true);
+		GamblerObject[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework, i);
+		GamblerObject[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));
+		// GamblerObject[i]->SetChild(m_pFramework->GetResource()->GetGamblerModel(i)->m_pModelRootObject, true);
 	}
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
-		GamblerObject[i] = new GamblerPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-		GamblerObject[i]->SetPosition(XMFLOAT3(-100000, 1000000, 10000));
-		//GamblerObject[i]->SetChild(m_pFramework->GetResource()->GetGamblerModel()->m_pModelRootObject, true);
-	}
-	for (int i = 0; i < MAX_PLAYER; ++i)
-	{
-		ElfObject[i] = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-		//ElfObject[i]->SetChild(m_pFramework->GetResource()->GetElfArcherModel()->m_pModelRootObject, true);
-		ElfObject[i]->SetPosition(XMFLOAT3(15500,0,0));
+		ElfObject[i] = new ElfArcherPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework, i);
+		//ElfObject[i]->SetChild(m_pFramework->GetResource()->GetElfArcherModel(i)->m_pModelRootObject, true);
+		ElfObject[i]->SetPosition(XMFLOAT3(-100000.0f, -100000.0f, -100000.0f));
 	}
 
 	//cmd = 0;
-	////printf("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
+	////ConsolePrint("<캐릭터 선택 >\n플레이어 캐릭터 선택을 위해 커맨드를 입력하세요. ( 사신 : 0, 도박사 : 1 ) >>>  ");
 	////scanf_s("%d", &cmd);
 	//switch (cmd) {
 	//case 0: 
@@ -145,26 +147,25 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		else if (i < 35) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 500);
 		else if (i < 45) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 600);
 		else if (i < 50) m_ppCubeObjects[i] = new TextureCubeObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 700);
-		
-		
 	}
 	
 	slashWave = new SlashWaveObject*[Slash_end - Slash_start];
 	for (unsigned int i = 0; i < Slash_end - Slash_start; ++i) {
-		slashWave[i] = new SlashWaveObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-		
+		slashWave[i] = new SlashWaveObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework, i);
+		// slashWave[i]->SetChild(m_pFramework->GetResource()->GetSlashWaveModel(i)->m_pModelRootObject, true);
 	}
 
-	m_arrow = new ArrowObject*[Arrow_end - Arrow_start];
+	arrow = new ArrowObject*[Arrow_end - Arrow_start];
 	for (unsigned int i = 0; i < Arrow_end - Arrow_start; ++i) {
-		m_arrow[i] = new ArrowObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
-
+		arrow[i] = new ArrowObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework, i);
+		// arrow[i]->SetChild(m_pFramework->GetResource()->GetArrowObject(i), true);
 	}
 
 	
 	card = new CardObject*[Card_end - Card_start];
 	for (unsigned int i = 0; i < Card_end - Card_start; ++i) {
-		card[i] = new CardObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+		card[i] = new CardObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework, i);
+		// card[i]->SetChild(m_pFramework->GetResource()->GetCardObject(i), true);
 	}
 
 	m_ppPotalObjects = new TexturePortalObject*[Potal_end - Potal_start];
@@ -395,7 +396,12 @@ bool BattleScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 
 bool BattleScene::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 {
-	if (m_pFramework->GetActivated() && m_pPlayer) m_pPlayer->ProcessInput(pKeysBuffer, fTimeElapsed);
+	if (m_pFramework->GetActivated() && m_pPlayer) {
+		m_pPlayer->ProcessInput(pKeysBuffer, fTimeElapsed);
+		return true;
+	}
+	else
+		;
 	return false;
 }
 
@@ -456,7 +462,7 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 	m_battleObjects[23]->m_xmf4x4World._33 = m_pPlayer->GetCamera()->GetLookVector().z;*/
 	//m_battleObjects[23]->SetPosition(Vector3::Subtract(m_pPlayer->GetCamera()->GetPosition(), XMFLOAT3(-10, 0, 0)));
 	//m_battleObjects[23]->SetLookAt(m_pPlayer->GetPosition(), m_pPlayer->GetUpVector());
-	//printf("%1.f, %1.f, %1.f\n", m_pPlayer->GetCamera()->GetPosition().x, m_pPlayer->GetCamera()->GetPosition().y, m_pPlayer->GetCamera()->GetPosition().z);
+	//ConsolePrint("%1.f, %1.f, %1.f\n", m_pPlayer->GetCamera()->GetPosition().x, m_pPlayer->GetCamera()->GetPosition().y, m_pPlayer->GetCamera()->GetPosition().z);
 	
 	
 	 //점수표
@@ -520,8 +526,8 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 	}
 
 	for (unsigned int i = 0; i < Arrow_end - Arrow_start; ++i)
-		if (m_arrow && m_arrow[i])
-			m_arrow[i]->Render(pd3dCommandList, pCamera);
+		if (arrow && arrow[i])
+			arrow[i]->Render(pd3dCommandList, pCamera);
 
 	for (unsigned int i = 0; i < Potal_end - Potal_start; ++i) {
 		if (m_ppPotalObjects && m_ppPotalObjects[i]) {
@@ -547,9 +553,7 @@ void BattleScene::BuildCube()
 	
 	if (cube_build) {
 		for (unsigned int i = 0; i < m_nCubeObjects; ++i) {
-#ifdef USE_CONSOLE_WINDOW
-			// printf("UP Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", i, m_pFramework->cubeSize[i], m_pFramework->cubePos[i].x, m_pFramework->cubePos[i].y, m_pFramework->cubePos[i].z, m_pFramework->cubeRot[i].x, m_pFramework->cubeRot[i].y, m_pFramework->cubeRot[i].z);
-#endif
+			// ConsolePrint("UP Cube [%d] %.2f -  Pos : (%.2f, %.2f, %.2f) / Rot : (%.2f, %.2f, %.2f)\n", i, m_pFramework->cubeSize[i], m_pFramework->cubePos[i].x, m_pFramework->cubePos[i].y, m_pFramework->cubePos[i].z, m_pFramework->cubeRot[i].x, m_pFramework->cubeRot[i].y, m_pFramework->cubeRot[i].z);
 			m_ppCubeObjects[i]->SetPosition(m_pFramework->cubePos[i]);
 			//m_ppCubeObjects[i]->SetPosition(m_pPlayer->GetPosition().x, m_pPlayer->GetPosition().y, m_pPlayer->GetPosition().z);
 			m_ppCubeObjects[i]->Rotate(m_pFramework->cubeRot[i].x, m_pFramework->cubeRot[i].y, m_pFramework->cubeRot[i].z);
@@ -573,8 +577,8 @@ void BattleScene::BuildCube()
 	if (arrow_build)
 	{
 		for (unsigned int i = 0; i < Arrow_end - Arrow_start; ++i)
-			if (m_arrow && m_arrow[i])
-				m_arrow[i]->SetPosition(10000, 10000, 10000);
+			if (arrow && arrow[i])
+				arrow[i]->SetPosition(10000, 10000, 10000);
 		arrow_build = false;
 	}
 
@@ -596,22 +600,19 @@ void BattleScene::ProcessPacket(char * ptr)
 	{
 	case SC_Type::LoginOK:
 	{
-		printf("login\n");
+		ConsolePrint("login\n");
 		/*SCPacket_LoginOK *packet = reinterpret_cast<SCPacket_LoginOK *>(ptr);
 		m_pFramework->myid = packet->id;
-#ifdef USE_CONSOLE_WINDOW
-		printf("LOGIN\n");
-#endif*/
+		ConsolePrint("LOGIN\n");
+		*/
 		break;
 	}
 	case SC_Type::PutPlayer:
 	{
-#ifdef USE_CONSOLE_WINDOW
-		printf("Put Player\n");
-#endif
+		ConsolePrint("Put Player Packet Process\n");
 		SCPacket_PutPlayer *my_packet = reinterpret_cast<SCPacket_PutPlayer *>(ptr);
 		unsigned int id = my_packet->id;
-		printf("%d\n", id);
+		ConsolePrint("Put Player ID : %d\n", id);
 		if (first_time) {
 			first_time = false;
 			m_pFramework->myid = id;
@@ -625,19 +626,19 @@ void BattleScene::ProcessPacket(char * ptr)
 
 			if (m_pPlayer->character_type == Character_type::Reaper)
 			{
-				m_pPlayer = ReaperObject[1];
+				m_pPlayer = ReaperObject[id];
 				m_pFramework->m_pPlayer = m_pPlayer;
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
 			}
 			if (m_pPlayer->character_type == Character_type::Gamber)
 			{
-				m_pPlayer = GamblerObject[1];
+				m_pPlayer = GamblerObject[id];
 				m_pFramework->m_pPlayer = m_pPlayer;
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
 			}
 			if (m_pPlayer->character_type == Character_type::Elf)
 			{
-				m_pPlayer = ElfObject[1];
+				m_pPlayer = ElfObject[id];
 				m_pFramework->m_pPlayer = m_pPlayer;
 				m_pFramework->m_pCamera = m_pPlayer->GetCamera();
 			}
@@ -650,13 +651,13 @@ void BattleScene::ProcessPacket(char * ptr)
 				m_ppOtherPlayers[id]->character_type = my_packet->character_type;			
 				if (m_ppOtherPlayers[id]->character_type == Character_type::Reaper)
 				{
-					m_ppOtherPlayers[id] = ReaperObject[0];
+					m_ppOtherPlayers[id] = ReaperObject[id];
 					//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
 					
 				}
 				if (m_ppOtherPlayers[id]->character_type == Character_type::Gamber)
 				{
-					m_ppOtherPlayers[id] = GamblerObject[0];
+					m_ppOtherPlayers[id] = GamblerObject[id];
 					
 					
 					//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
@@ -664,7 +665,7 @@ void BattleScene::ProcessPacket(char * ptr)
 				}
 				if (m_ppOtherPlayers[id]->character_type == Character_type::Elf)
 				{
-					m_ppOtherPlayers[id] = ElfObject[0];
+					m_ppOtherPlayers[id] = ElfObject[id];
 					
 					//m_pFramework->m_pCamera = m_ppOtherPlayers[id]->GetCamera();
 				}
@@ -685,46 +686,43 @@ void BattleScene::ProcessPacket(char * ptr)
 		SCPacket_Position *my_packet = reinterpret_cast<SCPacket_Position *>(ptr);
 		unsigned short other_id = my_packet->id;
 		anime = my_packet->animation_state;
-		//printf("%d", anime);
-	//	printf("포지션! 서버한테 받기 성공\n");
+		//ConsolePrint("%d", anime);
+	//	ConsolePrint("포지션! 서버한테 받기 성공\n");
 		if (other_id == m_pFramework->myid && m_pFramework->GetActivated()) {
 			m_pPlayer->SetVisible(true);
-			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			//ConsolePrint("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			m_pPlayer->SetPosition(my_packet->position);
 		}
 		else if (other_id < MAX_PLAYER) {
 			//m_ppOtherPlayers[other_id]->m_pSkinnedAnimationController->SetAnimationSet(anime);
 			m_ppOtherPlayers[other_id]->SetPosition(my_packet->position);
-			
-//#ifdef USE_CONSOLE_WINDOW
 		}
 		else if (other_id>=Card_start&&other_id<Card_end) {
-			//printf("도박사 평타 : %1.f, %1.f, %1.f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			//ConsolePrint("도박사 평타 : %1.f, %1.f, %1.f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			// 그려주시고 위치 설정
 			if (card && card[other_id - Card_start]) {
 				card[other_id - Card_start]->SetPosition(my_packet->position);
-				//printf("도박사 평타 받은 후  : %1.f, %1.f, %1.f\n", card[other_id - Card_start]->GetPosition().x, card[other_id - Card_start]->GetPosition().y, card[other_id - Card_start]->GetPosition().z);
+				//ConsolePrint("도박사 평타 받은 후  : %1.f, %1.f, %1.f\n", card[other_id - Card_start]->GetPosition().x, card[other_id - Card_start]->GetPosition().y, card[other_id - Card_start]->GetPosition().z);
 			}
 		}
 		else if (other_id >= Arrow_start&&other_id<Arrow_end) {
-			//printf("도박사 평타 : %1.f, %1.f, %1.f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			//ConsolePrint("도박사 평타 : %1.f, %1.f, %1.f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			// 그려주시고 위치 설정
-			if (m_arrow && m_arrow[other_id - Arrow_start]) {
-				m_arrow[other_id - Arrow_start]->SetPosition(my_packet->position);
-				//printf("도박사 평타 받은 후  : %1.f, %1.f, %1.f\n", card[other_id - Card_start]->GetPosition().x, card[other_id - Card_start]->GetPosition().y, card[other_id - Card_start]->GetPosition().z);
+			if (arrow && arrow[other_id - Arrow_start]) {
+				arrow[other_id - Arrow_start]->SetPosition(my_packet->position);
+				//ConsolePrint("도박사 평타 받은 후  : %1.f, %1.f, %1.f\n", card[other_id - Card_start]->GetPosition().x, card[other_id - Card_start]->GetPosition().y, card[other_id - Card_start]->GetPosition().z);
 			}
 		}
 		else if (other_id >= Slash_start&&other_id < Slash_end) {
-			//printf("검기 : %1.f, %1.f, %1.f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			//ConsolePrint("검기 : %1.f, %1.f, %1.f\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			// 그려주시고 위치 설정
 			if (slashWave && slashWave[other_id - Slash_start]) {
 				slashWave[other_id - Slash_start]->SetPosition(my_packet->position);
-				/*printf("Right : %f, %f, %f\n", slashWave[other_id - Slash_start]->GetRight().x, slashWave[other_id - Slash_start]->GetRight().y, slashWave[other_id - Slash_start]->GetRight().z);
-				printf("Up : %f, %f, %f\n", slashWave[other_id - Slash_start]->GetUp().x, slashWave[other_id - Slash_start]->GetUp().y, slashWave[other_id - Slash_start]->GetUp().z);
-				printf("Look : %f, %f, %f\n", slashWave[other_id - Slash_start]->GetLook().x, slashWave[other_id - Slash_start]->GetLook().y, slashWave[other_id - Slash_start]->GetLook().z);*/
+				/*ConsolePrint("Right : %f, %f, %f\n", slashWave[other_id - Slash_start]->GetRight().x, slashWave[other_id - Slash_start]->GetRight().y, slashWave[other_id - Slash_start]->GetRight().z);
+				ConsolePrint("Up : %f, %f, %f\n", slashWave[other_id - Slash_start]->GetUp().x, slashWave[other_id - Slash_start]->GetUp().y, slashWave[other_id - Slash_start]->GetUp().z);
+				ConsolePrint("Look : %f, %f, %f\n", slashWave[other_id - Slash_start]->GetLook().x, slashWave[other_id - Slash_start]->GetLook().y, slashWave[other_id - Slash_start]->GetLook().z);*/
 				//slashWave[other_id - Slash_start]->MoveForward()
-				//printf("검기 받은 후 : %1.f, %1.f, %1.f\n", slashWave[other_id - Slash_start]->GetPosition().x, slashWave[other_id - Slash_start]->GetPosition().y, slashWave[other_id - Slash_start]->GetPosition().z);
-				
+				//ConsolePrint("검기 받은 후 : %1.f, %1.f, %1.f\n", slashWave[other_id - Slash_start]->GetPosition().x, slashWave[other_id - Slash_start]->GetPosition().y, slashWave[other_id - Slash_start]->GetPosition().z);			
 			}
 		}
 		break;
@@ -737,7 +735,7 @@ void BattleScene::ProcessPacket(char * ptr)
 		obj_rot_y = my_packet->y;
 		obj_rot_z = my_packet->z;
 		
-		//printf(" %f, %f, %f\n", my_packet->m_Look.x, my_packet->m_Look.y, my_packet->m_Look.z);
+		//ConsolePrint(" %f, %f, %f\n", my_packet->m_Look.x, my_packet->m_Look.y, my_packet->m_Look.z);
 		if (other_id == m_pFramework->myid && m_pFramework->GetActivated()) {
 			m_pPlayer->SetVisible(true);
 			m_pPlayer->GetCamera()->Rotate(my_packet->y, my_packet->x, my_packet->z);
@@ -752,7 +750,7 @@ void BattleScene::ProcessPacket(char * ptr)
 
 			//m_pPlayer->SetLook(my_packet->m_Look);
 			
-			//printf("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			//ConsolePrint("Your [%d] : (%.1f, %.1f, %.1f)\n", my_packet->id, my_packet->position.x, my_packet->position.y, my_packet->position.z);
 		//	m_pPlayer->GetCamera()->Rotate(my_packet->y, my_packet->x, my_packet->z);
 			//m_pPlayer->Rotate(my_packet->y, my_packet->x, my_packet->z);
 			
@@ -773,9 +771,7 @@ void BattleScene::ProcessPacket(char * ptr)
 	}
 	case SC_Type::RemovePlayer:
 	{
-#ifdef USE_CONSOLE_WINDOW
-		printf("Remove\n");
-#endif
+		ConsolePrint("Remove Player\n");
 //		SCPacket_RemovePlayer *my_packet = reinterpret_cast<SCPacket_RemovePlayer *>(ptr);
 //		unsigned int other_id = my_packet->id;
 //		if (other_id == m_pFramework->myid) m_pPlayer->SetVisible(false);
@@ -784,9 +780,7 @@ void BattleScene::ProcessPacket(char * ptr)
 //				//m_ppOtherPlayers[other_id]->SetVisible(false);
 //				delete m_ppOtherPlayers[other_id];
 //				m_ppOtherPlayers[other_id] = nullptr;
-//#ifdef USE_CONSOLE_WINDOW
-//				printf("Player [%d] Remove from Screen\n", my_packet->id);
-//#endif
+//				ConsolePrint("Player [%d] Remove from Screen\n", my_packet->id);
 //			}
 //		}
 		
@@ -820,7 +814,7 @@ void BattleScene::ProcessPacket(char * ptr)
 		m_pFramework->cubeRot[id] = XMFLOAT3(my_packet->rotate.x, my_packet->rotate.y, my_packet->rotate.z);
 		if(cube_build==false)
 			cube_build = my_packet->build_cube;
-		//printf("%.1f, %.1f, %.1f\n", m_pFramework->cubePos[id].x, m_pFramework->cubePos[id].y, m_pFramework->cubePos[id].z);
+		//ConsolePrint("%.1f, %.1f, %.1f\n", m_pFramework->cubePos[id].x, m_pFramework->cubePos[id].y, m_pFramework->cubePos[id].z);
 		
 		break;
 	}
@@ -838,7 +832,7 @@ void BattleScene::ProcessPacket(char * ptr)
 		SCPacket_ProjectTile *my_packet = reinterpret_cast<SCPacket_ProjectTile *>(ptr);
 		if (my_packet->projectTile_type == ProjectTile::Card)
 		{
-			//printf("card (%.1f, %.1f, %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			//ConsolePrint("card (%.1f, %.1f, %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			unsigned short card_id = my_packet->id - Card_start;
 			m_pFramework->cardPos[card_id] = my_packet->position;
 			my_packet->position = m_pPlayer[m_pFramework->myid].GetPosition();
@@ -846,7 +840,7 @@ void BattleScene::ProcessPacket(char * ptr)
 		}
 		if (my_packet->projectTile_type == ProjectTile::Slash)
 		{
-			//printf("slash (%.1f, %.1f, %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			//ConsolePrint("slash (%.1f, %.1f, %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			unsigned short slash_id = my_packet->id - Slash_start;
 			m_pFramework->slashWavePos[slash_id] = my_packet->position;
 			my_packet->position = m_pPlayer[m_pFramework->myid].GetPosition();
@@ -854,7 +848,7 @@ void BattleScene::ProcessPacket(char * ptr)
 		}
 		if (my_packet->projectTile_type == ProjectTile::Arrow)
 		{
-			//printf("slash (%.1f, %.1f, %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
+			//ConsolePrint("slash (%.1f, %.1f, %.1f)\n", my_packet->position.x, my_packet->position.y, my_packet->position.z);
 			unsigned short arrow_id = my_packet->id - Arrow_start;
 			m_pFramework->arrowPos[arrow_id] = my_packet->position;
 			my_packet->position = m_pPlayer[m_pFramework->myid].GetPosition();
@@ -896,7 +890,7 @@ void BattleScene::ProcessPacket(char * ptr)
 	case SC_Type::GameTime:
 	{
 		SCPacket_GameTime *packet = reinterpret_cast<SCPacket_GameTime*>(ptr);
-		//printf("%d\n", packet->time);
+		//ConsolePrint("%d\n", packet->time);
 		break;
 	}
 	case SC_Type::CreateRoom:
@@ -905,9 +899,7 @@ void BattleScene::ProcessPacket(char * ptr)
 		break;
 	}
 	default:
-#ifdef USE_CONSOLE_WINDOW
-		printf("Unknown PACKET type [%d]\n", ptr[1]);
-#endif
+		ConsolePrint("Unknown PACKET type [%d]\n", ptr[1]);
 		break;
 	}
 	

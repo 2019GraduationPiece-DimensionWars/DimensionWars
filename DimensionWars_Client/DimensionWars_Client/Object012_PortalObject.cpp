@@ -7,7 +7,7 @@
 PortalObject::PortalObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, RuntimeFrameWork * pFramework)
 {
 	m_pFramework = pFramework;
-	SetChild(m_pFramework->GetResource()->GetPortalObject(), true);
+	//SetChild(m_pFramework->GetResource()->GetPortalObject(), true);
 
 	//m_pSkinnedAnimationController = new AnimationController(pd3dDevice, pd3dCommandList, 1, m_pFramework->GetResource()->GetPortalModel());
 	//m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);

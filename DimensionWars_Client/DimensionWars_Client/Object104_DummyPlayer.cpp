@@ -7,7 +7,7 @@
 #include "Object008_HeightmapTerrain.h"
 
 
-Object104_DummyPlayer::Object104_DummyPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, RuntimeFrameWork * pFramework)
+DummyPlayer::DummyPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, RuntimeFrameWork * pFramework)
 {
 	m_pFramework = pFramework;
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
@@ -26,11 +26,11 @@ Object104_DummyPlayer::Object104_DummyPlayer(ID3D12Device *pd3dDevice, ID3D12Gra
 }
 
 
-Object104_DummyPlayer::~Object104_DummyPlayer()
+DummyPlayer::~DummyPlayer()
 {
 }
 
-void Object104_DummyPlayer::OnPrepareRender()
+void DummyPlayer::OnPrepareRender()
 {
 	BasePlayer::OnPrepareRender();
 
@@ -38,7 +38,7 @@ void Object104_DummyPlayer::OnPrepareRender()
 	m_xmf4x4ToParent = Matrix4x4::Multiply(XMMatrixRotationX(-90.0f), m_xmf4x4ToParent);
 }
 
-BaseCamera * Object104_DummyPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
+BaseCamera * DummyPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 {
 	DWORD nCurrentCameraMode = (m_pCamera) ? m_pCamera->GetMode() : 0x00;
 	if (nCurrentCameraMode == nNewCameraMode) return(m_pCamera);
@@ -75,12 +75,12 @@ BaseCamera * Object104_DummyPlayer::ChangeCamera(DWORD nNewCameraMode, float fTi
 	return(m_pCamera);
 }
 
-void Object104_DummyPlayer::Update(float fTimeElapsed)
+void DummyPlayer::Update(float fTimeElapsed)
 {
 	BasePlayer::Update(fTimeElapsed);
 }
 
-void Object104_DummyPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
+void DummyPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 {
 	HeightMapTerrain *pTerrain = (HeightMapTerrain *)m_pPlayerUpdatedContext;
 	XMFLOAT3 xmf3Scale = pTerrain->GetScale();
@@ -98,7 +98,7 @@ void Object104_DummyPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 	}
 }
 
-void Object104_DummyPlayer::OnCameraUpdateCallback(float fTimeElapsed)
+void DummyPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 {
 	HeightMapTerrain *pTerrain = (HeightMapTerrain *)m_pCameraUpdatedContext;
 	XMFLOAT3 xmf3Scale = pTerrain->GetScale();
@@ -128,9 +128,9 @@ void Object104_DummyPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 	p3rdPersonCamera->SetLookAt(GetPosition());*/
 }
 
-void Object104_DummyPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
+void DummyPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed)
 {
-	DWORD dwDirection = 0;
+	char direction = 0;
 	
 	float cxDelta = 0.0f, cyDelta = 0.0f;
 	POINT ptCursorPos;
@@ -144,20 +144,20 @@ void Object104_DummyPlayer::ProcessInput(UCHAR * pKeysBuffer, float fTimeElapsed
 		m_ptOldCursorPos = ptCursorPos;
 	}
 
-	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f)) {
+	if ((direction != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f)) {
 		if (cxDelta || cyDelta)
 		{
 			//if (pKeysBuffer[VK_RBUTTON] & 0xF0) Rotate(cyDelta, 0.0f, -cxDelta);
 			// else
 			Rotate(cyDelta, cxDelta, 0.0f);
 		}
-		if (dwDirection) Move(dwDirection, 30.0f * fTimeElapsed, true);
+		if (direction) Move(direction, 30.0f * fTimeElapsed, true);
 	}
-	this->SetDirectionBit(dwDirection);
+	SetDirectionBit(direction);
 	Update(fTimeElapsed);
 }
 
-bool Object104_DummyPlayer::isCancleEnabled()
+bool DummyPlayer::isCancleEnabled()
 {
 	//if (m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_bEndTrigger &&
 	//	m_pSkinnedAnimationController->m_pAnimationSets->GetAnimationSet(state)->m_nType != ANIMATION_TYPE_LOOP) {

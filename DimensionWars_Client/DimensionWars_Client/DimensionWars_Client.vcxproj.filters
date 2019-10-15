@@ -55,6 +55,9 @@
     <Filter Include="Shader\Material">
       <UniqueIdentifier>{94b7c375-f0e4-4a5d-923a-6ebf8be73719}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\ProjectileObject">
+      <UniqueIdentifier>{7e3c4ba0-456a-4b21-b565-d2ba47997281}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -195,9 +198,6 @@
     <ClInclude Include="Mesh006_DiffuseCubeMesh.h">
       <Filter>Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Object007_DiffuseCubeObject.h">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="Object103_ElfArcherPlayer.h">
       <Filter>Object\PlayerObject</Filter>
     </ClInclude>
@@ -219,20 +219,8 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>FrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="Object009_ProjectileObject.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Object010_SlashWaveObject.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Object011_CardObject.h">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="Shader008_CubeShader.h">
       <Filter>Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Object012_PortalObject.h">
-      <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Object104_DummyPlayer.h">
       <Filter>Object\PlayerObject</Filter>
@@ -243,11 +231,26 @@
     <ClInclude Include="Mesh008_ScreenTextureMesh.h">
       <Filter>Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Object013_ScreenTextureObject.h">
+    <ClInclude Include="Object014_ScreenTextureObject.h">
       <Filter>Object\TextureObject</Filter>
     </ClInclude>
+    <ClInclude Include="Object009_ProjectileObject.h">
+      <Filter>Object\ProjectileObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object010_SlashWaveObject.h">
+      <Filter>Object\ProjectileObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object011_CardObject.h">
+      <Filter>Object\ProjectileObject</Filter>
+    </ClInclude>
     <ClInclude Include="Object013_ArrowObject.h">
-      <Filter>Object</Filter>
+      <Filter>Object\ProjectileObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object012_PortalObject.h">
+      <Filter>Object\EnvironmentObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object007_DiffuseCubeObject.h">
+      <Filter>Object\EnvironmentObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -374,9 +377,6 @@
     <ClCompile Include="Mesh006_DiffuseCubeMesh.cpp">
       <Filter>Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Object007_DiffuseCubeObject.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
     <ClCompile Include="Object103_ElfArcherPlayer.cpp">
       <Filter>Object\PlayerObject</Filter>
     </ClCompile>
@@ -398,20 +398,8 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>FrameWork</Filter>
     </ClCompile>
-    <ClCompile Include="Object009_ProjectileObject.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Object010_SlashWaveObject.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Object011_CardObject.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
     <ClCompile Include="Shader008_CubeShader.cpp">
       <Filter>Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Object012_PortalObject.cpp">
-      <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="Object104_DummyPlayer.cpp">
       <Filter>Object\PlayerObject</Filter>
@@ -422,11 +410,26 @@
     <ClCompile Include="Mesh008_ScreenTextureMesh.cpp">
       <Filter>Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Object013_ScreenTextureObject.cpp">
+    <ClCompile Include="Object014_ScreenTextureObject.cpp">
       <Filter>Object\TextureObject</Filter>
     </ClCompile>
+    <ClCompile Include="Object009_ProjectileObject.cpp">
+      <Filter>Object\ProjectileObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object010_SlashWaveObject.cpp">
+      <Filter>Object\ProjectileObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object011_CardObject.cpp">
+      <Filter>Object\ProjectileObject</Filter>
+    </ClCompile>
     <ClCompile Include="Object013_ArrowObject.cpp">
-      <Filter>Object</Filter>
+      <Filter>Object\ProjectileObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object012_PortalObject.cpp">
+      <Filter>Object\EnvironmentObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object007_DiffuseCubeObject.cpp">
+      <Filter>Object\EnvironmentObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

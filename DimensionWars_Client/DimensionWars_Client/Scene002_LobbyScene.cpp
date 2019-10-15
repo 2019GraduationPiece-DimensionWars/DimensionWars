@@ -9,7 +9,7 @@
 #include "Shader005_TextureRectangleShader.h"
 #include "Object104_DummyPlayer.h"
 #include "Shader007_TerrainShader.h"
-#include "Object013_ScreenTextureObject.h"
+#include "Object014_ScreenTextureObject.h"
 #include "Shader009_UIShader.h"
 
 
@@ -33,7 +33,7 @@ void LobbyScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandLi
 	m_lobbyObjects = new BaseObject*[m_nObjects2];
 	//
 
-	Object104_DummyPlayer *pPlayer = new Object104_DummyPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
+	DummyPlayer *pPlayer = new DummyPlayer(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, m_pTerrain, m_pFramework);
 	m_pPlayer = pPlayer;
 	
 	Texture *lobbyImage[n_texture];
@@ -214,7 +214,7 @@ void LobbyScene::ReleaseObjects()
 void LobbyScene::ReleaseUploadBuffers()
 {
 	if (m_lobbyObjects) {
-		for (int i = 0; i < m_nObjects2; ++i) {
+		for (unsigned int i = 0; i < m_nObjects2; ++i) {
 			m_lobbyObjects[i]->ReleaseUploadBuffers();
 		}
 	}
@@ -228,7 +228,7 @@ bool LobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 	switch (nMessageID)
 	{
 	case WM_LBUTTONDOWN:
-		//printf("%d, %d\n", pt.x, pt.y);
+		//ConsolePrint("%d, %d\n", pt.x, pt.y);
 		//좌측 화살표
 		//if (pt.x > 380 && pt.x < 445 && pt.y>650 && pt.y < 680)
 		//{
@@ -519,7 +519,7 @@ void LobbyScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera 
 	pCamera->UpdateShaderVariables(pd3dCommandList);
 
 	//if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
-	//printf("%d\n", m_pFramework->nBase_member[0]);
+	//ConsolePrint("%d\n", m_pFramework->nBase_member[0]);
 	if (m_lobbyObjects) {
 		
 		m_lobbyObjects[6]->Render(pd3dCommandList, pCamera); // 방 생성 
@@ -627,13 +627,10 @@ void LobbyScene::ProcessPacket(char * ptr)
 	{
 	case SC_Type::LoginOK:
 	{
-		//printf("login\n");
+		//ConsolePrint("login\n");
 		SCPacket_LoginOK *packet = reinterpret_cast<SCPacket_LoginOK *>(ptr);
 		m_pFramework->myid = packet->id;
-		
-#ifdef USE_CONSOLE_WINDOW
-		printf("LOGIN\n");
-#endif
+		ConsolePrint("LOGIN\n");
 		break;
 	}
 	case SC_Type::CreateRoom:
@@ -651,7 +648,7 @@ void LobbyScene::ProcessPacket(char * ptr)
 			m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
 			room_enter = false;
 		}
-		//printf("생성후 룸정보%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_room[m_pFramework->room_num - 1]);
+		//ConsolePrint("생성후 룸정보%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_room[m_pFramework->room_num - 1]);
 		break;
 	}
 	case SC_Type::EnterRoom:
@@ -668,8 +665,8 @@ void LobbyScene::ProcessPacket(char * ptr)
 			m_pFramework->ChangeScene(BaseScene::SceneTag::Room);
 			room_enter = false;
 		}
-		//printf("입장후 %d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_member[m_pFramework->room_num - 1]);
-		//printf("%d\n", packet->player_num);
+		//ConsolePrint("입장후 %d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_member[m_pFramework->room_num - 1]);
+		//ConsolePrint("%d\n", packet->player_num);
 		break;
 	}
 	case SC_Type::ExitRoom:
@@ -686,8 +683,8 @@ void LobbyScene::ProcessPacket(char * ptr)
 			m_pFramework->nBase_room[m_pFramework->room_num - 1] = packet->room_num;  // 룸번호
 			m_pFramework->nBase_member[m_pFramework->room_num - 1] = packet->player_num; // 룸에 있는 인원
 		}
-		printf("%d\n", m_pFramework->room_num);
-//		printf("%d, %d, %d\n", room_num, m_pFramework->nBase_room[room_num - 1], m_pFramework->nBase_member[room_num - 1]);
+		ConsolePrint("Room Number : %d\n", m_pFramework->room_num);
+//		ConsolePrint("%d, %d, %d\n", room_num, m_pFramework->nBase_room[room_num - 1], m_pFramework->nBase_member[room_num - 1]);
 		break;
 	}
 	
@@ -741,9 +738,7 @@ void LobbyScene::ProcessPacket(char * ptr)
 	}
 	
 	default:
-#ifdef USE_CONSOLE_WINDOW
-		printf("로비Unknown PACKET type [%d]\n", ptr[1]);
-#endif
+		ConsolePrint("Lobby Scene - Unknown PACKET type [%d]\n", ptr[1]);
 		break;
 	}
 }
@@ -761,7 +756,7 @@ void LobbyScene::SendRoomCreate()
 	roomPacket->check = room_enter;
 	m_pFramework->SendPacket(reinterpret_cast<char *>(roomPacket));
 	
-	//printf("생성전 룸정보%d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num]);
+	//ConsolePrint("생성전 룸정보%d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num]);
 }
 
 
@@ -779,7 +774,7 @@ void LobbyScene::SendEnterRoom()
 	roomPacket->scene = nCurrScene;
 	roomPacket->check = room_enter;
 	m_pFramework->SendPacket(reinterpret_cast<char *>(roomPacket));
-	//printf("입장전 룸정보%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_member[m_pFramework->room_num - 1]);
+	//ConsolePrint("입장전 룸정보%d, %d, %d\n", m_pFramework->room_num, m_pFramework->nBase_room[m_pFramework->room_num - 1], m_pFramework->nBase_member[m_pFramework->room_num - 1]);
 	
 }
 

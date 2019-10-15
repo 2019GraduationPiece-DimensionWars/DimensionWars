@@ -50,7 +50,7 @@ RuntimeFrameWork::RuntimeFrameWork()
 	m_pCamera = nullptr;
 	m_pPlayer = nullptr;
 //#ifdef USE_CONSOLE_WINDOW
-//	printf(" Server IP를 입력하세요. >> ");
+//	ConsolePrint(" Server IP를 입력하세요. >> ");
 //	scanf_s("%s", server_ip, unsigned int(sizeof(server_ip)));
 //#endif
 
@@ -642,7 +642,7 @@ LRESULT RuntimeFrameWork::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, 
 			Activate = true;
 			m_Timer.Start();
 		}
-		printf("현재 창 활성화 상태 : %d\n", Activate);
+		ConsolePrint("현재 창 활성화 상태 : %d\n", Activate);
 		break;
 
 	}
@@ -734,9 +734,7 @@ void RuntimeFrameWork::NetworkInitialize()
 	// 윈속 초기화
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
-#ifdef USE_CONSOLE_WINDOW
-		::puts("Error - Can't load 'winsock.dll' file");
-#endif
+		ConsolePrint("Error - Can't load 'winsock.dll' file");
 		::PostQuitMessage(0);
 	}
 
@@ -744,14 +742,10 @@ void RuntimeFrameWork::NetworkInitialize()
 	// client_sock = socket(AF_INET, SOCK_STREAM, 0);
 	mySocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0);//WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	if (mySocket == INVALID_SOCKET) {
-#ifdef USE_CONSOLE_WINDOW
-		::printf("Error - Invalid socket\n");
-#endif
+		::ConsolePrint("Error - Invalid socket\n");
 		::PostQuitMessage(0);
 	}
-#ifdef USE_CONSOLE_WINDOW
-	printf("Client : %d\n", static_cast<int>(mySocket));
-#endif
+	ConsolePrint("Client : %d\n", static_cast<int>(mySocket));
 
 	// 서버정보 객체설정	
 	SOCKADDR_IN serveraddr;
@@ -764,12 +758,11 @@ void RuntimeFrameWork::NetworkInitialize()
 	// connect()
 	// if (connect(client_sock, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) == SOCKET_ERROR) {
 	if (WSAConnect(mySocket, (struct sockaddr *)&serveraddr, sizeof(serveraddr), NULL, NULL, NULL, NULL) == SOCKET_ERROR) {
-#ifdef USE_CONSOLE_WINDOW
-		printf("%s IP Error - Fail to connect\n", server_ip);
-#endif
+		ConsolePrint("%s IP Error - Fail to connect\n", server_ip);
 		closesocket(mySocket);
 		WSACleanup();
 		::PostQuitMessage(0);
+		return;
 	}
 
 	WSAAsyncSelect(mySocket, m_hWnd, WM_SOCKET, FD_CLOSE | FD_READ); // m_hWnd 초기화도 안하고 생성자에서 이걸 부르고 있었으니 당연히 안되지...
@@ -778,9 +771,8 @@ void RuntimeFrameWork::NetworkInitialize()
 	send_wsabuf.len = BUFSIZE;
 	recv_wsabuf.buf = recv_buffer;
 	recv_wsabuf.len = BUFSIZE;
-#ifdef USE_CONSOLE_WINDOW
-	puts("Server Connected");
-#endif
+
+	ConsolePrint("Server Connected");
 
 	//ReadPacket((SOCKET)mySocket);
 }
@@ -793,9 +785,7 @@ void RuntimeFrameWork::ReadPacket(SOCKET sock)
 	int ret = WSARecv(sock, &recv_wsabuf, 1, &iobyte, &ioflag, NULL, NULL);
 	if (ret) {
 		int err_code = WSAGetLastError();
-#ifdef USE_CONSOLE_WINDOW
-		printf("Recv Error [%d]\n", err_code);
-#endif
+		ConsolePrint("Recv Error [%d]\n", err_code);
 	}
 
 	BYTE *ptr = reinterpret_cast<BYTE *>(recv_buffer);
@@ -825,7 +815,5 @@ void RuntimeFrameWork::SendPacket(char * clientToServerPacket)
 	DWORD ioByte = 0;
 
 	int nByteCheck = WSASend(mySocket, &send_wsabuf, 1, &ioByte, 0, NULL, NULL);
-#ifdef USE_CONSOLE_WINDOW
-	if (nByteCheck) printf("Error while sending packet [%d]", WSAGetLastError());
-#endif
+	if (nByteCheck) ConsolePrint("Error while sending packet [%d]", WSAGetLastError());
 }

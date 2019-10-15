@@ -453,3 +453,28 @@ inline XMFLOAT4 random_color()
 #endif
 
 #endif
+
+/*
+USE_CONSOLE_WINDOW가 define되지 않았다면 아무 일도 하지 않고 -1을 반환하는 함수. 그 외에는 printf와 동일한 기능을 수행한다.
+printf는 system Call 때문에 성능 이슈가 발생하기 쉬우므로, 변수 출력이나 임의시점 출력 등의 디버깅 이외에 실제 게임에서는 사용을 배제해야 한다.
+
+이 함수를 printf 대신 사용하면 좋은 점은?
+USE_CONSOLE_WINDOW의 define을 제거(Release로 바꾼다던가)할 경우
+깔끔하게 -1을 return할 뿐인 아무 일도 하지 않는 함수로 변신한다.
+실제 게임을 실행하기 직전 일일이 printf를 지우고 다닐 필요가 전혀 없다.
+
+애초에 Debug 콘솔창을 사용하면 굳이 이런 함수를 쓰지 않아도 되겠지만,
+Debug를 하지 않을 때에도 콘솔창 출력으로 무언가를 테스트하고 싶을 수도 있으니까...
+*/
+__inline int ConsolePrint(_In_z_ _Printf_format_string_ char const* const _Format, ...)
+{
+#ifdef USE_CONSOLE_WINDOW
+	va_list ArgList;
+	__crt_va_start(ArgList, _Format);
+	int Result = _vfprintf_l(stdout, _Format, NULL, ArgList);
+	__crt_va_end(ArgList);
+	return Result;
+#else
+	return -1;
+#endif
+}
