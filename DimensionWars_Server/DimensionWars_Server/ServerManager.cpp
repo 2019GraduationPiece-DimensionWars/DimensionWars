@@ -100,7 +100,7 @@ void ServerManager::AcceptThread()
 		}
 
 		unsigned short new_id = GetNewID();
-	
+
 		//update_check += 1;
 		user += 1;
 		if (user > 1)
@@ -113,14 +113,14 @@ void ServerManager::AcceptThread()
 		objects[new_id].over.dataBuffer.len = BUFSIZE;
 		objects[new_id].over.dataBuffer.buf = objects[clientSocket].over.messageBuffer;
 		objects[new_id].over.type = OVER_EX::Type::RECV;
-		
+
 		std::random_device rd;
 		std::default_random_engine dre(rd());
 		std::uniform_real_distribution<> startPos(0.0, 0.0);
 		std::uniform_int_distribution<> cinfo(0, 1);
 
 		objects[new_id].position = { static_cast<float>(startPos(dre)), 0, static_cast<float>(startPos(dre)) };
-	//	objects[new_id].character_info = cinfo(dre);
+		//	objects[new_id].character_info = cinfo(dre);
 		objects[new_id].viewlist.clear();
 		objects[new_id].prev_size = 0;
 		ZeroMemory(&objects[new_id].over.overlapped, sizeof(WSAOVERLAPPED));	// 초기화 안하면 제대로 오버랩I/O가 동작 안함
@@ -160,26 +160,26 @@ void ServerManager::AcceptThread()
 		// 이거는 맵정보니까  룸에서 하자
 		/*for (int i = Cube_start; i < Cube_start + 50; ++i)
 		{
-			SendMapInfoPacket(new_id, i);
+		SendMapInfoPacket(new_id, i);
 		}
 
 		for (int i = Potal_start; i < Potal_end; ++i)
 		{
-			SendPotalInfoPacket(new_id, i);
+		SendPotalInfoPacket(new_id, i);
 		}
 
 
 		for (int i = Card_start; i < Card_end; ++i)
 		{
-			objects[i].position = XMFLOAT3(100000, 0, 100000);
-			SendCardPaket(new_id, i);
+		objects[i].position = XMFLOAT3(100000, 0, 100000);
+		SendCardPaket(new_id, i);
 
 		}
 
 		for (int i = Slash_start; i < Slash_end; ++i)
 		{
-			objects[i].position = XMFLOAT3(-100000, 0, 100000);
-			SendSlashPaket(new_id, i);
+		objects[i].position = XMFLOAT3(-100000, 0, 100000);
+		SendSlashPaket(new_id, i);
 		}*/
 
 		for (int i = 0; i < MAX_PLAYER; ++i)
@@ -257,15 +257,19 @@ void ServerManager::WorkerThread()
 		break;
 		case OVER_EX::Type::EVENT:
 		{
-			
+
 			TimerEvent* pEvent = reinterpret_cast<TimerEvent*>(lpover_ex->messageBuffer);
 			if (pEvent->command == TimerEvent::Command::Update) {
-				if (user > 1)
-				{
+				//if (user > 1)
+				//{
 					Update(key);
-				}
+					//GameTime();
+				//}
+					
+				
 			}
 			
+
 			delete lpover_ex;
 		}
 		break;
@@ -366,8 +370,8 @@ void ServerManager::ObjectInitialize()
 		}
 	}
 
-	
-	
+
+
 	// 맨아래
 	objects[Potal_start].position = XMFLOAT3(0, 50, 0);
 	objects[Potal_start + 1].position = XMFLOAT3(2500, 50, 0);
@@ -377,17 +381,17 @@ void ServerManager::ObjectInitialize()
 
 	/*for (int i = 5; i < 30; ++i)
 	{
-		objects[Potal_start + i].position = XMFLOAT3(objects[2 * i + 1].position.x, objects[2 * i + 1].position.y, objects[2 * i + 1].position.z);
+	objects[Potal_start + i].position = XMFLOAT3(objects[2 * i + 1].position.x, objects[2 * i + 1].position.y, objects[2 * i + 1].position.z);
 	}*/
 	// 300큐브 포탈 3개
-	objects[Potal_start + 5].position = XMFLOAT3(objects[11].position.x, objects[11].position.y+200, objects[11].position.z);
-	objects[Potal_start + 6].position = XMFLOAT3(objects[13].position.x, objects[13].position.y+200, objects[13].position.z);
-	objects[Potal_start + 7].position = XMFLOAT3(objects[15].position.x, objects[15].position.y+200, objects[15].position.z);
-	
+	objects[Potal_start + 5].position = XMFLOAT3(objects[11].position.x, objects[11].position.y + 200, objects[11].position.z);
+	objects[Potal_start + 6].position = XMFLOAT3(objects[13].position.x, objects[13].position.y + 200, objects[13].position.z);
+	objects[Potal_start + 7].position = XMFLOAT3(objects[15].position.x, objects[15].position.y + 200, objects[15].position.z);
+
 	//400큐브 포탈5개
 	for (int i = 8; i < 13; ++i)
 	{
-		objects[Potal_start + i].position = XMFLOAT3(objects[2 * i + 1].position.x, objects[2 * i + 1].position.y+250, objects[2 * i + 1].position.z);
+		objects[Potal_start + i].position = XMFLOAT3(objects[2 * i + 1].position.x, objects[2 * i + 1].position.y + 250, objects[2 * i + 1].position.z);
 	}
 	// 500큐브 포탈 10개
 	for (int i = 13; i < 23; ++i)
@@ -406,7 +410,7 @@ void ServerManager::ObjectInitialize()
 	}
 
 
-	objects[Reaper_scy-1].position = XMFLOAT3(0,0,-3000);
+	objects[Reaper_scy - 1].position = XMFLOAT3(0, 0, -3000);
 	for (int i = Card_start; i < Slash_end; ++i)
 	{
 		objects[i].tile_life = false;
@@ -470,8 +474,8 @@ void ServerManager::SendPutPlayerPacket(unsigned short int to, unsigned short in
 	packet.type = SC_Type::PutPlayer;
 	packet.position = objects[obj].position;
 	packet.character_type = objects[obj].character_info;
-	packet.hp = objects[obj].hp;
-	packet.sp = objects[obj].sp;
+	packet.hp = MAX_HP;
+	packet.sp = MAX_SP;
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
@@ -589,7 +593,7 @@ void ServerManager::SendNattackPaket(unsigned short to, unsigned short obj)
 	packet.size = sizeof(packet);
 	packet.type = SC_Type::Attack;
 	packet.position = XMFLOAT3(objects[obj].position.x, objects[obj].position.y, objects[obj].position.z);
-	
+
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
@@ -691,11 +695,21 @@ void ServerManager::SendGameStart(unsigned short to)
 	SendPacket(to, reinterpret_cast<char *>(&packet));
 }
 
+void ServerManager::SendGameOverPaket(unsigned short to, unsigned short obj)
+{
+	SCPacket_GameOver packet;
+	packet.id = obj;
+	packet.size = sizeof(packet);
+	packet.type = SC_Type::GameOver;
+	packet.death_count = objects[obj].death_count;
+	SendPacket(to, reinterpret_cast<char *>(&packet));
+}
+
 void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 {
-	
+
 	CSPacket_Move * packet = reinterpret_cast<CSPacket_Move *>(buf);
-	CSPacket_Rotate *rpacket= reinterpret_cast<CSPacket_Rotate *>(buf);
+	CSPacket_Rotate *rpacket = reinterpret_cast<CSPacket_Rotate *>(buf);
 	XMFLOAT3 xmf3Shift = objects[id].position;
 	/*objects[id].m_Right = rpacket->m_Right;
 	objects[id].m_Up = rpacket->m_Up;
@@ -709,7 +723,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 			if (false == objects[i].connected) continue;
 			if (i == id) continue; // 나 자신에게 나를 알려줄 필요는 없다.
 			else {
-				
+
 				SendOtherCharacterPacket(i, id);
 			}
 		}
@@ -748,7 +762,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 
 				if (character_type == 0)
 					xmf3Shift = Vector3::Add(xmf3Shift, objects[id].m_Up, +fDistance * 3);
-				else 
+				else
 				{
 					//jump_check == true;
 					xmf3Shift = Vector3::Add(xmf3Shift, objects[id].m_Up, 200);
@@ -769,18 +783,18 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	case CS_Type::Rotate:
 	{
 		CSPacket_Rotate *packet = reinterpret_cast<CSPacket_Rotate *>(buf);
-		
+
 		objects[id].m_Right = packet->m_Right;
 		objects[id].m_Up = packet->m_Up;
 		objects[id].m_Look = packet->m_Look;
-		
+
 		if (packet->x != 0.0f)
 		{
 			m_fPitch += packet->x;
 			//if (m_fPitch > +89.0f) { packet->x -= (m_fPitch - 89.0f); m_fPitch = +89.0f; }
 			//if (m_fPitch < -89.0f) { packet->x -= (m_fPitch + 89.0f); m_fPitch = -89.0f; }
 		}
-		if (packet->y != 0.0f) 
+		if (packet->y != 0.0f)
 		{
 			m_fYaw += packet->y;
 			//if (m_fYaw > 90.0f) m_fYaw -= 90.0f;
@@ -833,7 +847,10 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 			if (packet->attack_type == ElfArcher::First_Shot)
 			{
 				objects[Arrow_start + arrow_num].tile_life = true;
-				objects[Arrow_start + arrow_num].position = objects[id].position;
+				objects[Arrow_start + arrow_num].position.x = objects[id].position.x + 10;
+				objects[Arrow_start + arrow_num].position.y = objects[id].position.y + 80;
+				objects[Arrow_start + arrow_num].position.z = objects[id].position.z + 20;
+				objects[id].my_attack = true;
 				++arrow_num;
 			}
 		}
@@ -843,7 +860,10 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 			if (packet->attack_type == Gambler::Idle_Attack)
 			{
 				objects[Card_start + card_num].tile_life = true;
-				objects[Card_start + card_num].position = objects[id].position;
+				objects[Card_start + card_num].position.x = objects[id].position.x - 10;
+				objects[Card_start + card_num].position.y = objects[id].position.y + 80;
+				objects[Card_start + card_num].position.z = objects[id].position.z + 10;
+				objects[id].my_attack = true;
 				card_num++;
 
 			}
@@ -853,9 +873,11 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 			if (packet->attack_type == GrimReaper::Slash_Wave)
 			{
 				objects[Slash_start + slash_num].tile_life = true;
-				objects[Slash_start + slash_num].position = objects[id].position;
+				objects[Slash_start + slash_num].position.x = objects[id].position.x;
+				objects[Slash_start + slash_num].position.y = objects[id].position.y + 50;
+				objects[Slash_start + slash_num].position.z = objects[id].position.z + 50;
 				//objects[Slash_start + slash_num].tile_life = true;
-
+				objects[id].my_attack = true;
 				slash_num++;
 				objects[id].sp -= 10;
 				//printf("%f", objects[id].sp);
@@ -871,14 +893,14 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 	case CS_Type::Room_Create:
 	{
 		CSPacket_RoomCreate *packet = reinterpret_cast<CSPacket_RoomCreate*>(buf);
-		
+
 		room_num = packet->room_num + 1;
 		player_num = packet->player_num;
 		objects[id].change_check = packet->check;
 		scene = packet->scene;
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (objects[i].connected == true) {
-					SendRoomPacket(i, id);
+				SendRoomPacket(i, id);
 			}
 		}
 
@@ -904,7 +926,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 				SendRoomEnterPacket(id, i);
 			}
 		}
-		
+
 		break;
 	}
 	case CS_Type::Room_Exit:
@@ -916,16 +938,16 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 			member_num = 0;
 			room_num = packet->room_num - 1;
 		}
-		
-		
+
+
 		if (room_num <= 0)
 		{
 			room_num = 0;
 		}
-		
+
 		objects[id].change_check = packet->check;
 		for (int i = 0; i < MAX_PLAYER; ++i) {
-			if (objects[i].connected == true){
+			if (objects[i].connected == true) {
 				SendRoomExitPacket(i, id);
 			}
 		}
@@ -940,13 +962,13 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		objects[id].character_info = packet->c_type;
 		character_type = packet->c_type;
 		//unsigned short id = packet->id;
-		
+
 		//룸
 		if (scene == 3)
 		{
 			//SendOtherCharacterPacket(id, id); // 나 자신에게 미리 알려준다.
 
-			
+
 			for (int i = 0; i < MAX_PLAYER; ++i) {
 				if (false == objects[i].connected) continue;
 				if (i == id) continue; // 나 자신에게 나를 알려줄 필요는 없다.
@@ -969,7 +991,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		// 배틀 
 		if (scene == 4)
 		{
-			
+
 			SendPutPlayerPacket(id, id); // 나 자신에게 미리 알려준다.
 
 			for (int i = 0; i < MAX_PLAYER; ++i) {
@@ -1021,10 +1043,10 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 				objects[i].position = XMFLOAT3(-100000, 0, 100000);
 				SendArrowPaket(id, i);
 			}
-			SendNattackPaket(id, Reaper_scy-1);// 사신 낫 
-			
-			
-			
+			SendNattackPaket(id, Reaper_scy - 1);// 사신 낫 
+
+
+
 
 		}
 		break;
@@ -1038,7 +1060,7 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		else
 			--ready_count;
 
-		if (ready_count==1|| ready_count == 4|| ready_count == 6)
+		if (ready_count == 1 || ready_count == 4 || ready_count == 6)
 		{
 			for (int i = 0; i < MAX_PLAYER; ++i)
 			{
@@ -1048,8 +1070,8 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 				}
 			}
 		}
-		
-		
+
+
 
 		break;
 	}
@@ -1057,81 +1079,81 @@ void ServerManager::ProcessPacket(unsigned short int id, char * buf)
 		serverPrint("Unknown Packet Type Error\n");
 		while (true);
 	}
-	
+
 	if (objects[id].col_check)
 	{
 		/*if (packet->dir & DIR_FORWARD) {
-			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, -fDistance);
-			check_f = false;
+		xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, -fDistance);
+		check_f = false;
 		}
 		if (packet->dir & DIR_BACKWARD)
 		{
-			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, +fDistance);
+		xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, +fDistance);
 
 		}*/
 		/*if (packet->dir & DIR_RIGHT&&check_r) {
-			
-			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, -fDistance);
+
+		xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, -fDistance);
 
 		}
 		if (packet->dir & DIR_LEFT&&check_l) {
-			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, +fDistance);
+		xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, +fDistance);
 
 		}
 		if (packet->dir & DIR_UP&&check_u) {
-			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, -fDistance);
+		xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, -fDistance);
 
 		}*/
 		/*if (packet->dir & DIR_FORWARD&&check_b == false && check_r == false && check_l == false && check_u == false && check_d == false) {
-			check_f = true;
-			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, -fDistance);
+		check_f = true;
+		xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, -fDistance);
 
 		}
 		if (packet->dir & DIR_BACKWARD&&check_f == false && check_r == false && check_l == false && check_u == false && check_d == false)
 		{
-			check_b = true;
-			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, +fDistance);
+		check_b = true;
+		xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Look, +fDistance);
 
 		}
 		if (packet->dir & DIR_RIGHT&&check_f == false && check_b == false && check_l == false && check_u == false && check_d == false) {
-			check_r = true;
-			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, -fDistance);
+		check_r = true;
+		xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, -fDistance);
 
 		}
 		if (packet->dir & DIR_LEFT&&check_f == false && check_b == false && check_r == false && check_u == false && check_d == false) {
-			check_l = true;
-			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, +fDistance);
+		check_l = true;
+		xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Right, +fDistance);
 
 		}
 		if (packet->dir & DIR_UP&&check_f == false && check_b == false && check_r == false && check_l == false && check_d == false) {
-			check_u = true;
-			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, -fDistance);
+		check_u = true;
+		xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, -fDistance);
 
 		}*/
 		/*if (packet->dir & DIR_DOWN) {
 
-			xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, +fDistance);
+		xmf3Shift = Vector3::Add(xmf3Shift, packet->m_Up, +fDistance);
 
 		}*/
 		/*if (packet->dir & DIR_FORWARD) {
 
-			xmf3Shift = Vector3::Add(xmf3Shift, objects[id].m_Look, -fDistance);
+		xmf3Shift = Vector3::Add(xmf3Shift, objects[id].m_Look, -fDistance);
 
 		}
 		if (packet->dir & DIR_BACKWARD)
 		{
 
-			xmf3Shift = Vector3::Add(xmf3Shift, objects[id].m_Look, +fDistance);
+		xmf3Shift = Vector3::Add(xmf3Shift, objects[id].m_Look, +fDistance);
 
 		}
 		if (packet->dir & DIR_RIGHT) {
 
-			xmf3Shift = Vector3::Add(xmf3Shift, objects[id].m_Right, -fDistance);
+		xmf3Shift = Vector3::Add(xmf3Shift, objects[id].m_Right, -fDistance);
 
 		}
 		if (packet->dir & DIR_LEFT) {
 
-			xmf3Shift = Vector3::Add(xmf3Shift, objects[id].m_Right, +fDistance);
+		xmf3Shift = Vector3::Add(xmf3Shift, objects[id].m_Right, +fDistance);
 
 		}*/
 		if (packet->dir & DIR_UP) {
@@ -1250,12 +1272,12 @@ void ServerManager::Collision()
 	{
 		if (objects[i].character_info == 1)   // 도박사
 		{
-			objects[i].colbox.Center = XMFLOAT3(objects[i].position.x, objects[i].position.y+80, objects[i].position.z);
+			objects[i].colbox.Center = XMFLOAT3(objects[i].position.x, objects[i].position.y + 80, objects[i].position.z);
 			objects[i].colbox.Extents = XMFLOAT3(50, 100, 50);
 		}
 		else if (objects[i].character_info == 0) // 사신
 		{
-			objects[i].colbox.Center = XMFLOAT3(objects[i].position.x, objects[i].position.y+40, objects[i].position.z);
+			objects[i].colbox.Center = XMFLOAT3(objects[i].position.x, objects[i].position.y + 40, objects[i].position.z);
 			objects[i].colbox.Extents = XMFLOAT3(60, 55, 60);
 		}
 		else if (objects[i].character_info == 2) // 엘프
@@ -1264,7 +1286,7 @@ void ServerManager::Collision()
 			objects[i].colbox.Extents = XMFLOAT3(60, 75, 60);
 		}
 	}
-	objects[Reaper_scy - 1].colbox.Center = XMFLOAT3(objects[Reaper_scy - 1].position.x, objects[Reaper_scy - 1].position.y+80, objects[Reaper_scy - 1].position.z+10);
+	objects[Reaper_scy - 1].colbox.Center = XMFLOAT3(objects[Reaper_scy - 1].position.x, objects[Reaper_scy - 1].position.y + 80, objects[Reaper_scy - 1].position.z + 10);
 	objects[Reaper_scy - 1].colbox.Extents = XMFLOAT3(80, 10, 10);
 	objects[Reaper_scy - 1].colbox.Orientation = XMFLOAT4(0, 0, 1, 1);
 	/*for (int i = Card_start; i < Card_end; ++i)
@@ -1278,21 +1300,21 @@ void ServerManager::Collision()
 		objects[i].colbox.Extents = XMFLOAT3(150, 150, 150);
 	}
 	for (int i = Cube_start + 5; i < Cube_start + 15; ++i) {
-		objects[i].colbox.Extents = XMFLOAT3(200,200,200);
+		objects[i].colbox.Extents = XMFLOAT3(200, 200, 200);
 	}
 	for (int i = Cube_start + 15; i < Cube_start + 35; ++i) {
-		objects[i].colbox.Extents = XMFLOAT3(250,250,250);
+		objects[i].colbox.Extents = XMFLOAT3(250, 250, 250);
 	}
 	/*objects[Cube_start + 31].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 200, MAX_CUBE_SIZE - 200, MAX_CUBE_SIZE - 200);
 	objects[Cube_start + 32].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 400, MAX_CUBE_SIZE - 400, MAX_CUBE_SIZE - 400);
 	objects[Cube_start + 33].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 400, MAX_CUBE_SIZE - 400, MAX_CUBE_SIZE - 400);
 	objects[Cube_start + 34].colbox.Extents = XMFLOAT3(MAX_CUBE_SIZE - 400, MAX_CUBE_SIZE - 400, MAX_CUBE_SIZE - 400);
-*/
+	*/
 	for (int i = Cube_start + 35; i < Cube_start + 45; ++i) {
-		objects[i].colbox.Extents = XMFLOAT3(300,300,300);
+		objects[i].colbox.Extents = XMFLOAT3(300, 300, 300);
 	}
 	for (int i = Cube_start + 45; i < Cube_start + 50; ++i) {
-		objects[i].colbox.Extents = XMFLOAT3(350,350,350);
+		objects[i].colbox.Extents = XMFLOAT3(350, 350, 350);
 	}
 
 	for (int i = Cube_start; i < Cube_start + 50; ++i)
@@ -1305,7 +1327,7 @@ void ServerManager::Collision()
 		{
 			if (objects[j].connected)
 			{
-				
+
 				if (objects[i].colbox.Intersects(objects[j].colbox)) {
 					objects[j].col_check = true;
 					//printf("충돌!\n");
@@ -1314,7 +1336,7 @@ void ServerManager::Collision()
 				}
 				else
 				{
-					
+
 				}
 			}
 		}
@@ -1334,9 +1356,9 @@ void ServerManager::AddTimerEvent(unsigned int id, TimerEvent::Command cmd, doub
 void ServerManager::Update(unsigned short int id)
 {
 	
-	/*if (scene == 4)
-	{
-		
+	//if (scene == 4)
+	//{
+
 		Game_Timer += 0.01f;
 		if (Game_Timer >= 1.0f)
 		{
@@ -1344,8 +1366,8 @@ void ServerManager::Update(unsigned short int id)
 			Game_Timer = 0;
 			SendGameTimePaket(id);
 		}
-	}*/
-	
+	//}
+
 	objects[id].col_check = false;
 	Collision();
 	if (!objects[id].col_check && objects[id].connected == true)
@@ -1355,10 +1377,10 @@ void ServerManager::Update(unsigned short int id)
 	{
 		objects[id].position.y = 0;
 	}
-	
-	
 
-	
+
+
+
 
 	/*if (jump_check == true)
 	{
@@ -1375,10 +1397,10 @@ void ServerManager::Update(unsigned short int id)
 
 
 	// 플레이어 충돌
-	
+
 	if (scene == 4)
 	{
-		
+
 		for (int i = 0; i < MAX_PLAYER; ++i)
 		{
 			if (objects[id].connected&&objects[i].connected&&objects[i].colbox.Intersects(objects[id].colbox) && id != i)
@@ -1387,41 +1409,43 @@ void ServerManager::Update(unsigned short int id)
 			}
 			if (hitcheck&&objects[i].connected&&objects[i].character_info != 0 && objects[i].colbox.Intersects(objects[Reaper_scy - 1].colbox))
 			{
-				
+
 				objects[i].hp -= 1.0f;
 				//objects[Reaper_scy - 1].position = XMFLOAT3(50000, 0, 20);
 				printf("%f\n", objects[i].hp);
-				SendHitPaket(i,id);
-			
+				SendHitPaket(i, id);
+
 			}
 		}
-		
+
 	}
-	
+
 	if (scene == 4)
 	{
 		// 도박사 평타 
-		for (int k = 0; k < MAX_PLAYER; ++k)
+		
+		for (int i = Card_start; i < Card_end; ++i)
 		{
-			for (int i = Card_start; i < Card_end; ++i)
+			if (objects[i].tile_life == true && objects[id].connected == true)
 			{
-				if (objects[i].tile_life == true&&objects[k].connected==true)
+				//printf("%d\n", id);
+				card_time += 0.01f;
+				if(id==0)
+					objects[i].position = Vector3::Add(objects[i].position, objects[0].m_Look, 10.0f);
+				if(id==1)
+					objects[i].position = Vector3::Add(objects[i].position, objects[1].m_Look, 10.0f);
+				if (card_time > 1.0f)
 				{
-					card_time += 0.01f;
-					objects[i].position = Vector3::Add(objects[i].position, objects[k].m_Look, 10.0f);
-					if (card_time > 1.0f)
-					{
-						objects[i].tile_life = false;
-						card_time = 0.0f;
-					}
-					SendPositionPacket(id, i);
+					objects[i].position = XMFLOAT3(10000, 0, -20000);
+					objects[id].my_attack = false;
+					objects[i].tile_life = false;
+					card_time = 0.0f;
 				}
+				SendPositionPacket(id, i);
 			}
 		}
+		
 		// 사신 검기 날리기
-		//printf("%f, %f, %f\n", objects[id].m_Look.x, objects[id].m_Look.y, objects[id].m_Look.z);
-
-
 		for (int i = Slash_start; i < Slash_end; ++i)
 		{
 			if (objects[i].tile_life == true)
@@ -1431,6 +1455,8 @@ void ServerManager::Update(unsigned short int id)
 				//printf("%1.f, %1.f, %1.f\n", objects[i].position.x, objects[i].position.y,objects[i].position.z);
 				if (slash_time > 1.0f)
 				{
+					objects[i].position = XMFLOAT3(10000, 0, -20000);
+					objects[id].my_attack = false;
 					objects[i].tile_life = false;
 					slash_time = 0.0f;
 				}
@@ -1448,6 +1474,8 @@ void ServerManager::Update(unsigned short int id)
 				//printf("%1.f, %1.f, %1.f\n", objects[i].position.x, objects[i].position.y,objects[i].position.z);
 				if (arrow_time > 1.0f)
 				{
+					objects[i].position = XMFLOAT3(10000, 0, -20000);
+					objects[id].my_attack = false;
 					objects[i].tile_life = false;
 					arrow_time = 0.0f;
 				}
@@ -1473,18 +1501,28 @@ void ServerManager::Update(unsigned short int id)
 				objects[i].position = XMFLOAT3(0, -400000, 0);
 			}
 		}
-		for (int k = 0; k < MAX_PLAYER; ++k)
+		if (objects[id].connected&&objects[i].tile_life&&objects[i].colbox.Intersects(objects[id].colbox) && objects[id].my_attack == false)
 		{
-			if (objects[k].connected&&objects[id].connected&&k != id&&objects[i].tile_life&&objects[i].colbox.Intersects(objects[k].colbox))
+			objects[id].hp -= 1;
+			objects[i].position = XMFLOAT3(10000, 0, -20000);
+
+			for (int k = 0; k < MAX_PLAYER; ++k)
 			{
+				if (objects[k].connected&&k != id)
+					SendHitPaket(k, id);
+			}
+			if (objects[id].hp <= 0)
+			{
+				objects[id].death_count += 1;
+				objects[id].position = XMFLOAT3(0, 6000, 0);
+				objects[id].hp = MAX_HP;
 
-				objects[k].hp -= 2;
-				SendHitPaket(k, id);
-
-				if (objects[k].hp <= 0) {
-					objects[k].position = XMFLOAT3(0, 6000, 0);
-					objects[k].hp = 100;
+				for (int k = 0; k < MAX_PLAYER; ++k)
+				{
+					if (objects[k].connected&&k != id)
+						SendGameOverPaket(k, id);
 				}
+				printf("쥬금 ㅠㅠ!\n");
 			}
 		}
 	}
@@ -1493,7 +1531,7 @@ void ServerManager::Update(unsigned short int id)
 	for (int i = Slash_start; i < Slash_end; ++i)
 	{
 		objects[i].colbox.Center = XMFLOAT3(objects[i].position.x, objects[i].position.y, objects[i].position.z);
-		objects[i].colbox.Extents = XMFLOAT3(150, 50, 50);
+		objects[i].colbox.Extents = XMFLOAT3(150, 20, 40);
 
 		for (int j = Cube_start; j < Cube_start + 50; ++j)
 		{
@@ -1506,35 +1544,41 @@ void ServerManager::Update(unsigned short int id)
 			}
 		}
 
-		for (int k = 0; k < MAX_PLAYER; ++k)
+		if (objects[id].connected&&objects[i].tile_life&&objects[i].colbox.Intersects(objects[id].colbox)&&objects[id].my_attack==false)
 		{
-			if (objects[k].connected&&objects[id].connected&&k != id&&objects[i].tile_life&&objects[i].colbox.Intersects(objects[k].colbox))
-			{
-				
-				objects[k].hp -= 2;
-				/*if(character_type=1)
-					ani_state = Gambler::OnHit;
-				else if(character_type=0)
-					ani_state = GrimReaper::OnHit;*/
-				SendHitPaket(k, id);
-				//printf("검기유저충돌 %1.f!\n", objects[k].hp);
-				if (objects[k].hp <= 0)
-				{
-					objects[k].position = XMFLOAT3(0, 6000, 0);
-					objects[k].hp = 100;
-				}
+			objects[id].hp -= 1;
+			objects[i].position = XMFLOAT3(10000, 0, -20000);
 
+			for (int k = 0; k < MAX_PLAYER; ++k)
+			{
+				if(objects[k].connected&&k!=id)
+					SendHitPaket(k, id);
+			}
+			if (objects[id].hp <= 0)
+			{
+				objects[id].death_count += 1;
+				objects[id].position = XMFLOAT3(0, 6000, 0);
+				objects[id].hp = MAX_HP;
+				
+				for (int k = 0; k < MAX_PLAYER; ++k)
+				{
+					if (objects[k].connected&&k != id)
+						SendGameOverPaket(k, id);
+				}
+				printf("쥬금 ㅠㅠ!\n");
 			}
 		}
+
+		
 	}
 
-	
+
 	for (int i = Potal_start; i < Potal_end; ++i)
 	{
 		objects[i].colbox.Center = XMFLOAT3(objects[i].position.x, objects[i].position.y, objects[i].position.z);
 		objects[i].colbox.Extents = XMFLOAT3(30, 30, 30);
 	}
-	
+
 	// 바닥에있는 포탈 맨위로 올라감
 	for (int i = Potal_start; i < Potal_start + 5; ++i)
 	{
@@ -1546,9 +1590,9 @@ void ServerManager::Update(unsigned short int id)
 	// 300짜리  짝수번호로 한칸씩 이동
 	for (int i = 5; i < 8; ++i)
 	{
-		if (objects[id].connected&&objects[Potal_start+i].colbox.Intersects(objects[id].colbox))
+		if (objects[id].connected&&objects[Potal_start + i].colbox.Intersects(objects[id].colbox))
 		{
-			objects[id].position = XMFLOAT3(objects[2 * i + 2].position.x, objects[2 * i + 2].position.y+300, objects[2 * i + 2].position.z);
+			objects[id].position = XMFLOAT3(objects[2 * i + 2].position.x, objects[2 * i + 2].position.y + 300, objects[2 * i + 2].position.z);
 		}
 	}
 	for (int i = 8; i < 13; ++i)
@@ -1580,8 +1624,26 @@ void ServerManager::Update(unsigned short int id)
 		}
 	}
 
-	
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		if (objects[i].connected)
+		{
+			if (objects[i].death_count == MAX_DEATH)
+			{
+				objects[i].death_count = 0;
+			}
+		}
+	}
 	AddTimerEvent(id);
 
 }
 
+void ServerManager::GameTime()
+{
+	//printf("dd\n");
+	/*for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		if (objects[i].connected)
+			AddTimerEvent(i, TimerEvent::Command::Update, 1.0f);
+	}*/
+}

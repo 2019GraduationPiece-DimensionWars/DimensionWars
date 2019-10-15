@@ -222,15 +222,8 @@ bool RoomScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 				ready = 0;
 			}
 			SendSceneInfo(4, c_type);
-			//m_pFramework->m_pCommandList->Reset(m_pFramework->m_pCommandAllocator, NULL);
-			//m_pFramework->resourceMgr = new ResourceManager();
-			////m_pPlayer = m_pFramework->arrScene[BaseScene::SceneTag::Game]->m_pPlayer;
-			//m_pFramework->arrScene[BaseScene::SceneTag::Game]->BuildObjects(m_pFramework->m_pDevice, m_pFramework->m_pCommandList);
-			//m_pFramework->m_pPlayer = m_pFramework->arrScene[BaseScene::SceneTag::Title]->m_pPlayer;
-			//m_pCamera = m_pPlayer->GetCamera();
-			//m_pFramework->m_pCommandList->Close();
-			//m_pFramework->BuildObjects2();
-
+			
+			ready = 0;
 			m_pFramework->ChangeScene(BaseScene::SceneTag::Game);
 			
 		}

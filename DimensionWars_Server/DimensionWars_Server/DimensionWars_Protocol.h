@@ -34,6 +34,10 @@ constexpr float MAX_CUBE_SIZE = 700.0f;	// 큐브 사이즈
 constexpr unsigned short Slash_end = 200;
 constexpr unsigned short Card_end = 300;
 
+constexpr unsigned short MAX_DEATH = 3;
+constexpr unsigned short MAX_HP = 1;
+constexpr unsigned short MAX_SP = 100;
+
 namespace GrimReaper
 {
 	// 0번 Full 애니메이션은 테스트용으로 FBX 내부의 모든 애니메이션을 순회하며 재생하는 것, 실전에선 필요 없음
@@ -178,6 +182,7 @@ namespace SC
 		Chracter_type=20,
 		GameTime=21,
 		ReadyGame=22,
+		GameOver=23,
 	};
 }
 using SC_Type = SC::ServerToClientSocketType;	// 약자 형태로 사용할 것이다.
@@ -200,6 +205,7 @@ namespace CS
 		Rotate=13,
 		GameTimer=14,
 		GameReady=15,
+		GameOver=16,
 	};
 }
 using CS_Type = CS::ClientToServerSocketType;	// 약자 형태로 사용할 것이다.
@@ -328,6 +334,10 @@ struct SCPacket_ReadyGame : SCPacket_Base {
 	unsigned short ready_state;
 };
 
+struct SCPacket_GameOver : SCPacket_Base {
+	unsigned short death_count;
+};
+
 struct CSPacket_Base {
 	char size;
 	char type;
@@ -414,6 +424,10 @@ struct CSPacket_GameTimer : SCPacket_Base {
 
 struct CSPacket_GameReady : SCPacket_Base {
 	unsigned short ready_state;
+};
+
+struct CSPacket_GameOver : SCPacket_Base {
+	unsigned short death_count;
 };
 
 

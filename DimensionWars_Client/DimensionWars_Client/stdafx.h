@@ -39,7 +39,7 @@
 #include <sstream>
 #include <random>
 #include <memory>
-
+#include <chrono>
 // DirectX 관련 헤더
 #include <d3d12.h>
 #include <dxgi1_4.h>

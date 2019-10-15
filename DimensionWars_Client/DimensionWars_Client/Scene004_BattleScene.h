@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene000_BaseScene.h"
 
-constexpr unsigned short ui_texture = 16;
+constexpr unsigned short ui_texture = 21;
 
 class SkyBox;
 class DiffuseCubeObject;
@@ -92,6 +92,6 @@ public:
 	void SendChracterType(int a);
 	int cmd;
 	unsigned int anime; // 애니메이션 정보
-
+	unsigned short gametime;
 };
 

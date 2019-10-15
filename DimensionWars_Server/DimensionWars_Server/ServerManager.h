@@ -87,6 +87,8 @@ private:
 	void SendGameTimePaket(unsigned short to);
 	void SendArrowPaket(unsigned short to, unsigned short obj);
 	void SendGameStart(unsigned short to);
+	void SendGameOverPaket(unsigned short to, unsigned short obj);
+	void GameTime();
 
 
 	void DisConnect(unsigned short int id);
