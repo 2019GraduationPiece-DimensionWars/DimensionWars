@@ -280,7 +280,7 @@ bool GrimReaperPlayer::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPAR
 	{
 	case WM_LBUTTONDOWN:
 		animation_check = true;
-		//SendNomarlAttack();
+		SendNomarlAttack();
 		switch (state) {
 		case First_Attack:
 			SecondAttackTrigger = true;

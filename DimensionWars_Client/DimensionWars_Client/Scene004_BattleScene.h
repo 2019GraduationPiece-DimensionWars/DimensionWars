@@ -93,5 +93,6 @@ public:
 	int cmd;
 	unsigned int anime; // 애니메이션 정보
 	unsigned short gametime;
+	unsigned short sample_id;
 };
 

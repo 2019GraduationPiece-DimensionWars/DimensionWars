@@ -31,12 +31,12 @@ constexpr float VIEW_RANGE = 2500.0f;	// 플레이어의 시야
 
 constexpr float MAX_CUBE_SIZE = 700.0f;	// 큐브 사이즈
 
-constexpr unsigned short Slash_end = 200;
+constexpr unsigned short Slash_end = 110;
 constexpr unsigned short Card_end = 300;
 
 constexpr unsigned short MAX_DEATH = 3;
-constexpr unsigned short MAX_HP = 1;
-constexpr unsigned short MAX_SP = 100;
+constexpr unsigned short MAX_HP = 10;
+constexpr unsigned short MAX_SP = 50;
 
 namespace GrimReaper
 {
@@ -229,8 +229,8 @@ struct SCPacket_Position : SCPacket_Base {
 struct SCPacket_PutPlayer : SCPacket_Position {
 	// 플레이어가 어떤 캐릭터인가 등의 정보를 추가
 	unsigned short character_type;
-	float hp;
-	float sp;
+	unsigned short hp;
+	unsigned short sp;
 	
 	
 };
@@ -271,7 +271,7 @@ struct SCPacket_ProjectTile : SCPacket_Base {
 };
 
 struct SCPacket_Hit : SCPacket_Base {
-	float hp;
+	unsigned short hp;
 };
 
 struct SCPacket_CreateRoom : SCPacket_Base {

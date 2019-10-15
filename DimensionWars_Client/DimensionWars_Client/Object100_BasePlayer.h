@@ -106,8 +106,8 @@ public:
 
 	int anime_state;
 	bool animation_check = false;
-	float hp;
-	float sp;
+	unsigned short hp;
+	unsigned short sp;
 	unsigned short character_type;
 	unsigned short death_count;
 	float cxDelta = 0.0f, cyDelta = 0.0f;

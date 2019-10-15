@@ -28,7 +28,6 @@
 
 
 
-
 BattleScene::BattleScene()
 {
 
@@ -263,7 +262,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 
 	}
 
-	m_nObjects = 36; //텍스쳐 로드는 45개 
+	m_nObjects = 96; //텍스쳐 로드는 45개 
 	m_battleObjects = new BaseObject*[m_nObjects];
 
 	// 202x290 -> 101 145
@@ -289,11 +288,11 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 		m_battleObjects[i]->SetMaterial(0, battleMaterial[i - 15]);
 	}
 	// hp
-	ScreenTextureObject *battleImageObject3 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.95f, 0.95f, -0.45f, 0.85f);
+	ScreenTextureObject *battleImageObject3 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature,0,0,0,0);
 	m_battleObjects[21] = battleImageObject3;
 	m_battleObjects[21]->SetMaterial(0, battleMaterial[10]);
 	// sp
-	ScreenTextureObject *battleImageObject4 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.95f, 0.8f, -0.45f, 0.7f);
+	ScreenTextureObject *battleImageObject4 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, 0,0,0,0);
 	m_battleObjects[22] = battleImageObject4;
 	m_battleObjects[22]->SetMaterial(0, battleMaterial[11]);
 	// 레이더
@@ -309,7 +308,7 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	m_battleObjects[25] = battleImageObject7;
 	m_battleObjects[25]->SetMaterial(0, battleMaterial[14]);
 	// 빈 hp
-	ScreenTextureObject *battleImageObject11 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.98f, 0.955f, -0.42f, 0.845f);
+	ScreenTextureObject *battleImageObject11 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.98f, 0.955f, -0.42f, 0.845f); //-0.98f, 0.955f, -0.42f, 0.845f
 	m_battleObjects[26] = battleImageObject11;
 	m_battleObjects[26]->SetMaterial(0, battleMaterial[15]);
 	// 빈 sp
@@ -349,6 +348,19 @@ void BattleScene::BuildObjects(ID3D12Device * pd3dDevice, ID3D12GraphicsCommandL
 	m_battleObjects[35] = battleImageObject20;
 	m_battleObjects[35]->SetMaterial(0, battleMaterial[20]);
 
+	for (int i = 0; i < 10; ++i)
+	{
+		ScreenTextureObject *battleImageObject21 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.95f+0.05f*i, 0.95f, -0.90f + 0.05f*i, 0.85f);
+		m_battleObjects[36+i] = battleImageObject21;
+		m_battleObjects[36+i]->SetMaterial(0, battleMaterial[10]);
+	}
+
+	for (int i = 0; i < 50; ++i)
+	{
+		ScreenTextureObject *battleImageObject22 = new ScreenTextureObject(pd3dDevice, pd3dCommandList, m_pFramework->m_pGraphicsRootSignature, -0.95f + 0.01f*i, 0.8f, -0.94f + 0.01f*i, 0.7f);
+		m_battleObjects[46 + i] = battleImageObject22;
+		m_battleObjects[46 + i]->SetMaterial(0, battleMaterial[11]);
+	}
 
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
@@ -430,7 +442,13 @@ bool BattleScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 				case 'P':
 					m_pPlayer->GetCamera()->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 60.0f);
 					break;*/
-
+			case 'P':
+				m_pPlayer->sp -= 1;
+				if (m_pPlayer->sp <= 0)
+				{
+					m_pPlayer->sp = 50;
+				}
+				break; 
 
 			}
 
@@ -482,8 +500,54 @@ void BattleScene::AnimateObjects(float fTimeElapsed)
 			m_ppOtherPlayers[i]->Animate(fTimeElapsed);
 
 
-	
+	//slashWave[0]->SetPosition(m_pPlayer->GetPosition());
 
+
+	for (unsigned int i = 0; i < Slash_end - Slash_start; ++i)
+	{
+		if (slashWave && slashWave[i])
+		{
+			slashWave[i]->m_xmf4x4ToParent._11 = m_pPlayer->GetCamera()->GetRightVector().x;
+			slashWave[i]->m_xmf4x4ToParent._12 = m_pPlayer->GetCamera()->GetRightVector().y;
+			slashWave[i]->m_xmf4x4ToParent._13 = m_pPlayer->GetCamera()->GetRightVector().z;
+			slashWave[i]->m_xmf4x4ToParent._21 = m_pPlayer->GetCamera()->GetUpVector().x;
+			slashWave[i]->m_xmf4x4ToParent._22 = m_pPlayer->GetCamera()->GetUpVector().y;
+			slashWave[i]->m_xmf4x4ToParent._23 = m_pPlayer->GetCamera()->GetUpVector().z;
+			slashWave[i]->m_xmf4x4ToParent._31 = m_pPlayer->GetCamera()->GetLookVector().x;
+			slashWave[i]->m_xmf4x4ToParent._32 = m_pPlayer->GetCamera()->GetLookVector().y;
+			slashWave[i]->m_xmf4x4ToParent._33 = m_pPlayer->GetCamera()->GetLookVector().z;
+		}
+	}
+	for (unsigned int i = 0; i < Card_end - Card_start; ++i)
+	{
+		if (card && card[i]) {
+			card[i]->m_xmf4x4ToParent._11 = m_pPlayer->GetCamera()->GetRightVector().x;
+			card[i]->m_xmf4x4ToParent._12 = m_pPlayer->GetCamera()->GetRightVector().y;
+			card[i]->m_xmf4x4ToParent._13 = m_pPlayer->GetCamera()->GetRightVector().z;
+			card[i]->m_xmf4x4ToParent._21 = m_pPlayer->GetCamera()->GetUpVector().x;
+			card[i]->m_xmf4x4ToParent._22 = m_pPlayer->GetCamera()->GetUpVector().y;
+			card[i]->m_xmf4x4ToParent._23 = m_pPlayer->GetCamera()->GetUpVector().z;
+			card[i]->m_xmf4x4ToParent._31 = m_pPlayer->GetCamera()->GetLookVector().x;
+			card[i]->m_xmf4x4ToParent._32 = m_pPlayer->GetCamera()->GetLookVector().y;
+			card[i]->m_xmf4x4ToParent._33 = m_pPlayer->GetCamera()->GetLookVector().z;
+		}
+	}
+
+
+	for (unsigned int i = 0; i < Arrow_end - Arrow_start; ++i)
+	{
+		if (arrow && arrow[i]) {
+			arrow[i]->m_xmf4x4ToParent._11 = m_pPlayer->GetCamera()->GetRightVector().x;
+			arrow[i]->m_xmf4x4ToParent._12 = m_pPlayer->GetCamera()->GetRightVector().y;
+			arrow[i]->m_xmf4x4ToParent._13 = m_pPlayer->GetCamera()->GetRightVector().z;
+			arrow[i]->m_xmf4x4ToParent._21 = m_pPlayer->GetCamera()->GetUpVector().x;
+			arrow[i]->m_xmf4x4ToParent._22 = m_pPlayer->GetCamera()->GetUpVector().y;
+			arrow[i]->m_xmf4x4ToParent._23 = m_pPlayer->GetCamera()->GetUpVector().z;
+			arrow[i]->m_xmf4x4ToParent._31 = m_pPlayer->GetCamera()->GetLookVector().x;
+			arrow[i]->m_xmf4x4ToParent._32 = m_pPlayer->GetCamera()->GetLookVector().y;
+			arrow[i]->m_xmf4x4ToParent._33 = m_pPlayer->GetCamera()->GetLookVector().z;
+		}
+	}
 	
 	
 	/*for (int i = 0; i < m_nCubeObjects; ++i) {
@@ -559,28 +623,49 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 
 
 	if (m_pPlayer->death_count == 1)
-		m_battleObjects[30]->Render(pd3dCommandList, pCamera);
+		m_battleObjects[33]->Render(pd3dCommandList, pCamera);
 	if (m_pPlayer->death_count == 2)
-		m_battleObjects[31]->Render(pd3dCommandList, pCamera);
+		m_battleObjects[34]->Render(pd3dCommandList, pCamera);
 	if (m_pPlayer->death_count == 3)
-		m_battleObjects[32]->Render(pd3dCommandList, pCamera);
+		m_battleObjects[35]->Render(pd3dCommandList, pCamera);
 
 	
-	for (int i = 0; i < MAX_PLAYER; ++i)
+	
+	if (m_ppOtherPlayers[sample_id]->connected)
 	{
-		if (m_ppOtherPlayers[i]->connected)
-		{
-			if (m_ppOtherPlayers[i]->death_count == 1)
-				m_ppOtherPlayers[i]->Render(pd3dCommandList, pCamera);
-			if (m_pPlayer->death_count == 2)
-				m_ppOtherPlayers[i]->Render(pd3dCommandList, pCamera);
-			if (m_pPlayer->death_count == 3)
-				m_ppOtherPlayers[i]->Render(pd3dCommandList, pCamera);
-		}
-
+		if (m_ppOtherPlayers[sample_id]->death_count == 1)
+			m_battleObjects[30]->Render(pd3dCommandList, pCamera);
+		if (m_pPlayer->death_count == 2)
+			m_battleObjects[31]->Render(pd3dCommandList, pCamera);
+		if (m_pPlayer->death_count == 3)
+			m_battleObjects[32]->Render(pd3dCommandList, pCamera);
 	}
 
 	
+	//hp
+	
+	for (int i = 0; i < 10; ++i)
+	{
+		
+		if (m_pPlayer->hp >= i+1)
+		{
+			m_battleObjects[36+i]->Render(pd3dCommandList, pCamera);
+		}
+		
+	}
+	//sp
+	for (int i = 0; i < 50; ++i)
+	{
+
+		if (m_pPlayer->sp >= i+1)
+		{
+			m_battleObjects[46 + i]->Render(pd3dCommandList, pCamera);
+		}
+
+	}
+	
+
+
 
 	for (int i = 0; i < 7; ++i)
 	{
@@ -591,16 +676,15 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 	{
 		m_battleObjects[29]->Render(pd3dCommandList, pCamera);
 	}
-	for (int i = 0; i < MAX_PLAYER; ++i)
+	
+	if (m_ppOtherPlayers[sample_id]->connected)
 	{
-		if (m_ppOtherPlayers[i]->connected)
+		if (m_ppOtherPlayers[sample_id]->death_count == MAX_DEATH)
 		{
-			if (m_ppOtherPlayers[i]->death_count == MAX_DEATH)
-			{
-				m_battleObjects[28]->Render(pd3dCommandList, pCamera);
-			}
+			m_battleObjects[28]->Render(pd3dCommandList, pCamera);
 		}
 	}
+	
 	
 }
 
@@ -801,6 +885,35 @@ void BattleScene::ProcessPacket(char * ptr)
 			m_pPlayer->SetUp(my_packet->m_Up);
 			m_pPlayer->SetLook(my_packet->m_Look);
 			
+			
+
+			/*float a = Vector3::DotProduct(slashWave[0]->GetLook(), m_pPlayer->GetCamera()->GetLookVector());
+			printf("%f\n", a);
+			
+			float b = sqrtf(1 - a*a);
+			float c = a*a + b * b;*/
+			//printf("%f\n", c);
+			/*if (a < 1 && a>0)
+			{
+				slashWave[0]->m_xmf4x4ToParent._11 = a;
+				slashWave[0]->m_xmf4x4ToParent._12 = 0;
+				slashWave[0]->m_xmf4x4ToParent._13 = b;
+				slashWave[0]->m_xmf4x4ToParent._21 = 0;
+				slashWave[0]->m_xmf4x4ToParent._22 = 1;
+				slashWave[0]->m_xmf4x4ToParent._23 = 0;
+				slashWave[0]->m_xmf4x4ToParent._31 = m_pPlayer->GetCamera()->GetLookVector().x;
+				slashWave[0]->m_xmf4x4ToParent._32 = m_pPlayer->GetCamera()->GetLookVector().y;
+				slashWave[0]->m_xmf4x4ToParent._33 = m_pPlayer->GetCamera()->GetLookVector().z;
+			}*/
+			/*slashWave[0]->m_xmf4x4ToParent._11 = a;
+			slashWave[0]->m_xmf4x4ToParent._12 = 0;
+			slashWave[0]->m_xmf4x4ToParent._13 = -b;
+			slashWave[0]->m_xmf4x4ToParent._21 = 0;
+			slashWave[0]->m_xmf4x4ToParent._22 = 1;
+			slashWave[0]->m_xmf4x4ToParent._23 = 0;
+			slashWave[0]->m_xmf4x4ToParent._31 = b;
+			slashWave[0]->m_xmf4x4ToParent._32 = 0;
+			slashWave[0]->m_xmf4x4ToParent._33 = a;*/
 			//slashWave[0]->Rotate(&slashWave[0]->GetUp(),obj_rot_y);
 			//m_battleObjects[21]->SetLookAt(XMFLOAT3(0,0,0), my_packet->m_Up);
 			//m_battleObjects[21]->Rotate(0,my_packet->x,0);
@@ -921,6 +1034,7 @@ void BattleScene::ProcessPacket(char * ptr)
 		unsigned short other_id = my_packet->id;
 		if (other_id == m_pFramework->myid) {
 			m_pPlayer->hp = my_packet->hp;
+			printf("맞음 %d\n",m_pPlayer->hp);
 		}
 		else if (other_id < MAX_PLAYER) {
 			m_ppOtherPlayers[other_id]->hp = my_packet->hp;
@@ -948,19 +1062,24 @@ void BattleScene::ProcessPacket(char * ptr)
 	case SC_Type::GameTime:
 	{
 		SCPacket_GameTime *packet = reinterpret_cast<SCPacket_GameTime*>(ptr);
-		ConsolePrint("%d\n", packet->time);
+		//ConsolePrint("%d\n", packet->time);
 		break;
 	}
 	case SC_Type::GameOver:
 	{
 		SCPacket_GameOver *my_packet = reinterpret_cast<SCPacket_GameOver*>(ptr);
 		unsigned short other_id = my_packet->id;
+
 		if (other_id == m_pFramework->myid) {
 			m_pPlayer->death_count = my_packet->death_count;
+			printf("나\n");
 		}
 		else if (other_id < MAX_PLAYER) {
+			sample_id = my_packet->id;
 			m_ppOtherPlayers[other_id]->death_count = my_packet->death_count;
+			printf("너\n");
 		}
+		
 		//ConsolePrint("%d\n", packet->time);
 		break;
 	}

@@ -142,5 +142,7 @@ private:
 	int user = 0;  // 서버에 접속한 플레이어 수
 	int update_check = 0; // 타이머 버그 임시방편 해결 변수
 	unsigned short ready_count = 0;
+
+	unsigned short cube_id;
 	
 };
