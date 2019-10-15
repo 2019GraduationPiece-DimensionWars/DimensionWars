@@ -148,7 +148,7 @@ public:
 
 private:
 	BOOL 							m_bEnable = true;
-	float 							m_fSpeed = 1.0f;
+	float 							m_fSpeed = 1.5f;
 	float 							m_fPosition = 0.0f;
 	float 							m_fWeight = 1.0f;
 

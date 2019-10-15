@@ -10,6 +10,14 @@
 
 ResourceManager::ResourceManager()
 {
+	// 사운드시스템 생성 
+	FMOD_System_Create(&SoundSystem);
+
+	// 초기화
+	FMOD_System_Init(SoundSystem, 10, FMOD_INIT_NORMAL, NULL); // 사운드시스템, 채널 갯수(동시에 재생할 BGM 가짓수), 초기화 상태, 플러그인 드라이버(NULL로 무시)
+
+	FMOD_System_CreateSound(SoundSystem, "Sound\\BGM\\symphonic_metal_vanishing_dream_lost_dream.mp3", FMOD_LOOP_NORMAL | FMOD_2D | FMOD_3D_WORLDRELATIVE | FMOD_3D_INVERSEROLLOFF, 0, &TitleLobbyRoom_Sound);
+	FMOD_System_CreateSound(SoundSystem, "Sound\\BGM\\Gluttony Fang.mp3", FMOD_LOOP_NORMAL | FMOD_2D | FMOD_3D_WORLDRELATIVE | FMOD_3D_INVERSEROLLOFF, 0, &BattleScene_Sound);
 }
 
 ResourceManager::~ResourceManager()
@@ -406,6 +414,25 @@ void ResourceManager::LoadElfArcher(ID3D12Device * pd3dDevice, ID3D12GraphicsCom
 
 		ArrowFeather = ElfArcherModel[index]->m_pModelRootObject->FindFrame("Elf_Arrow_Frather003");
 		ArrowFeather->GetMaterial(0)->SetTexture(pArrowFeatherTexture);
+
+		/*
+		Texture *pMaskUpperTexture = new Texture(1, RESOURCE_TEXTURE2D, 0);
+		pMaskUpperTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Model/ElfArcher/ElfArcher_Mask_Upper_Base_Color.dds", 0);
+		BaseScene::CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pMaskUpperTexture, 15, false);
+		SkinnedFrameObject* MaskUpper = ElfArcherModel[index]->m_pModelRootObject->FindFrame("Elf_Mask_Upper");
+		MaskUpper->GetMaterial(0)->SetTexture(pMaskUpperTexture);
+
+		Texture *pMaskUnderTexture = new Texture(1, RESOURCE_TEXTURE2D, 0);
+		pMaskUnderTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Model/ElfArcher/ElfArcher_Mask_Under_Base_Color.dds", 0);
+		BaseScene::CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pMaskUnderTexture, 15, false);
+		SkinnedFrameObject* MaskUnder = ElfArcherModel[index]->m_pModelRootObject->FindFrame("Elf_Mask_Under");
+		MaskUnder->GetMaterial(0)->SetTexture(pMaskUnderTexture);
+
+		Texture *pMaskEyeTexture = new Texture(1, RESOURCE_TEXTURE2D, 0);
+		pMaskEyeTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Texture/Model/ElfArcher/ElfArcher_Mask_Eye_Base_Color.dds", 0);
+		BaseScene::CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pMaskEyeTexture, 15, false);
+		SkinnedFrameObject* MaskEye = ElfArcherModel[index]->m_pModelRootObject->FindFrame("Elf_Mask_Eye");
+		MaskEye->GetMaterial(0)->SetTexture(pMaskEyeTexture);*/
 	}
 
 	for (unsigned int i = 0; i < Arrow_end - Arrow_start; ++i) {
@@ -505,4 +532,18 @@ SkinnedFrameObject * ResourceManager::GetArrowObject(unsigned int index) const
 SkinnedFrameObject * ResourceManager::GetPortalObject(unsigned int index) const
 {
 	return PortalModel[index]->m_pModelRootObject;
+}
+
+void ResourceManager::PlayTitleLobbyRoomBGM()
+{
+	FMOD_Channel_Stop(BGM_Channel); // BGM 채널의 현재 음악 중지	
+	if (TitleLobbyRoom_Sound && SoundSystem)
+		FMOD_System_PlaySound(SoundSystem, TitleLobbyRoom_Sound, NULL, 0, &BGM_Channel);
+}
+
+void ResourceManager::PlayBattleBGM()
+{
+	FMOD_Channel_Stop(BGM_Channel); // BGM 채널의 현재 음악 중지	
+	if (BattleScene_Sound && SoundSystem)
+		FMOD_System_PlaySound(SoundSystem, BattleScene_Sound, NULL, 0, &BGM_Channel);
 }

@@ -233,7 +233,7 @@ AnimationSets::AnimationSets(int nAnimationSets)
 AnimationSets::~AnimationSets()
 {
 	//if (m_ppInitalAnimationSets[0] && m_ppInitalAnimationSets[0]->m_pAnimationLayers) delete[] m_ppInitalAnimationSets[0]->m_pAnimationLayers;
-	for (int i = 0; i < m_nAnimationSets; i++) if (m_ppInitalAnimationSets[i]) delete m_ppInitalAnimationSets[i];
+	//for (int i = 0; i < m_nAnimationSets; i++) if (m_ppInitalAnimationSets[i]) delete m_ppInitalAnimationSets[i];
 	
 	if (m_ppInitalAnimationSets) delete[] m_ppInitalAnimationSets;
 	for (auto & data : m_AnimationSets) if (data) delete data;

@@ -5,6 +5,11 @@ class SkinnedFrameObject;
 
 class ResourceManager
 {
+public:
+	enum EffectSoundType {
+		Damage,
+		EffectSoundCount
+	};
 private:
 	LoadedModelInfo* GrimReaperModel[MAX_PLAYER] = { nullptr };
 	LoadedModelInfo* GamblerModel[MAX_PLAYER] = { nullptr };
@@ -14,6 +19,22 @@ private:
 	LoadedModelInfo* CardModel[Card_end - Card_start] = { nullptr };
 	LoadedModelInfo* ArrowModel[Arrow_end - Arrow_start] = { nullptr };
 	LoadedModelInfo* PortalModel[Potal_end - Potal_start] = { nullptr };
+
+	// Sound
+	FMOD_SYSTEM *SoundSystem;
+
+	// 채널 하나에 동시 재생은 하나만 된다. 동시에 많이 재생시키고 싶은 만큼 채널 갯수를 늘려서 만들어야 한다.
+	FMOD_CHANNEL *BGM_Channel;
+	FMOD_CHANNEL *Effect_Channel;
+
+	// BGM
+	FMOD_SOUND *TitleLobbyRoom_Sound;
+	FMOD_SOUND *BattleScene_Sound;
+
+	// 효과음
+	FMOD_SOUND *SoundEffect[EffectSoundType::EffectSoundCount];
+
+
 
 public:
 	ResourceManager();
@@ -42,5 +63,10 @@ public:
 	SkinnedFrameObject* GetCardObject(unsigned int index = 0) const;
 	SkinnedFrameObject* GetArrowObject(unsigned int index = 0) const;
 	SkinnedFrameObject* GetPortalObject(unsigned int index = 0) const;
+
+
+	void ResourceManager::PlayTitleLobbyRoomBGM();
+
+	void ResourceManager::PlayBattleBGM();
 };
 

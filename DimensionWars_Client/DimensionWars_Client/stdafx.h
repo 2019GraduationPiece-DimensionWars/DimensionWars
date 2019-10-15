@@ -17,6 +17,8 @@
 #include "../../DimensionWars_Server/DimensionWars_Server/DimensionWars_Protocol.h"
 #define WM_SOCKET	(WM_USER + 1)
 
+#pragma comment(lib, "FMOD_API\\lib\\fmod64_vc.lib")	// 라이브러리 링크
+#include "FMOD_API\\inc\\fmod.h"	// fmod 라이브러리를 사용하기 위한 음악 파일 헤더
 
 // C 런타임 헤더 파일입니다.
 #include <stdlib.h>

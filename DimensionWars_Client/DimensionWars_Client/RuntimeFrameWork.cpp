@@ -89,7 +89,7 @@ bool RuntimeFrameWork::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	// 네트워크 초기화
 	//NetworkInitialize();
 	BuildObjects();
-
+	resourceMgr->PlayTitleLobbyRoomBGM();
 	return (m_hWnd != NULL);
 }
 
@@ -585,10 +585,14 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 		switch (wParam)
 		{
 		case VK_ESCAPE:
-			if (m_CurrSceneTag == BaseScene::SceneTag::Title)
+			if (m_CurrSceneTag == BaseScene::SceneTag::Title) {
+				resourceMgr->PlayBattleBGM();
 				ChangeScene(BaseScene::SceneTag::Game);
-			else
+			}
+			else {
+				resourceMgr->PlayTitleLobbyRoomBGM();
 				ChangeScene(BaseScene::SceneTag::Title);
+			}
 			break;
 		case VK_RETURN:
 			break;
@@ -723,6 +727,8 @@ LRESULT RuntimeFrameWork::WndProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPA
 
 void RuntimeFrameWork::ChangeScene(BaseScene::SceneTag tag, bool bDestroy)
 {
+	if (tag == BaseScene::SceneTag::Game)
+		resourceMgr->PlayBattleBGM();
 	if (BaseScene::SceneTag::Count > tag) {
 		m_pPrevScene = m_pCurrScene;
 		m_pCurrScene = arrScene[m_CurrSceneTag = tag];

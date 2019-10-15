@@ -113,7 +113,7 @@ public:
 
 	char* GetSendBuf() { return send_buffer; }
 	const bool GetActivated() const { return Activate; }
-	ResourceManager*			resourceMgr = nullptr;
+	ResourceManager* resourceMgr = nullptr;
 	ResourceManager* GetResource() const { return resourceMgr; }
 
 	float cubeSize[50];
@@ -148,7 +148,7 @@ private:
 	BaseScene::SceneTag m_CurrSceneTag = BaseScene::SceneTag::Game;
 
 	SOCKET mySocket; // 소켓
-//	char server_ip[17] = "10.30.1.11"; // 서버 IP
+//	char server_ip[17] = "192.168.0.5"; // 서버 IP
 									  // 전역변수
 	char server_ip[17] = "127.0.0.1";
 	//192.168.20.173
@@ -159,7 +159,5 @@ private:
 	char	packet_buffer[BUFSIZE];
 	DWORD	in_packet_size = 0;
 	int		saved_packet_size = 0;
-	
-
 };
 
