@@ -89,6 +89,7 @@ bool RuntimeFrameWork::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	// 네트워크 초기화
 	//NetworkInitialize();
 	BuildObjects();
+	ChangeSwapChainState();
 	resourceMgr->PlayTitleLobbyRoomBGM();
 	return (m_hWnd != NULL);
 }
@@ -602,7 +603,10 @@ void RuntimeFrameWork::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, W
 			// m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
 			break;
 		case VK_F9:
-			ChangeSwapChainState();
+			//ChangeSwapChainState();
+			break;
+		case VK_F12:
+			exit(1);
 			break;
 		case VK_SPACE:
 			//m_pCamera = m_pPlayer->GetCamera();

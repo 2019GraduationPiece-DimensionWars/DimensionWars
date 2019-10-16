@@ -454,7 +454,10 @@ void ServerManager::RecvPacket(unsigned short int id)
 
 	if (WSARecv(client_s, &over->dataBuffer, 1, NULL, &flags, &(over->overlapped), NULL) == SOCKET_ERROR)
 		if (WSAGetLastError() != WSA_IO_PENDING)
+		{
 			serverPrint("RECV ERROR - ", WSAGetLastError());
+			user -= 1;
+		}
 }
 
 void ServerManager::SendLoginOKPacket(unsigned short int to)

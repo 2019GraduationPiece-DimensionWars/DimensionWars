@@ -441,7 +441,7 @@ inline XMFLOAT4 random_color()
 }
 
 // 콘솔 창 띄움 여부, 디버그용
-#define USE_CONSOLE_WINDOW
+//#define USE_CONSOLE_WINDOW
 #ifdef USE_CONSOLE_WINDOW
 #include <stdio.h>
 #include <iostream>

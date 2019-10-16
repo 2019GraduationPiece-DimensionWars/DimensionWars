@@ -669,7 +669,10 @@ void BattleScene::Render(ID3D12GraphicsCommandList * pd3dCommandList, BaseCamera
 
 	for (int i = 0; i < 7; ++i)
 	{
-		m_battleObjects[21 + i]->Render(pd3dCommandList, pCamera);
+		if (i != 2)
+		{
+			m_battleObjects[21 + i]->Render(pd3dCommandList, pCamera);
+		}
 	}
 
 	if (m_pPlayer->death_count == MAX_DEATH)
@@ -1034,7 +1037,7 @@ void BattleScene::ProcessPacket(char * ptr)
 		unsigned short other_id = my_packet->id;
 		if (other_id == m_pFramework->myid) {
 			m_pPlayer->hp = my_packet->hp;
-			printf("맞음 %d\n",m_pPlayer->hp);
+			//printf("맞음 %d\n",m_pPlayer->hp);
 		}
 		else if (other_id < MAX_PLAYER) {
 			m_ppOtherPlayers[other_id]->hp = my_packet->hp;
@@ -1072,12 +1075,12 @@ void BattleScene::ProcessPacket(char * ptr)
 
 		if (other_id == m_pFramework->myid) {
 			m_pPlayer->death_count = my_packet->death_count;
-			printf("나\n");
+			//printf("나\n");
 		}
 		else if (other_id < MAX_PLAYER) {
 			sample_id = my_packet->id;
 			m_ppOtherPlayers[other_id]->death_count = my_packet->death_count;
-			printf("너\n");
+			//printf("너\n");
 		}
 		
 		//ConsolePrint("%d\n", packet->time);
